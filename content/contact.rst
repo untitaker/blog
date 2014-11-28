@@ -14,6 +14,5 @@ Contact
 
 - `Twitter <https://twitter.com/untitaker>`_
 
-  I don't recieve any notifications and am currently trying to avoid any
-  regular usage. Some reasons for this have been `explained by Alex Gaynor
-  <https://alexgaynor.net/2014/oct/30/i-hope-twitter-goes-away/>`_.
+  Twitter is not suitable for any meaningful discussion, but you can follow me
+  there.
