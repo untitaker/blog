@@ -5,6 +5,7 @@ serve:
 	liquidluck server
 
 deploy:
-	rsync --del -rvze ssh ./deploy/ untispace:~/virtual/unterwaditzer.net/
+	rsync -av --chmod=755 ./deploy/ untispace:~/virtual/unterwaditzer.net/
+
 
 .PHONY: deploy serve build
