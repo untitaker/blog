@@ -4,14 +4,6 @@ The Dream of the personal Cloud
 
 :public: false
 
-ownCloud
-========
-
-ownCloud_ is a server-side web application that incorporates very many services
-into its user management system. As a ownCloud user you can install multiple
-*apps* into ownCloud. A few examples are calendar and addressbook hosting, note
-taking, file hosting (that one is actually built-in) and a feed reader.
-
 WebDAV
 ======
 
@@ -23,8 +15,7 @@ has very powerful access control features.
 It seems to be mainly used in corporate environments, yet somehow it
 has crept into the FOSS-community. Which is why I came into contact with it.
 
-OwnCloud supports the WebDAV protocol, obviously for retrieving and uploading
-files. It also supports two variants of WebDAV:
+There are two variants of WebDAV:
 
 - CalDAV, a protocol for accessing calendars. Basically you send a special
   request to retrieve the *calendar root*, which is basically a WebDAV folder.
@@ -36,7 +27,8 @@ files. It also supports two variants of WebDAV:
   serialization of contacts.
 
 Both of those protocols are authored by Apple, which uses them to synchronize
-data between iCloud and the built-in apps on iOS.
+data between iCloud and the built-in apps on iOS. FOSS software like ownCloud_
+or Baikal_ also supports those.
 
 Both protocols are neither a superset nor a subset of WebDAV: While their RFC
 mandates that such servers have to fully support WebDAV, they can (*should*)
@@ -119,10 +111,11 @@ why when you delete a tasklist in the Tasks app, it warns you that your
 same-named calendar will also be deleted [#]_. This is how your iPhone calendar
 syncs to iCloud. And people think the legacy of HTTP or TCP is crippling.
 
-.. [#] Tested on an old iPod touch, running iOS 6. (FIXME: Check that) I'm
-   pretty sure nothing has changed since then.
+.. [#] Tested on an old iPod touch, running iOS 6. I'm pretty sure nothing has
+   changed since then.
 
 .. _ownCloud: http://owncloud.org/
+.. _Baikal: http://baikal-server.com/
 .. _WebDAV: https://en.wikipedia.org/wiki/WebDAV
 .. _iCalendar: https://tools.ietf.org/html/rfc5545
 .. _VCard: https://tools.ietf.org/html/rfc6350
