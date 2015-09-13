@@ -161,10 +161,10 @@ applications can access.
 
 I'm hoping to replace WebDAV in my personal infrastructure as far as possible.
 It probably won't ever go away, but at least I can try. I've also extended
-vdirsyncer in a way such that I can use it to synchronize a
-CalDAV/CardDAV-server with a remoteStorage-server. `It's still a
-work-in-progress <vdirsyncerRemotestorage>`_, but at least it's not a Sisyphean
-task like writing a CalDAV/CardDAV-client that actually works.
+vdirsyncer so I can use it to synchronize a CalDAV/CardDAV-server with a
+remoteStorage-server. `It's still a work-in-progress
+<vdirsyncerRemotestorage>`_, but at least it's not a Sisyphean task like
+writing a CalDAV/CardDAV-client that actually works.
 
 For the users of vdirsyncer this means nothing, because I still rely on WebDAV
 myself. But as I dive deeper into the remoteStorage protocol, I'm less and less
