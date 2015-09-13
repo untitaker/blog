@@ -12,7 +12,8 @@ support for file locks, arbitrary key-value properties attached to folders,
 file mimetypes, and many other features that extend this standard. It also has
 powerful access control features.
 
-There are two variants of WebDAV:
+There are also two protocols that extend WebDAV. This blogpost is more about
+them:
 
 - CalDAV, a protocol for accessing calendars. Basically you send a few requests
   to retrieve URLs to special folders that represent a calendar each. Inside
@@ -23,7 +24,7 @@ There are two variants of WebDAV:
   serialization of contacts.
 
 Both of those protocols are authored by Apple, which uses them to synchronize
-data between iCloud and the built-in apps on iOS. FOSS software like ownCloud_
+data between iCloud and the built-in apps on iOS. FOSS-software like ownCloud_
 or Baikal_ also supports them. Nowadays those are the standard protocols for
 accessing calendar and contacts data from a server.
 
@@ -47,11 +48,11 @@ following XML as payload to a folder URL::
     </D:propfind>
 
 The WebDAV server then responds with another XML document that enlists URLs for
-each file in that folder. It also includes the requested properties. In this
-case, we requested the current etag and the MIME-type. You can also change the
-``Depth``-header to recursively list files in subfolders, kind of like what the
-``find``-command does. The server has to support all these fun queries,
-otherwise clients will break. Or some of them. You never know.
+each file in that folder. It also includes the requested properties for each
+file. In this case, we requested the current etag and the MIME-type. You can
+also change the ``Depth``-header to recursively list files in subfolders, kind
+of like what the ``find``-command does. The server has to support all these fun
+queries, otherwise clients will break. Or some of them. You never know.
 
 And even though the WebDAV protocol allows for so many slightly different
 queries, there was one feature missing: You can't *filter* folder listings. In
@@ -63,9 +64,9 @@ but also in regards to space when considering mobile devices.
 .. [#] This would be a ridiculous reason given that WebDAV already uses XML.
 
 At this point it might have made sense to extend ``PROPFIND`` requests to
-filter by properties. But the authors made a different decision anyway [#]_.
-WebDAV also has a method called ``REPORT``. Of course you can send XML with
-that method too, why wouldn't you. Here's how it looks like::
+filter by properties. But the authors made a different decision. WebDAV also
+has a method called ``REPORT``. Of course you can send XML with that method
+too, why wouldn't you. Here's what it looks like::
 
     <?xml version="1.0" encoding="utf-8" ?>
     <C:calendar-query xmlns:D="DAV:"
@@ -83,9 +84,6 @@ that method too, why wouldn't you. Here's how it looks like::
         </C:filter>
     </C:calendar-query>
 
-.. [#] I actually couldn't find any rationale for this. Given my experience
-   with those protocols I assume none.
-
 And there you have your filtering feature, *all encapsulated in a new XML
 namespace like God intended it to be*. The filtering semantics can be explained
 like this: You're querying for a ``VCALENDAR`` component (basically a container
@@ -95,10 +93,10 @@ filter by those too.
 
 But why would you want to filter by events? What else could there be inside of
 a calendar? Turns out you can also store tasks (``VTODO``) and diary entries
-(``VJOURNAL``) inside one. Remember that Apple uses this protocol? This is
-why when you delete a tasklist in the Tasks app, it warns you that your
-same-named calendar will also be deleted [#]_. This is how your iPhone calendar
-syncs to iCloud. And people think the legacy of HTTP or TCP is crippling.
+(``VJOURNAL``) inside one. Remember that Apple uses this protocol? This is why
+when you delete a tasklist in the Tasks app, it warns you that your same-named
+calendar will also be deleted [#]_. This is how your iPhone calendar syncs to
+iCloud. And people think the legacy of HTTP or TCP is crippling.
 
 .. [#] Tested on an old iPod touch, running iOS 6. I'm pretty sure nothing has
    changed since then.
@@ -109,8 +107,8 @@ WebDAV in practice
 
 Flock_ was an Android app that offered end-to-end encrypted contact and
 calendar sync. Under the hood they used the CalDAV and CardDAV protocols. They
-shut down a few months ago. `Their lead developer wrote a short note on the
-technical reasons behind it <Flocknotice>`_.
+shut down a few months ago. `Their main developer wrote a short note on the
+technical reasons behind it <FlockNotice>`_.
 
 The fact that CalDAV and CardDAV are based on WebDAV has fatal downsides in
 practice. I guess the idea was that you could just use an existing WebDAV
@@ -124,11 +122,12 @@ I also wrote a client. I even `blogged about it <vdirsyncerPost>`_. Yes, CalDAV
 and CardDAV being derived from WebDAV does allow for some pretty cool tricks
 involving a WebDAV FUSE filesystem and a bunch of shellscripts that scrape the
 files in that filesystem and add them up to a listing of contacts and
-calendars. But that's about it with the upsides of that protocol.
+calendars. But that's about it with the upsides of that protocol. And in
+practice that trick works with only a few servers anyway.
 
 Vdirsyncer's integration tests spawn several popular WebDAV servers and run a
 massive amount of tests against them, using the internal client classes of
-vdirsyncer. During its lifetime it has catched countless bugs in those servers
+vdirsyncer. During its lifetime it has caught countless bugs in those servers
 [#]_. And those are just the ones that are actually testable in a sane way. The
 most broken servers are part of massive groupwares that would probably eat up
 all of the RAM in Travis' VMs.
