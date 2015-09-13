@@ -2,7 +2,9 @@
 I hope WebDAV dies
 ==================
 
-:public: false
+:date: 2015-09-14
+:category: dev
+:tags: webdav, remotestorage, vdirsyncer, contacts, calendar
 
 WebDAV
 ======
