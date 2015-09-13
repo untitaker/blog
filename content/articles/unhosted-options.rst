@@ -1,6 +1,6 @@
-===============================
-The Dream of the personal Cloud
-===============================
+==================
+I hope WebDAV dies
+==================
 
 :public: false
 
@@ -36,15 +36,7 @@ reject invalid iCalendar/VCard data. And obviously the folder structure is
 limited. You can't create a calendar folder inside another calendar folder, for
 example.
 
-I guess the idea was that you could just use an existing WebDAV client library
-to access your calendar data in an easy way. However, the fact that CalDAV and
-CardDAV are based on WebDAV has only downsides. In practice, most
-CardDAV/CalDAV servers implement the bare minimum to stay compatible with the
-majority of CardDAV/CalDAV clients. Many features of WebDAV are unused in those
-protocols, some are explicitly forbidden, but the majority is simply not
-supported.
-
-Yet the spec authors added new queries to both CardDAV and CalDAV, specific to
+The spec authors also added new queries to both CardDAV and CalDAV, specific to
 their datamodels. For example, in WebDAV, you can send a ``PROPFIND`` HTTP
 request (yes, that's a HTTP method) with a ``Depth: 1`` header and the
 following XML as payload to a folder URL::
@@ -114,8 +106,87 @@ syncs to iCloud. And people think the legacy of HTTP or TCP is crippling.
 .. [#] Tested on an old iPod touch, running iOS 6. I'm pretty sure nothing has
    changed since then.
 
-.. _ownCloud: http://owncloud.org/
+
+WebDAV in practice
+==================
+
+Flock_ was an Android app that offered end-to-end encrypted contact and
+calendar sync. Under the hood they used the CalDAV and CardDAV protocols. They
+shut down a few months ago. `Their lead developer wrote a short note on the
+technical reasons behind it <Flocknotice>`_.
+
+The fact that CalDAV and CardDAV are based on WebDAV has only downsides. I
+guess the idea was that you could just use an existing WebDAV client library to
+access your calendar data in an easy way. In practice, all of this complexity
+makes servers really hard to implement properly. Consequently most servers only
+implement a subset, which leads to massive compatibility problems, and leaves
+client developers with the challenge to find a subset of the protocol that is
+supported by the servers they care about.
+
+I also wrote a client. I even `blogged about it <vdirsyncerPost>`_. Yes,
+CalDAV and CardDAV being derived from WebDAV does allow for some pretty cool
+tricks involving a WebDAV FUSE filesystem and a bunch of shellscripts that
+scrape the files in that filesystem and add them up to a listing of contacts
+and calendars. But that's about it with the upsides of that protocol.
+
+Vdirsyncer's integration tests spawn several popular WebDAV servers and run a
+massive amount of tests against them, using the internal client classes of
+vdirsyncer. During its lifetime it has catched countless bugs in those servers
+[#]_. And those are just the ones that are actually testable in a sane way. The
+majority of broken servers are embedded into massive groupwares that would
+probably exceed the RAM of Travis' VMs.
+
+.. [#] Except Baikal_, it's the only FOSS server I can recommend. Yes, it's
+   written in PHP, no comment. FastMail is pretty good too.
+
+As far as I know, it's the only client with a testsuite actually doing that in
+an automated way. Other clients such as DavDroid_ just have a obscenely high
+amount of tolerance for invalid server responses. Their client is quite good,
+given that you use a good server.
+
+The future
+==========
+
+I'm currently playing around with remoteStorage_. It's a file transfer
+protocol, like WebDAV. But at least the protocol is simple, based on HTTP, and a
+little JSON for file listings. It doesn't support locks. It doesn't support
+ACLs, or whatever they are called. It doesn't support attaching arbitrary
+properties to a folder. It doesn't support all those crazy features that make
+CalDAV- and CardDAV-servers hard to implement, and as a result clients. Yes,
+it's slow to fetch all events, but so is parsing XML. And since remoteStorage
+doesn't restrict the way I store files, I can always change the way I store
+files to somehow implement that time-range querying feature CalDAV has. Or not,
+I don't want to end up with something like CalDAV. Perhaps I'll just run a
+cronjob to automatically delete old events, I don't know.
+
+The only thing that is more complex in remoteStorage than in WebDAV is
+authentication. RemoteStorage requires the server to support a subset of OAuth,
+and that's the only kind of authentication supported. It also requires
+WebFinger support instead of making it optional (like in WebDAV, where it's
+almost a luxury if the DAV client actually *finds* the HTTP endpoints it's
+supposed to use). It also has a very simple permission system baked into the
+authentication protocol that actually gives the user control over the data
+applications can access.
+
+I'm hoping to replace WebDAV in my personal infrastructure as far as possible.
+It probably won't ever go away, but at least I can try. I've also extended
+vdirsyncer in a way such that I can use it to synchronize a
+CalDAV/CardDAV-server with a remoteStorage-server. `It's still a
+work-in-progress <vdirsyncerRemotestorage>`_, but at least it's not a Sisyphean
+task like writing a CalDAV/CardDAV-client that actually works.
+
+For the users of vdirsyncer this means nothing, because I still rely on WebDAV
+myself. But as I dive deeper into the remoteStorage protocol, I'm less and less
+inclined to work around bugs in your stupid groupware.
+
 .. _Baikal: http://baikal-server.com/
+.. _Flock: https://github.com/WhisperSystems/Flock
+.. _VCard: https://tools.ietf.org/html/rfc6350
 .. _WebDAV: https://en.wikipedia.org/wiki/WebDAV
 .. _iCalendar: https://tools.ietf.org/html/rfc5545
-.. _VCard: https://tools.ietf.org/html/rfc6350
+.. _ownCloud: http://owncloud.org/
+.. _FlockNotice: https://gist.github.com/rhodey/873ae9d527d8d2a38213
+.. _vdirsyncerPost: https://unterwaditzer.net/2014/vdirsyncer.html
+.. _DavDroid: http://davdroid.bitfire.at/
+.. _remoteStorage: http://remotestorage.io/
+.. _vdirsyncerRemotestorage: https://github.com/untitaker/vdirsyncer/pull/265
