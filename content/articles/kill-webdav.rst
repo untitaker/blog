@@ -49,8 +49,8 @@ following XML as payload to a folder URL::
 The WebDAV server then responds with another XML document that enlists URLs for
 each file in that folder. It also includes the requested properties. In this
 case, we requested the current etag and the MIME-type. You can also change the
-``Depth`` header to recursively list files in subfolders, kind of like what the
-``find`` command does. The server has to support all these fun queries,
+``Depth``-header to recursively list files in subfolders, kind of like what the
+``find``-command does. The server has to support all these fun queries,
 otherwise clients will break. Or some of them. You never know.
 
 And even though the WebDAV protocol allows for so many slightly different
@@ -90,8 +90,8 @@ And there you have your filtering feature, *all encapsulated in a new XML
 namespace like God intended it to be*. The filtering semantics can be explained
 like this: You're querying for a ``VCALENDAR`` component (basically a container
 for events and timezone definitions), then you query for a ``VEVENT`` component
-inside it (an event, duh), and since every event has a start and end datetime,
-you can finally filter by those too.
+inside it, and since every event has a start and end property, you can finally
+filter by those too.
 
 But why would you want to filter by events? What else could there be inside of
 a calendar? Turns out you can also store tasks (``VTODO``) and diary entries
