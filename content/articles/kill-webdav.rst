@@ -8,27 +8,24 @@ WebDAV
 ======
 
 WebDAV_ is a file access and transfer protocol created in the 90s. It has
-support for file locks, arbitrary additional key-value properties on folders,
-file mimetypes, and very many other features that extend this standard. It also
-has very powerful access control features.
-
-It seems to be mainly used in corporate environments, yet somehow it
-has crept into the FOSS-community. Which is why I came into contact with it.
+support for file locks, arbitrary key-value properties attached to folders,
+file mimetypes, and many other features that extend this standard. It also has
+powerful access control features.
 
 There are two variants of WebDAV:
 
-- CalDAV, a protocol for accessing calendars. Basically you send a special
-  request to retrieve the *calendar root*, which is basically a WebDAV folder.
-  That folder contains subfolders, each of which represents a calendar. Inside
-  that calendar are events, each represented as a file in the iCalendar_
-  format.
+- CalDAV, a protocol for accessing calendars. Basically you send a few requests
+  to retrieve URLs to special folders that represent a calendar each. Inside
+  those calendar folders are events, each represented as a file in the
+  iCalendar_ format.
 
 - CardDAV, the same thing as CalDAV, but for addressbooks. It uses VCard_ for
   serialization of contacts.
 
 Both of those protocols are authored by Apple, which uses them to synchronize
 data between iCloud and the built-in apps on iOS. FOSS software like ownCloud_
-or Baikal_ also supports those.
+or Baikal_ also supports those. Nowadays those are the standard protocols for
+accessing calendar and contacts data from a server.
 
 Both protocols are neither a superset nor a subset of WebDAV: While their RFC
 mandates that such servers have to fully support WebDAV, they can (*should*)
@@ -115,19 +112,19 @@ calendar sync. Under the hood they used the CalDAV and CardDAV protocols. They
 shut down a few months ago. `Their lead developer wrote a short note on the
 technical reasons behind it <Flocknotice>`_.
 
-The fact that CalDAV and CardDAV are based on WebDAV has only downsides. I
-guess the idea was that you could just use an existing WebDAV client library to
-access your calendar data in an easy way. In practice, all of this complexity
-makes servers really hard to implement properly. Consequently most servers only
-implement a subset, which leads to massive compatibility problems, and leaves
-client developers with the challenge to find a subset of the protocol that is
-supported by the servers they care about.
+The fact that CalDAV and CardDAV are based on WebDAV has fatal downsides in
+practice. I guess the idea was that you could just use an existing WebDAV
+client library to access your calendar data in an easy way. In practice, all of
+this complexity makes servers really hard to implement properly. Consequently
+most servers only implement a subset, which leads to massive compatibility
+problems, and leaves client developers with the challenge to find a subset of
+the protocol that is supported by the servers they care about.
 
-I also wrote a client. I even `blogged about it <vdirsyncerPost>`_. Yes,
-CalDAV and CardDAV being derived from WebDAV does allow for some pretty cool
-tricks involving a WebDAV FUSE filesystem and a bunch of shellscripts that
-scrape the files in that filesystem and add them up to a listing of contacts
-and calendars. But that's about it with the upsides of that protocol.
+I also wrote a client. I even `blogged about it <vdirsyncerPost>`_. Yes, CalDAV
+and CardDAV being derived from WebDAV does allow for some pretty cool tricks
+involving a WebDAV FUSE filesystem and a bunch of shellscripts that scrape the
+files in that filesystem and add them up to a listing of contacts and
+calendars. But that's about it with the upsides of that protocol.
 
 Vdirsyncer's integration tests spawn several popular WebDAV servers and run a
 massive amount of tests against them, using the internal client classes of
@@ -137,19 +134,14 @@ majority of broken servers are embedded into massive groupwares that would
 probably exceed the RAM of Travis' VMs.
 
 .. [#] Except Baikal_, it's the only FOSS server I can recommend. Yes, it's
-   written in PHP, no comment. FastMail is pretty good too.
-
-As far as I know, it's the only client with a testsuite actually doing that in
-an automated way. Other clients such as DavDroid_ just have a obscenely high
-amount of tolerance for invalid server responses. Their client is quite good,
-given that you use a good server.
+   written in PHP, no comment about that. FastMail is pretty good too.
 
 The future
 ==========
 
 I'm currently playing around with remoteStorage_. It's a file transfer
-protocol, like WebDAV. But at least the protocol is simple, based on HTTP, and a
-little JSON for file listings. It doesn't support locks. It doesn't support
+protocol, like WebDAV. But at least the protocol is simple, based on HTTP, and
+a little JSON for file listings. It doesn't support locks. It doesn't support
 ACLs, or whatever they are called. It doesn't support attaching arbitrary
 properties to a folder. It doesn't support all those crazy features that make
 CalDAV- and CardDAV-servers hard to implement, and as a result clients. Yes,
@@ -164,7 +156,7 @@ authentication. RemoteStorage requires the server to support a subset of OAuth,
 and that's the only kind of authentication supported. It also requires
 WebFinger support instead of making it optional (like in WebDAV, where it's
 almost a luxury if the DAV client actually *finds* the HTTP endpoints it's
-supposed to use). It also has a very simple permission system baked into the
+supposed to use). It also has a simple permission system baked into the
 authentication protocol that actually gives the user control over the data
 applications can access.
 
