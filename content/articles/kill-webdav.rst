@@ -24,7 +24,7 @@ There are two variants of WebDAV:
 
 Both of those protocols are authored by Apple, which uses them to synchronize
 data between iCloud and the built-in apps on iOS. FOSS software like ownCloud_
-or Baikal_ also supports those. Nowadays those are the standard protocols for
+or Baikal_ also supports them. Nowadays those are the standard protocols for
 accessing calendar and contacts data from a server.
 
 Both protocols are neither a superset nor a subset of WebDAV: While their RFC
@@ -130,8 +130,8 @@ Vdirsyncer's integration tests spawn several popular WebDAV servers and run a
 massive amount of tests against them, using the internal client classes of
 vdirsyncer. During its lifetime it has catched countless bugs in those servers
 [#]_. And those are just the ones that are actually testable in a sane way. The
-majority of broken servers are embedded into massive groupwares that would
-probably exceed the RAM of Travis' VMs.
+most broken servers are part of massive groupwares that would probably eat up
+all of the RAM in Travis' VMs.
 
 .. [#] Except Baikal_, it's the only FOSS server I can recommend. Yes, it's
    written in PHP, no comment about that. FastMail is pretty good too.
