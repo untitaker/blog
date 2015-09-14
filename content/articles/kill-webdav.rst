@@ -119,7 +119,9 @@ client library to access your calendar data in an easy way. In practice, all of
 this complexity makes servers really hard to implement properly. Consequently
 most servers only implement a subset, which leads to massive compatibility
 problems, and leaves client developers with the challenge to find a subset of
-the protocol that is supported by the servers they care about.
+the protocol that is supported by the servers they care about. In practice, you
+can't use a WebDAV client library. In practice, you copy-paste XML from the
+examples in the RFC into your source code and hope for the best.
 
 I also wrote a client. I even `blogged about it
 <https://unterwaditzer.net/2014/vdirsyncer.html>`_. Yes, CalDAV and CardDAV
