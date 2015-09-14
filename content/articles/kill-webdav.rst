@@ -123,7 +123,7 @@ the protocol that is supported by the servers they care about. In practice, you
 can't use a WebDAV client library. In practice, you copy-paste XML from the
 examples in the RFC into your source code and hope for the best.
 
-I also wrote a client. I even `blogged about it
+I also wrote a client called "vdirsyncer". I even `blogged about it
 <https://unterwaditzer.net/2014/vdirsyncer.html>`_. Yes, CalDAV and CardDAV
 being derived from WebDAV does allow for some pretty cool tricks involving a
 WebDAV FUSE filesystem and a bunch of shellscripts that scrape the files in
