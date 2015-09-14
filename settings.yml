@@ -47,12 +47,13 @@ writer:
 
 #: theme variables
 theme:
-    name: default
+    name: blargh
 
     # theme variables are defined by theme creator
     # you can access theme in template with ``theme`` namespace
     # for instance: {{theme.disqus}}
     vars:
+        copyright: "© Copyright 2015 by Markus Unterwaditzer. <br/>Content licensed under the Creative Commons attribution-noncommercial-sharealike License."
         navigation:
             - name: Contact
               link: /contact.html
