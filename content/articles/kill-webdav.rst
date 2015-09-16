@@ -175,6 +175,10 @@ For the users of vdirsyncer this means nothing, because I still rely on WebDAV
 myself. But as I dive deeper into the remoteStorage protocol, I'm less and less
 inclined to work around bugs in your stupid groupware.
 
+-----
+
+Thanks to `@skddc <https://twitter.com/skddc>`_ for reviewing.
+
 .. _Baikal: http://baikal-server.com/
 .. _Flock: https://github.com/WhisperSystems/Flock
 .. _VCard: https://tools.ietf.org/html/rfc6350
