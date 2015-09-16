@@ -6,7 +6,7 @@
 #: for instance: {{site.name}}
 site:
     name: Blargh
-    url: "https://unterwaditzer.net/blog/"
+    url: "https://unterwaditzer.net/"
 
 #: this config defined information of your site
 #: 1. where the resources  2. how should the site be generated
