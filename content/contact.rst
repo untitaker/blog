@@ -16,6 +16,3 @@ Contact
 
   Twitter is not suitable for any meaningful discussion, but you can follow me
   there.
-
-- There's a small chance i'm currently on IRC under the nickname ``untitaker``
-  (in e.g. ``#pocoo`` on Freenode).
