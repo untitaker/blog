@@ -39,6 +39,8 @@ p {
     line-height: 1.8;
     margin: 20px 0;
 }
+
+.footnote { font-size: 80%; }
 figure {margin:0; padding:0;}
 
 hr {
