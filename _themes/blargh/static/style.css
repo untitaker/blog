@@ -40,7 +40,8 @@ p {
     margin: 20px 0;
 }
 
-.footnote { font-size: 80%; }
+.footnote { font-size: 80%; position: absolute; top: -999px; left: -9999px; background: #fee9cc; }
+.footnote:target { position: static; }
 figure {margin:0; padding:0;}
 
 hr {
