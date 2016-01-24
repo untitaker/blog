@@ -3,7 +3,6 @@ A simple synchronization algorithm
 
 :date: 2016-01-25
 :category: dev
-:public: false
 :tags: vdirsyncer, algorithm, sync
 
 I am writing this article out of my experience with writing vdirsyncer_, a
