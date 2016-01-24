@@ -40,8 +40,10 @@ p {
     margin: 20px 0;
 }
 
-.footnote { font-size: 80%; position: absolute; top: -999px; left: -9999px; background: #fee9cc; }
-.footnote:target { position: static; }
+.footnote { font-size: 80%; }
+.footnote:nth-of-type(1) { width: 100%; border-top: 1px solid #dadada; }
+.footnote .label { width: 0 }
+.footnote:target { background: #fee9cc; }
 figure {margin:0; padding:0;}
 
 hr {
