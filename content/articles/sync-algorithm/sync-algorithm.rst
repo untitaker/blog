@@ -7,10 +7,9 @@ A simple synchronization algorithm
 
 I am writing this article out of my experience with writing vdirsyncer_, a
 simple synchronization program for calendar events. The same ideas can be used
-to implement file synchronization. The whole article is targeted at people who
-currently need to write some sort of "cloud synchronization" and have no idea
-where to start, and/or when journal-based approaches are not an option due to
-API restrictions.
+for file synchronization. The whole article is targeted at people who need to
+write some sort of "cloud synchronization" and have no idea where to start,
+and/or when journal-based approaches are not an option due to API restrictions.
 
 Recap: The problem and OfflineIMAP's approach
 ---------------------------------------------
@@ -19,7 +18,7 @@ For a start, read `How OfflineIMAP works by E.Z. Yang`_. It deals
 with the synchronization algorithm used by OfflineIMAP, a program that can be
 used to synchronize emails between IMAP accounts and/or Maildir_ folders.
 
-The problem that OfflineIMAP has basically boils down to:
+The problem that OfflineIMAP has can be summarized as follows:
 
     You are given two "sets" ``A`` and ``B`` of "items", where the items have
     immutable content and globally unique IDs. Define the function ``sync``.
@@ -64,13 +63,13 @@ several possibilities as to which sets it is in:
      :align: right
 
   ``A + B - status`` -- If it exists on side ``A`` and side ``B``, but not in
-  ``status``, just create it in status.
+  ``status``, add the ID to the status.
 
 * .. image:: /articles/sync-algorithm/simplevenn-s.png
      :align: right
   
   ``status - A - B`` -- If it exists only in the ``status`` it doesn't exist in
-  reality, so just delete it from the status.
+  reality, delete the ID from the status.
 
 This algorithm assumes that items are immutable. In order to use it with
 mutable items, one could declare that modified items are treated as entirely
@@ -150,7 +149,7 @@ the underlying data. A few options for its implementation:
 * Do some other thing that only works in specific situations.
 
   + Perhaps you have access to the last-modified date and can use that to
-    determine which version is preferred?
+    determine the most up-to-date version?
 
   + Perhaps you managed to save the old version from the previous sync and can
     perform a three-way merge?
@@ -159,8 +158,9 @@ the underlying data. A few options for its implementation:
     with it, and you can use that to get a usable merge?
 
 What you always should do as part of conflict resolution is to check whether
-the item actually has different content on each side. Since no status exists on
-the first sync, that routine will be called for each item ID.
+the item actually has different content on each side. When called the first
+time, the status is empty, so ``sync`` will call ``conflict_resolution`` for
+each item ID.
 
 .. [1] The last-modified date of a file on POSIX. If you consider using
    that, keep in mind:
@@ -171,9 +171,9 @@ the first sync, that routine will be called for each item ID.
      change detection might miss some changes, as mtime after file modification
      is the same as the old one.
 
-   * You can randomly touch files (updating their mtimes) and not modify their
-     content, such that your application sees "bogus changes" in items. This
-     might lead to more synchronization conflicts and unnecessary calls to
+   * You can randomly touch files (updating their mtimes) without modifying
+     their content, such that your application sees "bogus changes" in items.
+     This might lead to more synchronization conflicts and unnecessary calls to
      ``conflict_resolution``.
 
    Vdirsyncer uses mtimes only as an indicator that a file *might* have
