@@ -7,7 +7,7 @@ A simple synchronization algorithm
 
 I am writing this article out of my experience with writing vdirsyncer_, a
 simple synchronization program for calendar events. The same ideas can be used
-to implement file synchronization. The whole article targeted at people who
+to implement file synchronization. The whole article is targeted at people who
 currently need to write some sort of "cloud synchronization" and have no idea
 where to start, and/or when journal-based approaches are not an option due to
 API restrictions.
