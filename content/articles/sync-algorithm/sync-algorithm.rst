@@ -18,7 +18,7 @@ For a start, read `How OfflineIMAP works by E.Z. Yang`_. It deals
 with the synchronization algorithm used by OfflineIMAP, a program that can be
 used to synchronize emails between IMAP accounts and/or Maildir_ folders.
 
-The problem that OfflineIMAP has can be summarized as follows:
+OfflineIMAP's algorithmic problem can be summarized as follows:
 
     You are given two "sets" ``A`` and ``B`` of "items", where the items have
     immutable content and globally unique IDs. Define the function ``sync``.
@@ -30,8 +30,8 @@ The presented solution involves maintaining a third set, called the ``status``,
 that keeps track of the item IDs (not content) that were present after the
 previous sync process. On first synchronization, that set is empty.
 
-To summarize the blogpost, for each item ID (from ``A, B, status``), there are
-several possibilities as to which sets it is in:
+For each item ID (from ``A, B, status``), there are several possibilities as to
+which sets it is in:
 
 * .. image:: /articles/sync-algorithm/simplevenn-a.png
      :align: right
