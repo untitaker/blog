@@ -44,6 +44,9 @@ p {
 .footnote:nth-of-type(1) { width: 100%; border-top: 1px solid #dadada; }
 .footnote .label { width: 0 }
 .footnote:target { background: #fee9cc; }
+
+.align-left { float: left }
+.align-right { float: right }
 figure {margin:0; padding:0;}
 
 hr {
