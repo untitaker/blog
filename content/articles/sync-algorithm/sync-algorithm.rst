@@ -35,24 +35,42 @@ previous sync process. On first synchronization, that set is empty.
 To summarize the blogpost, for each item ID (from ``A, B, status``), there are
 several possibilities as to which sets it is in:
 
-* ``A - B - status`` -- If the ID exists on side ``A``, but not on ``B`` or the
+* .. image:: /articles/sync-algorithm/simplevenn-a.png
+     :align: right
+  
+  ``A - B - status`` -- If the ID exists on side ``A``, but not on ``B`` or the
   ``status``, it must have been created on ``A``. Copy the item from ``A`` to
   ``B`` and update the ``status`` with the latest etags for both sides.
 
-  + ``B - A - status`` -- Likewise if the ID exists only in ``B``, it must have
+  + .. image:: /articles/sync-algorithm/simplevenn-b.png
+       :align: right
+
+    ``B - A - status`` -- Likewise if the ID exists only in ``B``, it must have
     been created there.
 
-* ``A + status - B`` -- If the ID exists on side ``A`` and the status, but not
+* .. image:: /articles/sync-algorithm/simplevenn-as.png
+     :align: right
+  
+  ``A + status - B`` -- If the ID exists on side ``A`` and the status, but not
   on ``B``, it has been deleted on ``B``. Delete it from ``A`` and the
   ``status``.
 
-  + ``B + status - A`` -- If the ID exists on side ``B`` and the status, but
+  + .. image:: /articles/sync-algorithm/simplevenn-bs.png
+       :align: right
+    
+    ``B + status - A`` -- If the ID exists on side ``B`` and the status, but
     not on ``A``, it has been deleted on ``A``.
 
-* ``A + B - status`` -- If it exists on side ``A`` and side ``B``, but not in
+* .. image:: /articles/sync-algorithm/simplevenn-ab.png
+     :align: right
+
+  ``A + B - status`` -- If it exists on side ``A`` and side ``B``, but not in
   ``status``, just create it in status.
 
-* ``status - A - B`` -- If it exists only in the ``status`` it doesn't exist in
+* .. image:: /articles/sync-algorithm/simplevenn-s.png
+     :align: right
+  
+  ``status - A - B`` -- If it exists only in the ``status`` it doesn't exist in
   reality, so just delete it from the status.
 
 This algorithm assumes that items are immutable. In order to use it with
@@ -101,14 +119,17 @@ it not only has to keep track of the item IDs, but also has to map each item ID
 to a tuple of two etags: One for each side ``{A, B}``. Not really a set, but a
 mapping, yes I know.
 
-There are only a few additional cases that need to be added to the previous
-if-else chunk:
+.. image:: /articles/sync-algorithm/simplevenn-abs.png
+   :align: right
+
+A few additional cases have to be added if the item exists on ``A, B, status``:
 
 * If the etag has changed on ``A`` but not ``B``, copy from ``A`` to ``B``.
 
   + If the etag has changed on ``B`` but not ``A``, copy from ``B`` to ``A``.
 
-* If the etag has changed on both sides, invoke ``conflict_resolution``.
+* If the etag has changed on both ``A`` and ``B``, invoke
+  ``conflict_resolution``.
 
 And the following case has to be modified:
 
