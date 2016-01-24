@@ -1,6 +1,10 @@
-==================================
 A simple synchronization algorithm
 ==================================
+
+:date: 2016-01-25
+:category: dev
+:public: false
+:tags: vdirsyncer, algorithm, sync
 
 I am writing this article out of my experience with writing vdirsyncer_, a
 simple synchronization program for calendar events. The same ideas can be used
@@ -10,9 +14,9 @@ where to start, and/or when journal-based approaches are not an option due to
 API restrictions.
 
 Recap: The problem and OfflineIMAP's approach
-=============================================
+---------------------------------------------
 
-For a start, read `How OfflineIMAP works by E.Z. Yang <yang2012>`_. It deals
+For a start, read `How OfflineIMAP works by E.Z. Yang`_. It deals
 with the synchronization algorithm used by OfflineIMAP, a program that can be
 used to synchronize emails between IMAP accounts and/or Maildir_ folders.
 
@@ -24,7 +28,7 @@ The problem that OfflineIMAP has basically boils down to:
     to the other set. If items are deleted from one set, those deletions should
     also be performed on the other set.
 
-The presented solution involves maintaining a third set, called the "status",
+The presented solution involves maintaining a third set, called the ``status``,
 that keeps track of the item IDs (not content) that were present after the
 previous sync process. On first synchronization, that set is empty.
 
@@ -66,7 +70,7 @@ it has two huge flaws:
   single update.
 
 The problem with mutable items
-==============================
+------------------------------
 
 Let's restate the problem above with mutable items:
 
@@ -84,13 +88,13 @@ Let's restate the problem above with mutable items:
 
 Let's also assume that there's a cheap way to determine a checksum (an
 ``etag``) for each item, cheap enough to be run for all items in both sets. In
-the case of a file sync tool you could use file's mtimes (TODO), or if you
+the case of a file sync tool you could use file's mtimes [1]_, or if you
 don't have too tight performance constraints, just hash the content of each
 file. The ``etag`` for an item on side ``A`` may differ from the ``etag`` of
 the same exact item on side ``B``.
 
 The algorithm
-=============
+-------------
 
 Before we create the algorithm, we need to redefine our ``status`` "set".  Now
 it not only has to keep track of the item IDs, but also has to map each item ID
@@ -113,7 +117,7 @@ And the following case has to be modified:
   might contain different content each. Invoke ``conflict_resolution``.
 
 Conflict resolution
--------------------
+~~~~~~~~~~~~~~~~~~~
 
 ``conflict_resolution`` is its own routine, and what it actually does depends
 heavily on actual usecase and the amount of knowledge your application has of
@@ -138,6 +142,24 @@ What you always should do as part of conflict resolution is to check whether
 the item actually has different content on each side. Since no status exists on
 the first sync, that routine will be called for each item ID.
 
+.. [1] The last-modified date of a file on POSIX. If you consider using
+   that, keep in mind:
+
+   * Depending on the OS and filesystem, mtime's precision may be insufficient.
+     On FAT, it has only 2-second resolution, and POSIX ``st_mtime`` may vary
+     in precision (there's also ``st_mtime_ns``). This means that mtime-based
+     change detection might miss some changes, as mtime after file modification
+     is the same as the old one.
+
+   * You can randomly touch files (updating their mtimes) and not modify their
+     content, such that your application sees "bogus changes" in items. This
+     might lead to more synchronization conflicts and unnecessary calls to
+     ``conflict_resolution``.
+
+   Vdirsyncer uses mtimes only as an indicator that a file *might* have
+   changed, and gets rid of false positives by comparing hashes of item's
+   content.
+
 .. _vdirsyncer: https://github.com/untitaker/vdirsyncer
-.. _yang2012: http://blog.ezyang.com/2012/08/how-offlineimap-works/
+.. _How OfflineIMAP works by E.Z. Yang: http://blog.ezyang.com/2012/08/how-offlineimap-works/
 .. _Maildir: https://cr.yp.to/proto/maildir.html
