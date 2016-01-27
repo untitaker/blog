@@ -104,6 +104,10 @@ strong {
     color: #424242;
 }
 
+.flattr {
+    color: #82B044
+}
+
 /* code */
 pre, code, tt {
     font: 14px "Menlo", monospace;

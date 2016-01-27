@@ -52,5 +52,7 @@
     {% endif -%}
     {%- endif %}
 </div>
-<strong>If you found this useful, consider supporting me on <a href="https://flattr.com/submit/auto?fid=enw5qj&url=https%3A%2F%2Funterwaditzer.net%2F">Flattr</a>.</strong>
+{% if theme.flattr -%}
+<strong id=flattr>If you found this useful, consider supporting me on <a href="https://flattr.com/submit/auto?fid={{theme.flattr}}&url={{post|permalink(prepend_site=True)}}">Flattr</a>.</strong>
+{% endif -%}
 {%- endblock %}

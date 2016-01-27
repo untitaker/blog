@@ -20,6 +20,7 @@ twitter = None
 github = None
 disqus = None
 analytics = None
+flattr = None
 
 allow_comment_on_secret_post = False
 
