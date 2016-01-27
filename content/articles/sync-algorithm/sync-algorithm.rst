@@ -112,10 +112,18 @@ the same exact item on side ``B``.
 The algorithm
 -------------
 
-Before we create the algorithm, we need to redefine our ``status`` "set".  Now
-it not only has to keep track of the item IDs, but also has to map each item ID
-to a tuple of two etags: One for each side ``{A, B}``. Not really a set, but a
-mapping, yes I know.
+Before we create the algorithm, we need to redefine our ``status`` from a set
+to a mapping. Now it not only has to keep track of the item IDs, but also has
+to map each item ID to a tuple of two etags: One for each side of ``{A, B}``.
+Here's an example:
+
++-----------------+----------+----------+
+| Item ID (index) | ETag A   | ETag B   |
++-----------------+----------+----------+
+| 1               | 771627ff | caf893af |
++-----------------+----------+----------+
+| 2               | dc165135 | 07b92840 |
++-----------------+----------+----------+
 
 .. image:: /articles/sync-algorithm/simplevenn-abs.png
    :align: right
