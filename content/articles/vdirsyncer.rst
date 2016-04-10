@@ -120,7 +120,7 @@ when mounted via davfs, with some additional restrictions.
 .. _Radicale: http://radicale.org/
 .. _khal: http://lostpackets.de/khal/
 .. _pycarddav: https://github.com/geier/pycarddav/
-.. _abook: abook.sourceforge.net
+.. _abook: http://abook.sourceforge.net
 .. _Maildir: http://cr.yp.to/proto/maildir.html
 .. _vdirsyncer: https://vdirsyncer.readthedocs.org/
 .. _vdir: https://vdirsyncer.readthedocs.org/en/latest/vdir.html
