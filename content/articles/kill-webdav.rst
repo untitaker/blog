@@ -132,13 +132,14 @@ that's about it with the upsides of that protocol. And in practice that trick
 works with only a few servers anyway.
 
 Vdirsyncer's integration tests spawn several popular WebDAV servers and run a
-massive amount of tests against them. During its lifetime this testsuite has
-found countless bugs in those servers [#]_. And those are just the ones that
-are actually testable in a sane way. The most broken servers are part of
-massive groupwares that would probably eat up all of the RAM in Travis' VMs.
-
-.. [#] Except Baikal_, it's the only FOSS server I can recommend. Yes, it's
-   written in PHP, no comment about that. FastMail is pretty good too.
+massive amount of tests against them. In some servers, that testsuite found
+bugs that one couldn't even call edgecases. Things like renaming a calendar, or
+fetching multiple events in a single request were completely broken. The fact
+that those bugs don't seem to get noticed by the user shows how flexible
+clients are when it comes to working around buggy implementations. And those
+are just the ones that are actually testable in a sane way. The most broken
+servers are part of massive groupwares that would probably eat up all of the
+RAM in Travis' VMs.
 
 The future
 ==========
