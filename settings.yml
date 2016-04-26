@@ -23,7 +23,7 @@ config:
 
 
 author:
-    default: untitaker
+    default: Markus Unterwaditzer
 
 #: active readers
 reader:
