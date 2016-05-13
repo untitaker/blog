@@ -118,7 +118,7 @@ Below the full conversation.
 
     I'm now filtering the url before it's used which also allowed me to, as you suggested, return an error instead of just sanitizing.
 
-    Feel free to mail me directly at leif@flattr.com if you have further input or find other issues.
+    Feel free to mail me directly at [REDACTED] if you have further input or find other issues.
 
     Best regards, Leif
 
