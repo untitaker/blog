@@ -56,88 +56,90 @@ Below the full conversation.
 
 ----
 
-**You wrote:** Hello,
+**You wrote:**
+    
+    Hello,
 
-What is an appropriate contact/email address for security vulnerability disclosures?
+    What is an appropriate contact/email address for security vulnerability disclosures?
 
-----
+**Flattr replied:**
 
-**Flattr replied:** Hi
+    Hi
 
-Simplest is to do it here =)
+    Simplest is to do it here =)
 
-Regards Linus
+    Regards Linus
 
-----
+**You wrote:**
 
-**You wrote:** Please visit the following URL:
+    Please visit the following URL:
 
-https://flattr.com/submit/auto?user_id=%3Cscript%3Ealert%28document.cookie%29;%3C/script%3E&url=https://unterwaditzer.net/2014/vdirsyncer.html
+    https://flattr.com/submit/auto?user_id=%3Cscript%3Ealert%28document.cookie%29;%3C/script%3E&url=https://unterwaditzer.net/2014/vdirsyncer.html
 
-Furthermore it is possible to use auto-submit with URLs with the javascript-scheme, which can be used for a subset of the things the above XSS already allows. Try clicking the thing's URL here:
+    Furthermore it is possible to use auto-submit with URLs with the javascript-scheme, which can be used for a subset of the things the above XSS already allows. Try clicking the thing's URL here:
 
-https://flattr.com/submit/auto?user_id=untitaker&url=javascript:alert%28document.cookie%29
+    https://flattr.com/submit/auto?user_id=untitaker&url=javascript:alert%28document.cookie%29
 
-----
+**Flattr replied:**
 
-**Flattr replied:** Hi
+    Hi
 
-Thanks we will look into it asap.
+    Thanks we will look into it asap.
 
-Regards Linus
+    Regards Linus
 
-----
+**Flattr replied:**
 
-**Flattr replied:** Hi
+    Hi
 
-It should now have been fixed. We would love if you also could check.
+    It should now have been fixed. We would love if you also could check.
 
-And you have our extreme appreciation!
+    And you have our extreme appreciation!
 
-Regards Linus
+    Regards Linus
 
-----
+**You wrote:**
 
-**You wrote:** https://flattr.com/submit/auto?user_id=untitaker&url=data:text/html,%3Cscript%3Ealert(document.cookie)%3C/script%3E
+    https://flattr.com/submit/auto?user_id=untitaker&url=data:text/html,%3Cscript%3Ealert(document.cookie)%3C/script%3E
 
-Please use a whitelist of URI schemes
+    Please use a whitelist of URI schemes
 
-----
+**You wrote:**
 
-**You wrote:** Also UX-wise I'm not sure if responding with a 400 Bad Request (making flattring for such URIs impossible) is better rather than just fixing the XSS?
+    Also UX-wise I'm not sure if responding with a 400 Bad Request (making flattring for such URIs impossible) is better rather than just fixing the XSS?
 
-----
+**You wrote:**
 
-**You wrote:** BTW the remedy against the first attack seems fine. I suspect you're now rejecting unknown user_ids?
+    BTW the remedy against the first attack seems fine. I suspect you're now rejecting unknown user_ids?
 
-----
+**Flattr replied:**
 
-**Flattr replied:** Until now I thought it would be enough to just escape the output, but I failed to account for the "data:" construct.
+    Until now I thought it would be enough to just escape the output, but I failed to account for the "data:" construct.
 
-I'm now filtering the url before it's used which also allowed me to, as you suggested, return an error instead of just sanitizing.
+    I'm now filtering the url before it's used which also allowed me to, as you suggested, return an error instead of just sanitizing.
 
-Feel free to mail me directly at leif@flattr.com if you have further input or find other issues.
+    Feel free to mail me directly at leif@flattr.com if you have further input or find other issues.
 
-Best regards, Leif
+    Best regards, Leif
 
-----
+**You wrote:**
 
-**You wrote:** The fix seems to be appropriate. Thanks for your quick responses.
+    The fix seems to be appropriate. Thanks for your quick responses.
 
-Two things:
+    Two things:
 
-    It would be nice if there were more documentation about how to disclose security issues. Even if that information was specified on /contact/, I don't think using the contact field was a good idea for that, since those messages are publicly visible for anybody knowing the URL. And those URLs are transmitted over unencrypted email for notification.
+    1. It would be nice if there were more documentation about how to disclose security issues. Even if that information was specified on /contact/, I don't think using the contact field was a good idea for that, since those messages are publicly visible for anybody knowing the URL. And those URLs are transmitted over unencrypted email for notification.
 
-    May I publicly disclose this conversation?
+    2. May I publicly disclose this conversation?
 
-----
+**Flattr replied:**
 
-**Flattr replied:** Hi,
+    Hi,
 
-Sorry for the late reply, things are quite crazy at the moment.
+    Sorry for the late reply, things are quite crazy at the moment.
 
-You are welcome to publicly disclose the details concerning this issue.
+    You are welcome to publicly disclose the details concerning this issue.
 
-You are absolutely right that we should be more informative about how to handle security issues and no this contact form is not ideal. We'll try to improve in that area as well.
+    You are absolutely right that we should be more informative about how to handle security issues and no this contact form is not ideal. We'll try to improve in that area as well.
 
-Thanks again! Leif
+    Thanks again! Leif
