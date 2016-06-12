@@ -25,6 +25,8 @@
         {{post.content}}
     </div>
 
+    <hr/>
+
     {% if post.review %}
     <div class="entry-review">
         <span itemprop="itemreviewed">{{post.review}}</span> Reviewed by <span itemprop="reviewer">{{post.author.name}}</span> {%if post.rating%}, Rating <span itemprop="rating">{{post.rating}}</span>{%endif%}
@@ -45,8 +47,9 @@
     </script>
     {% endif -%}
     {%- endif %}
+
+    {% if theme.flattr -%}
+    <strong id=flattr>If you found this useful, consider supporting me on <a href="https://flattr.com/submit/auto?user_id={{theme.flattr}}&url={{post|permalink(prepend_site=True)}}">Flattr</a>.</strong>
+    {% endif -%}
 </div>
-{% if theme.flattr -%}
-<strong id=flattr>If you found this useful, consider supporting me on <a href="https://flattr.com/submit/auto?user_id={{theme.flattr}}&url={{post|permalink(prepend_site=True)}}">Flattr</a>.</strong>
-{% endif -%}
 {%- endblock %}
