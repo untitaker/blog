@@ -2,6 +2,7 @@ install:
 	pip install liquidluck tornado
 
 build:
+	rm -r deploy
 	liquidluck build
 
 serve:
