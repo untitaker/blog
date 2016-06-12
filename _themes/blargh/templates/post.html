@@ -31,12 +31,6 @@
     </div>
     {% endif %}
 
-    <div class="entry-tags">
-        {% for tag in post.tags -%}
-        <a href="{{ tag|tag_url }}">{{tag}}</a>
-        {%- endfor %}
-    </div>
-
     {% if theme.disqus -%}
     {%- if theme.allow_comment_on_secret_post or post.public %}
     <div id="disqus_thread"></div>
