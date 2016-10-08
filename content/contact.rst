@@ -18,5 +18,5 @@ Contact
 
 - `Twitter <https://twitter.com/untitaker>`_
 
-  Twitter is not suitable for any meaningful discussion, but you can follow me
-  there.
+  Twitter is not suitable for constructive or complex discussions, yet
+  discussions still happen there. Anyway, follow me on Twitter.
