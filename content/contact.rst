@@ -19,3 +19,6 @@ Contact
 
   Twitter is not suitable for constructive or complex discussions, yet
   discussions still happen there. Anyway, follow me on Twitter.
+
+- My nickname is ``untitaker`` on IRC and most other services, but I may not
+  respond at all.
