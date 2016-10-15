@@ -54,6 +54,8 @@ theme:
         navigation:
             - name: Contact
               link: /contact.html
+            - name: About
+              link: /about.html
 
 #: template variables
 template:
