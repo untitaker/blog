@@ -2,7 +2,7 @@ About me
 ========
 
 I'm a programmer mostly interested in web development, open standards and
-security.
+information security.
 
 I'm an occasional maintainer of `Flask <http://flask.pocoo.org/>`_ and all of
 its dependencies (`Click <http://click.pocoo.org/>`_ and `Werkzeug
