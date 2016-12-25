@@ -50,7 +50,7 @@ theme:
     # for instance: {{theme.disqus}}
     vars:
         flattr: untitaker
-        copyright: "© Copyright 2015 by Markus Unterwaditzer. <br/>Content licensed under the <a href=https://creativecommons.org/licenses/by-nc-sa/3.0/>Creative Commons attribution-noncommercial-sharealike License</a>."
+        copyright: "© Copyright 2015-2016 by Markus Unterwaditzer. <br/>Content licensed under the <a href=https://creativecommons.org/licenses/by-nc-sa/3.0/>Creative Commons attribution-noncommercial-sharealike License</a>."
         navigation:
             - name: Contact
               link: /contact.html
