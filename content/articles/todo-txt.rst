@@ -7,9 +7,6 @@ Be careful with todo.txt, or: Dropbox isn't the solution to every problem
 :tags: sync, dropbox, todo.txt, unix
 :public: false
 
-Todo.txt
---------
-
 This is one of those posts that I've wanted to write for a while now, but given
 that the situation hasn't changed in the slightest, and that people are still
 unaware of the general problem, I guess it's time for a blogpost.
