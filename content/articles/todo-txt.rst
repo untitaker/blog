@@ -5,7 +5,6 @@ Be careful with todo.txt, or: Dropbox isn't the solution to every problem
 :date: 2017-01-26
 :category: dev
 :tags: sync, dropbox, todo.txt, unix
-:public: false
 
 This is one of those posts that I've wanted to write for a while now, but given
 that the situation hasn't changed in the slightest, and that people are still
