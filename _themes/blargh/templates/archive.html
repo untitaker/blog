@@ -4,18 +4,15 @@
 
 {% block main %}
 <ul class="entry-list">
-    {% set year = 0 -%}
-    {% for item in pagination.items %}
-    {%- if item.date.year != year %}
-    {% set year = item.date.year -%}
-    <li class="entry-item entry-item-title">
-    <a href="{{item|year_url}}">{{item.date.year}}</a>
-    </li>
-    {%- endif %}
-    <li class="entry-item">
-        <time class="updated" datetime="{{item.date|xmldatetime}}">{{item.date.strftime('%Y-%m-%d')}}</time>
-        <a href="{{item|permalink}}">{{item.title}}</a>
-    </li>
+    {% for yeargroup in pagination.items|groupby('date.year')|reverse %}
+        <li class="entry-item entry-item-title">
+        <a href="{{yeargroup.list.0|year_url}}">{{yeargroup.grouper}}</a>
+        </li>
+        {% for item in yeargroup.list %}
+            <li class="entry-item">
+                <a href="{{item|permalink}}">{{item.title}}</a>
+            </li>
+        {% endfor %}
     {% endfor %}
 </ul>
 {% if pagination.has_prev or pagination.has_next %}
