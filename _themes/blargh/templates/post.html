@@ -25,15 +25,16 @@
         {{post.content}}
     </div>
 
-    <hr/>
 
     {% if post.review %}
+    <hr/>
     <div class="entry-review">
         <span itemprop="itemreviewed">{{post.review}}</span> Reviewed by <span itemprop="reviewer">{{post.author.name}}</span> {%if post.rating%}, Rating <span itemprop="rating">{{post.rating}}</span>{%endif%}
     </div>
     {% endif %}
 
     {% if theme.disqus -%}
+    <hr/>
     {%- if theme.allow_comment_on_secret_post or post.public %}
     <div id="disqus_thread"></div>
     <script type="text/javascript">
