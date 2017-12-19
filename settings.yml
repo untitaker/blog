@@ -49,7 +49,6 @@ theme:
     # you can access theme in template with ``theme`` namespace
     # for instance: {{theme.disqus}}
     vars:
-        flattr: untitaker
         copyright: "© Copyright 2014-2017 by Markus Unterwaditzer. <br/>Content licensed under the <a href=https://creativecommons.org/licenses/by-nc-sa/3.0/>Creative Commons attribution-noncommercial-sharealike License</a>."
         navigation:
             - name: Contact
