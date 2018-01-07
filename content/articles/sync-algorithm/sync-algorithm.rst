@@ -38,7 +38,7 @@ which sets it is in:
   
   ``A - B - status`` -- If the ID exists on side ``A``, but not on ``B`` or the
   ``status``, it must have been created on ``A``. Copy the item from ``A`` to
-  ``B`` and update the ``status`` with the latest etags for both sides.
+  ``B`` and also insert it into ``status``.
 
   + .. image:: /articles/sync-algorithm/simplevenn-b.png
        :align: right
