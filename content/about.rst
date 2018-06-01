@@ -17,6 +17,3 @@ calendars and contacts from various sources.
 All the projects mentioned above are written in Python, but I've started to
 work with `Rust <https://www.rust-lang.org/>`_ a bit too. You can find most of
 my opensource work on `GitHub <https://github.com/untitaker/>`_.
-
-Currently I'm busy with my CS bachelor at `TU Wien
-<https://www.tuwien.ac.at/>`_.
