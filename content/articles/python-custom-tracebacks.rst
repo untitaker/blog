@@ -2,10 +2,9 @@
 How to create a traceback object in Python
 ==========================================
 
-:date: 2018-07-12
+:date: 2018-07-19
 :category: dev
 :tags: shippai, python, traceback, failure, error, hack
-:public: false
 
 I've been writing `a library for errorhandling when calling Rust code from
 Python <https://github.com/untitaker/shippai>`_. One peculiar challenge I faced
@@ -28,19 +27,19 @@ was when I wanted to have stacktraces that look like this::
     [...]
     shippai.UserWrong: Invalid username
 
-If our Rust code encounters an error, it captures a stacktrace, and returns
-that attached to the errormessage. The question is how to add that extra data
-to our existing traceback (resulting in the non-Python files at the end of the
-traceback)?
+So when we call some Rust code from Python, and the Rust code fails, we get
+this merged traceback with the Rust frames stitched onto it. To me personally
+this kind of error reporting is very appealing. If you think this is too much
+magic, you will not like what comes next. We'll explore how to do exactly that,
+how to add extra frames to a traceback object.
 
 The Jinja templating engine has the same problem and its author Armin `solved
 it extremely thoroughly
 <https://github.com/pallets/jinja/blob/fb7e12cce67b9849899f934e697f7e2a91d604c2/jinja2/debug.py>`_.
-It probably covers more corner-cases than I think or care about. This article
-is about a simpler version, and documents some known flaws. If you attempt to
-properly fix those, you'll probably end up with code similar to Jinja's. But
-there's a chance you'll be able to work around them in a simpler way that just
-fits your usecase.
+This article is about a simpler version, and documents some known flaws. If you
+attempt to properly fix those, you'll probably end up with code similar to
+Jinja's. But there's a chance you'll be able to work around them in a simpler
+way that just fits your usecase.
 
 Tracebacks in Python are just objects. Unfortunately creating them is not
 directly possible::
@@ -109,3 +108,8 @@ This code has a few problems:
 * A user stepping through our artificial frames with ``pdb`` will be able to
   access our defined helper functions, call them again etc. This might be
   something you can live with.
+* I'm sure it has many more.
+
+That's it for now. I'll eventually write a follow-up to this blogpost where we
+explore fixes for both problems. It will probably involve creating our own code
+objects, like Jinja does.
