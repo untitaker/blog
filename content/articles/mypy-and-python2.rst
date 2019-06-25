@@ -24,15 +24,16 @@ Why is this useful?
 .. _PyCharm: https://www.jetbrains.com/pycharm/ 
 
 For application developers this is a great story. The ``typing`` module is part
-of Python 3's standard library, and for Python 2 `a PyPI package
-<typing-pypi>`_ exists. They don't care about the extra dependency because
-their app has already too many. Or they port their app to Python 3 first.
+of Python 3's standard library, and for Python 2 `a PyPI package <https://pypi.org/project/typing/>`_ exists.
+They don't care about the extra dependency because their app has already too
+many. Or they port their app to Python 3 first.
 
-.. _typing-pypi: https://pypi.org/project/typing/
+What about libraries? At Sentry_ recently added type hints to our `SDK for
+Python`_. The motivation was to give IDE users nicer autocompletion and find a
+few bugs in our own code.
 
-What about libraries? We recently added type hints to the `Sentry SDK for
-Python <sdk>`_. The motivation was to give IDE users nicer autocompletion and
-find a few bugs in our own code.
+.. _Sentry: https://sentry.io
+.. _`SDK for Python`: https://sentry.io/for/python/
 
 We defined two requirements. They apply to a lot of libraries that support
 Python 2:
@@ -133,9 +134,9 @@ mypy had a more official way that didn't depend on undocumented quirks::
     ...
 
 The mypy documentation mentions this hack as a `solution to import cycles while
-type-checking <import-cycles-mypy>`_, but it works just as well for our purposes.
-
-.. _import-cycles-mypy: https://mypy.readthedocs.io/en/latest/common_issues.html#import-cycles
+type-checking
+<https://mypy.readthedocs.io/en/latest/common_issues.html#import-cycles>`_, but
+it works just as well for our purposes.
 
 Function overloading
 --------------------
