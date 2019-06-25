@@ -13,17 +13,18 @@ their types::
 
 Why is this useful?
 
-- You can use mypy_ to lint your code against mismatching types. It runs only
-  on Python 3 but works for either syntax.
+- You can use mypy_ to lint your code against mismatching types.
 - PyCharm_ supports those type annotations.
 
 .. _mypy: http://mypy-lang.org/
 .. _PyCharm: https://www.jetbrains.com/pycharm/ 
 
 For application developers this is a great story. The ``typing`` module is part
-of Python 3's standard library, and for Python 2 a PyPI package exists. They
-don't care about the extra dependency because their app has already
-too many. Or they port their app to Python 3 first.
+of Python 3's standard library, and for Python 2 `a PyPI package
+<typing-pypi>`_ exists. They don't care about the extra dependency because
+their app has already too many. Or they port their app to Python 3 first.
+
+.. _typing-pypi: https://pypi.org/project/typing/
 
 What about libraries? We recently added type hints to the `Sentry SDK for
 Python <sdk>`_. The motivation was to give IDE users nicer autocompletion and
@@ -36,8 +37,8 @@ Python 2:
   good now`_, but the majority of our users don't use type hints and
   won't see the value of having to install ``typing``.  We have users who
   forked our SDK to remove all dependencies because of their constrained legacy
-  environment. Right now they can do that by deleting a single file in their
-  fork.
+  environment. This would become a harder job if every file imported types
+  from ``typing``.
 
 * **As little runtime cost as possible.** Importing ``typing`` is runtime cost,
   defining types is runtime cost. There's no reason for any of that to happen
@@ -79,8 +80,8 @@ the real code::
 
 Even though we added a new argument to ``stringify_list``, mypy still thinks
 the function takes one argument. For this reason we decided against using stub
-files because we feared that those can go out of sync with their
-companion ``.py`` file.
+files because we feared that those could get out of sync with their
+companion ``.py`` files.
 
 Type hint comments
 ------------------
@@ -117,9 +118,9 @@ Luckily there is a cheap way to get rid of these pesky imports::
         # type: (Iterable[int]) -> Iterable[str]
         return [str(x) for x in xs]
 
-This avoids importing the ``typing`` module at runtime while mypy still seems
-to be happy. We had this version in use for quite a while until we discovered
-that mypy had a more official way that didn't depend on undocumented quirks::
+This avoids importing the ``typing`` module at runtime while keeping mypy
+happy. We had this version in use for quite a while until we discovered that
+mypy had a more official way that didn't depend on undocumented quirks::
 
     MYPY = False
     if MYPY:
@@ -158,7 +159,7 @@ overloads::
 The issue is the ``overload`` decorator. Wrapping only the first two function
 declarations in ``if MYPY`` confuses mypy so much it thinks the last
 declaration is an unnecessary redefinition. Other approaches we tried typecheck
-successfully but require more duplicated type signatures which can go out of
+successfully but require more duplicated type signatures which could get out of
 sync unnoticed.
 
 Our solution is::
@@ -188,6 +189,7 @@ Mypy is generally a good, useful piece of software. Unfortunately the story for
 annotating existing Python 2 code ignores the issues that come from additional
 dependencies. Documented workarounds like ``if MYPY`` are an afterthought even
 for their intended purpose. This will likely slow down adoption of type hints
-in libraries and make the typeshed_ a permanent necessity.
+in libraries and make the typeshed_ (the repository of type annotations for
+third-party packages that don't have any) a permanent necessity.
 
 .. _typeshed: https://github.com/python/typeshed
