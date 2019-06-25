@@ -71,8 +71,6 @@ live in the ``.pyi`` files, which are not used at runtime.
 Stub files seem to overwrite what mypy would've otherwise found out about
 the real code::
 
-    # The following typechecks.
-    
     # File: test.py
     def stringify_list(xs, random_new_parameter):
         return [str(x) for x in xs]
@@ -83,10 +81,10 @@ the real code::
     def stringify_list(xs: Iterable[int]) -> Iterable[str]:
         return [str(x) for x in xs]
 
-Even though we added a new argument to ``stringify_list``, mypy still thinks
-the function takes one argument. For this reason we decided against using stub
-files because we feared that those could get out of sync with their
-companion ``.py`` files.
+Even though we added a new argument to ``stringify_list``, mypy still accepts
+this code because it thinks the function takes one argument. For this reason we
+decided against using stub files because we feared that those could get out of
+sync with their companion ``.py`` files.
 
 Type hint comments
 ------------------
@@ -95,15 +93,13 @@ We chose the only other option: Use `type hint comments`_. Those work across
 Python 2 and 3 as well as stub files do, but can't get out of sync with the
 implementation::
 
-    # The following does not typecheck:
-    # error: Type signature has too few arguments
-
     from typing import Iterable
 
     def stringify_list(xs, random_new_parameter):
         # type: (Iterable[int]) -> Iterable[str]
         return [str(x) for x in xs]
 
+This time mypy rejects the code with ``error: Type signature has too few arguments``.
 
 .. _`type hint comments`: https://mypy.readthedocs.io/en/latest/python2.html
 
@@ -131,7 +127,7 @@ mypy had a more official way that didn't depend on undocumented quirks::
     if MYPY:
         from typing import Iterable
 
-    ...
+    <rest of the code as above>
 
 The mypy documentation mentions this hack as a `solution to import cycles while
 type-checking
