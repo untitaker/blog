@@ -173,7 +173,7 @@ Our solution is::
         def overload(x):
             return x
 
-    ...
+    <rest of the code as above>
 
 
 This is not quite zero runtime overhead but close enough.
