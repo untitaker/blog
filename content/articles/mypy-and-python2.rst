@@ -28,7 +28,7 @@ of Python 3's standard library, and for Python 2 `a PyPI package <https://pypi.o
 They don't care about the extra dependency because their app has already too
 many. Or they port their app to Python 3 first.
 
-What about libraries? At Sentry_ recently added type hints to our `SDK for
+What about libraries? At Sentry_ we vrecently added type hints to our `SDK for
 Python`_. The motivation was to give IDE users nicer autocompletion and find a
 few bugs in our own code.
 
