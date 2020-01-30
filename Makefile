@@ -1,18 +1,21 @@
-install:
-	pip install liquidluck tornado
+.venv/bin/python:
+	rm -fr .venv
+	virtualenv -ppython2 .venv
+	.venv/bin/pip install liquidluck tornado
 
-build:
+build: .venv/bin/python
 	rm -fr deploy
-	liquidluck build
+	.venv/bin/liquidluck build
+.PHONY: build
 
-serve:
-	liquidluck server
+serve: build
+	.venv/bin/liquidluck server
+.PHONY: serve
 
-open:
+open: serve
 	xdg-open http://localhost:8000
+.PHONY: open
 
-deploy:
+deploy: build
 	rsync -acv --delete --chmod=755 ./deploy/ unti@draco.uberspace.de:~/virtual/unterwaditzer.net/
-
-
-.PHONY: deploy serve build
+.PHONY: deploy
