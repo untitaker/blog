@@ -1,0 +1,178 @@
+<!DOCTYPE HTML>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>XSS vulnerabilities in Flattr - Markus Unterwaditzer</title>
+        <script>if (top !== self) top.location = self.location;</script>
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0" />
+        <link rel="stylesheet" href="../static/style.css?v=cd4de" />
+        <link rel="stylesheet" href="../static/pygments.css?v=c6adc" />
+        
+        <link rel="alternate" type="application/rss+xml" href="../feed.xml" title="Markus Unterwaditzer" />
+        <!--[if lt IE 9]>
+        <script type="text/javascript" src="../static/html5shiv.js?v=9a10c"></script>
+        <![endif]-->
+        
+        
+<link rel="canonical" href="../2016/flattr-xss.html" />
+
+
+    </head>
+    <body>
+        <header id="header">
+            <h1 id="brand"><a href="/">Markus Unterwaditzer</a></h1>
+            <nav id="nav" role="navigation">
+                
+                <a href="/contact.html">Contact</a>
+                <a href="/about.html">About</a>
+            </nav>
+        </header>
+
+        <div id="main">
+            <div class="container"><div class="hentry">
+    <h1 class="entry-title">XSS vulnerabilities in Flattr</h1>
+    <div class="entry-meta">
+        <time class="updated" datetime="2016-05-13T00:00:00+01:00" pubdate>
+            <a href="../2016/">2016-05-13</a>
+        </time>
+        <span class="author vcard">
+            by <span class="fn">Markus Unterwaditzer</span>
+        </span>
+    </div>
+    <div class="entry-content">
+        <p>Last week (May 7th) I disclosed multiple security vulnerabilities to Flattr,
+which have since been fixed.  I'm posting them here for sake of transparency,
+also because Flattr doesn't have a policy to do so themselves.</p>
+<p>Flattr basically lets you send money to any user, with any URL as payment
+reference. For that purpose, it allows you to embed JavaScript buttons on your
+site that take the user to Flattr. The main difference to other donation
+systems is that it doesn't require you to register each piece of content
+separately at Flattr, while still allowing you to gather statistics due to
+which content the user donated.</p>
+<p>If you don't want to use the Flattr button, you can also use <a class="reference external" href="http://developers.flattr.net/auto-submit/">Auto-submit URLs</a>:</p>
+<blockquote>
+Instead of the embedded buttons you can use a specific kind of URL that just
+like the button will autocreate, &quot;auto-submit&quot;, a Flattr thing on its first
+flattr. This is useful for when you can't use javascript on a site (or don’t
+want to) – just create a static link to an auto-submit URL instead.</blockquote>
+<p>The simplest example looks like this:</p>
+<pre class="literal-block">
+https://flattr.com/submit/auto?user_id=[USERNAME]&amp;url=[URL]
+</pre>
+<p>Here are the two vulnerabilities:</p>
+<ul class="simple">
+<li><tt class="docutils literal">user_id</tt> was part of the response body, unescaped, allowing for a very
+simple reflected XSS.</li>
+<li><tt class="docutils literal">url</tt> could have any scheme. This also includes <tt class="docutils literal">data</tt> and <tt class="docutils literal">javascript</tt>
+URIs, which run within the linking site's origin. This means that
+<tt class="docutils literal">javascript:alert(document.cookie)</tt> would give you cookies for
+<tt class="docutils literal">flattr.com</tt>, and so does the slightly more complex
+<tt class="docutils literal"><span class="pre">data:text/html,&lt;script&gt;alert(document.cookie)&lt;/script&gt;</span></tt>.</li>
+</ul>
+<p>They have been fixed each:</p>
+<ul class="simple">
+<li>Flattr didn't check whether the user specified in <tt class="docutils literal">user_id</tt> exists. They
+now do. A valid user ID has such a narrow character range, it makes XSS
+impossible.</li>
+<li><tt class="docutils literal">url</tt> is now restricted to only a few schemes. It appears that only
+<tt class="docutils literal">http</tt> and <tt class="docutils literal">https</tt> work.</li>
+</ul>
+<p>Those have been successfully tested with Firefox 46. Chrome seems not to work
+with the second vulnerability <a class="reference external" href="https://bugzilla.mozilla.org/show_bug.cgi?id=1016491">as it violates the spec for a reason</a>.</p>
+<p>Below the full conversation.</p>
+<hr class="docutils" />
+<p><strong>You wrote:</strong></p>
+<blockquote>
+<p>Hello,</p>
+<p>What is an appropriate contact/email address for security vulnerability disclosures?</p>
+</blockquote>
+<p><strong>Flattr replied:</strong></p>
+<blockquote>
+<p>Hi</p>
+<p>Simplest is to do it here =)</p>
+<p>Regards Linus</p>
+</blockquote>
+<p><strong>You wrote:</strong></p>
+<blockquote>
+<p>Please visit the following URL:</p>
+<p><a class="reference external" href="https://flattr.com/submit/auto?user_id=%3Cscript%3Ealert%28document.cookie%29;%3C/script%3E&amp;url=https://unterwaditzer.net/2014/vdirsyncer.html">https://flattr.com/submit/auto?user_id=%3Cscript%3Ealert%28document.cookie%29;%3C/script%3E&amp;url=https://unterwaditzer.net/2014/vdirsyncer.html</a></p>
+<p>Furthermore it is possible to use auto-submit with URLs with the javascript-scheme, which can be used for a subset of the things the above XSS already allows. Try clicking the thing's URL here:</p>
+<p><a class="reference external" href="https://flattr.com/submit/auto?user_id=untitaker&amp;url=javascript:alert%28document.cookie%29">https://flattr.com/submit/auto?user_id=untitaker&amp;url=javascript:alert%28document.cookie%29</a></p>
+</blockquote>
+<p><strong>Flattr replied:</strong></p>
+<blockquote>
+<p>Hi</p>
+<p>Thanks we will look into it asap.</p>
+<p>Regards Linus</p>
+</blockquote>
+<p><strong>Flattr replied:</strong></p>
+<blockquote>
+<p>Hi</p>
+<p>It should now have been fixed. We would love if you also could check.</p>
+<p>And you have our extreme appreciation!</p>
+<p>Regards Linus</p>
+</blockquote>
+<p><strong>You wrote:</strong></p>
+<blockquote>
+<p><a class="reference external" href="https://flattr.com/submit/auto?user_id=untitaker&amp;url=data:text/html,%3Cscript%3Ealert(document.cookie)%3C/script%3E">https://flattr.com/submit/auto?user_id=untitaker&amp;url=data:text/html,%3Cscript%3Ealert(document.cookie)%3C/script%3E</a></p>
+<p>Please use a whitelist of URI schemes</p>
+</blockquote>
+<p><strong>You wrote:</strong></p>
+<blockquote>
+Also UX-wise I'm not sure if responding with a 400 Bad Request (making flattring for such URIs impossible) is better rather than just fixing the XSS?</blockquote>
+<p><strong>You wrote:</strong></p>
+<blockquote>
+BTW the remedy against the first attack seems fine. I suspect you're now rejecting unknown user_ids?</blockquote>
+<p><strong>Flattr replied:</strong></p>
+<blockquote>
+<p>Until now I thought it would be enough to just escape the output, but I failed to account for the &quot;data:&quot; construct.</p>
+<p>I'm now filtering the url before it's used which also allowed me to, as you suggested, return an error instead of just sanitizing.</p>
+<p>Feel free to mail me directly at [REDACTED] if you have further input or find other issues.</p>
+<p>Best regards, Leif</p>
+</blockquote>
+<p><strong>You wrote:</strong></p>
+<blockquote>
+<p>The fix seems to be appropriate. Thanks for your quick responses.</p>
+<p>Two things:</p>
+<ol class="arabic simple">
+<li>It would be nice if there were more documentation about how to disclose security issues. Even if that information was specified on /contact/, I don't think using the contact field was a good idea for that, since those messages are publicly visible for anybody knowing the URL. And those URLs are transmitted over unencrypted email for notification.</li>
+<li>May I publicly disclose this conversation?</li>
+</ol>
+</blockquote>
+<p><strong>Flattr replied:</strong></p>
+<blockquote>
+<p>Hi,</p>
+<p>Sorry for the late reply, things are quite crazy at the moment.</p>
+<p>You are welcome to publicly disclose the details concerning this issue.</p>
+<p>You are absolutely right that we should be more informative about how to handle security issues and no this contact form is not ideal. We'll try to improve in that area as well.</p>
+<p>Thanks again! Leif</p>
+</blockquote>
+
+    </div>
+
+
+    
+
+    
+</div></div>
+        </div>
+
+        <footer id="footer">
+            <hr class="end" />
+            
+            <div class="copyright">
+                <p>© Copyright 2014-2017 by Markus Unterwaditzer. <br/>Content licensed under the <a href=https://creativecommons.org/licenses/by-nc-sa/3.0/>Creative Commons attribution-noncommercial-sharealike License</a>.</p>
+                <p>
+                    <span class="software">
+                        Powered by <a href="http://lab.lepture.com/liquidluck/">Felix Felicis</a> 3.8.1,
+                    </span>
+                    <span class="theme">
+                        Theme based on <a href="https://github.com/lepture/liquidluck-theme-moment" rel="nofollow">moment</a> 1.0 by <a href="http://lepture.com">Hsiaoming Yang</a>
+                    </span>
+                </p>
+            </div>
+        </footer>
+        <script type="text/javascript" src="../static/mobile.js?v=3b6df"></script>
+        
+    </body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE HTML>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Be careful with todo.txt, or: Dropbox isn't the solution to every problem - Markus Unterwaditzer</title>
+        <script>if (top !== self) top.location = self.location;</script>
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0" />
+        <link rel="stylesheet" href="../static/style.css?v=cd4de" />
+        <link rel="stylesheet" href="../static/pygments.css?v=c6adc" />
+        
+        <link rel="alternate" type="application/rss+xml" href="../feed.xml" title="Markus Unterwaditzer" />
+        <!--[if lt IE 9]>
+        <script type="text/javascript" src="../static/html5shiv.js?v=9a10c"></script>
+        <![endif]-->
+        
+        
+<link rel="canonical" href="../2017/todo-txt.html" />
+
+
+    </head>
+    <body>
+        <header id="header">
+            <h1 id="brand"><a href="/">Markus Unterwaditzer</a></h1>
+            <nav id="nav" role="navigation">
+                
+                <a href="/contact.html">Contact</a>
+                <a href="/about.html">About</a>
+            </nav>
+        </header>
+
+        <div id="main">
+            <div class="container"><div class="hentry">
+    <h1 class="entry-title">Be careful with todo.txt, or: Dropbox isn't the solution to every problem</h1>
+    <div class="entry-meta">
+        <time class="updated" datetime="2017-01-26T00:00:00+01:00" pubdate>
+            <a href="../2017/">2017-01-26</a>
+        </time>
+        <span class="author vcard">
+            by <span class="fn">Markus Unterwaditzer</span>
+        </span>
+    </div>
+    <div class="entry-content">
+        <p>This is one of those posts that I didn't originally consider writing, but given
+that the situation hasn't changed in the slightest, and that people are still
+unaware of the general problem, I guess it's time for a blogpost.</p>
+<p>You may or may not know <a class="reference external" href="http://todotxt.com/">todo.txt</a>. It is a very simple
+task management script, basically a thin wrapper around a single textfile that
+stores all your tasks. On desktop it is very easy to edit that file by hand, on
+mobile devices, todo.txt offers various apps that are wrappers around this
+plaintext format. Since this is just a file you're editing, it seems natural to
+use Dropbox to synchronize your tasks between your devices. In fact Dropbox is
+what the offered mobile apps integrate with.</p>
+<p>Unfortunately, that idea comes with severe drawbacks. Just take two devices
+offline and edit your task list on either of them. Then take the devices online
+again, and let Dropbox sync. Of course Dropbox does not know anything about the
+file format, so it doesn't dare to merge and creates a separate file (for
+example <tt class="docutils literal">todo (hostname's conflicted copy <span class="pre">2017-01-26).txt</span></tt>) that contains the
+version of your tasklist from the other device instead. So whenever you edit
+anything on two devices while they're offline, you're left with merging two
+textfiles manually.</p>
+<p>This wouldn't be so bad in situations where you are directly interacting with
+the filesystem anyway, such as when editing the file on desktop with a normal
+texteditor. But when you use the mobile apps, the entire point is that you
+don't have to edit textfiles with a on-screen keyboard. At least the Android
+application doesn't do anything about this either. It ignores all the files
+that Dropbox may have created.</p>
+<div class="section" id="the-leakiest-abstractions-are-the-most-unixoid-ones">
+<h2>The leakiest abstractions are the most unixoid ones</h2>
+<p>Aesthetically, this separation of data editing and synchronization and the fact
+that you have very direct control and knowledge of the underlying datastructure
+is very appealing to the average Unix-Fan, and if I had to guess, the feel of
+control one gains from this design made todo.txt a success.</p>
+<p>My main gripe is with a certain belief it creates: The idea that arbitrary file
+synchronization programs are suitable for synchronizing arbitrary data.
+Sometimes your constraints force you into a situation where you have to use
+Dropbox to sync your data, but it appears that most users don't consider the
+tradeoffs that come with this solution.</p>
+</div>
+
+    </div>
+
+
+    
+
+    
+</div></div>
+        </div>
+
+        <footer id="footer">
+            <hr class="end" />
+            
+            <div class="copyright">
+                <p>© Copyright 2014-2017 by Markus Unterwaditzer. <br/>Content licensed under the <a href=https://creativecommons.org/licenses/by-nc-sa/3.0/>Creative Commons attribution-noncommercial-sharealike License</a>.</p>
+                <p>
+                    <span class="software">
+                        Powered by <a href="http://lab.lepture.com/liquidluck/">Felix Felicis</a> 3.8.1,
+                    </span>
+                    <span class="theme">
+                        Theme based on <a href="https://github.com/lepture/liquidluck-theme-moment" rel="nofollow">moment</a> 1.0 by <a href="http://lepture.com">Hsiaoming Yang</a>
+                    </span>
+                </p>
+            </div>
+        </footer>
+        <script type="text/javascript" src="../static/mobile.js?v=3b6df"></script>
+        
+    </body>
+</html>

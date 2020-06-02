@@ -1,0 +1,250 @@
+<!DOCTYPE HTML>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>A simple synchronization algorithm - Markus Unterwaditzer</title>
+        <script>if (top !== self) top.location = self.location;</script>
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0" />
+        <link rel="stylesheet" href="../static/style.css?v=cd4de" />
+        <link rel="stylesheet" href="../static/pygments.css?v=c6adc" />
+        
+        <link rel="alternate" type="application/rss+xml" href="../feed.xml" title="Markus Unterwaditzer" />
+        <!--[if lt IE 9]>
+        <script type="text/javascript" src="../static/html5shiv.js?v=9a10c"></script>
+        <![endif]-->
+        
+        
+<link rel="canonical" href="../2016/sync-algorithm.html" />
+
+
+    </head>
+    <body>
+        <header id="header">
+            <h1 id="brand"><a href="/">Markus Unterwaditzer</a></h1>
+            <nav id="nav" role="navigation">
+                
+                <a href="/contact.html">Contact</a>
+                <a href="/about.html">About</a>
+            </nav>
+        </header>
+
+        <div id="main">
+            <div class="container"><div class="hentry">
+    <h1 class="entry-title">A simple synchronization algorithm</h1>
+    <div class="entry-meta">
+        <time class="updated" datetime="2016-01-25T00:00:00+01:00" pubdate>
+            <a href="../2016/">2016-01-25</a>
+        </time>
+        <span class="author vcard">
+            by <span class="fn">Markus Unterwaditzer</span>
+        </span>
+    </div>
+    <div class="entry-content">
+        <p>I am writing this article out of my experience with writing <a class="reference external" href="https://github.com/untitaker/vdirsyncer">vdirsyncer</a>, a
+simple synchronization program for calendar events. The same ideas can be used
+for file synchronization. The whole article is targeted at people who need to
+write some sort of &quot;cloud synchronization&quot; and have no idea where to start,
+and/or when journal-based approaches are not an option due to API restrictions.</p>
+<div class="section" id="recap-the-problem-and-offlineimap-s-approach">
+<h2>Recap: The problem and OfflineIMAP's approach</h2>
+<p>For a start, read <a class="reference external" href="http://blog.ezyang.com/2012/08/how-offlineimap-works/">How OfflineIMAP works by E.Z. Yang</a>. It deals
+with the synchronization algorithm used by OfflineIMAP, a program that can be
+used to synchronize emails between IMAP accounts and/or <a class="reference external" href="https://cr.yp.to/proto/maildir.html">Maildir</a> folders.</p>
+<p>OfflineIMAP's algorithmic problem can be summarized as follows:</p>
+<blockquote>
+You are given two &quot;sets&quot; <tt class="docutils literal">A</tt> and <tt class="docutils literal">B</tt> of &quot;items&quot;, where the items have
+immutable content and globally unique IDs. Define the function <tt class="docutils literal">sync</tt>.
+If items are added to one set, then <tt class="docutils literal">sync(A, B)</tt> should copy those items
+to the other set. If items are deleted from one set, those deletions should
+also be performed on the other set.</blockquote>
+<p>The presented solution involves maintaining a third set, called the <tt class="docutils literal">status</tt>,
+that keeps track of the item IDs (not content) that were present after the
+previous sync process. On first synchronization, that set is empty.</p>
+<p>For each item ID (from <tt class="docutils literal">A, B, status</tt>), there are several possibilities as to
+which sets it is in:</p>
+<ul>
+<li><img alt="/articles/sync-algorithm/simplevenn-a.png" class="first align-right" src="/articles/sync-algorithm/simplevenn-a.png" />
+<p><tt class="docutils literal">A - B - status</tt> -- If the ID exists on side <tt class="docutils literal">A</tt>, but not on <tt class="docutils literal">B</tt> or the
+<tt class="docutils literal">status</tt>, it must have been created on <tt class="docutils literal">A</tt>. Copy the item from <tt class="docutils literal">A</tt> to
+<tt class="docutils literal">B</tt> and also insert it into <tt class="docutils literal">status</tt>.</p>
+<ul>
+<li><img alt="/articles/sync-algorithm/simplevenn-b.png" class="first align-right" src="/articles/sync-algorithm/simplevenn-b.png" />
+<p><tt class="docutils literal">B - A - status</tt> -- Likewise if the ID exists only in <tt class="docutils literal">B</tt>, it must have
+been created there.</p>
+</li>
+</ul>
+</li>
+<li><img alt="/articles/sync-algorithm/simplevenn-as.png" class="first align-right" src="/articles/sync-algorithm/simplevenn-as.png" />
+<p><tt class="docutils literal">A + status - B</tt> -- If the ID exists on side <tt class="docutils literal">A</tt> and the status, but not
+on <tt class="docutils literal">B</tt>, it has been deleted on <tt class="docutils literal">B</tt>. Delete it from <tt class="docutils literal">A</tt> and the
+<tt class="docutils literal">status</tt>.</p>
+<ul>
+<li><img alt="/articles/sync-algorithm/simplevenn-bs.png" class="first align-right" src="/articles/sync-algorithm/simplevenn-bs.png" />
+<p><tt class="docutils literal">B + status - A</tt> -- If the ID exists on side <tt class="docutils literal">B</tt> and the status, but
+not on <tt class="docutils literal">A</tt>, it has been deleted on <tt class="docutils literal">A</tt>.</p>
+</li>
+</ul>
+</li>
+<li><img alt="/articles/sync-algorithm/simplevenn-ab.png" class="first align-right" src="/articles/sync-algorithm/simplevenn-ab.png" />
+<p><tt class="docutils literal">A + B - status</tt> -- If it exists on side <tt class="docutils literal">A</tt> and side <tt class="docutils literal">B</tt>, but not in
+<tt class="docutils literal">status</tt>, add the ID to the status.</p>
+</li>
+<li><img alt="/articles/sync-algorithm/simplevenn-s.png" class="first align-right" src="/articles/sync-algorithm/simplevenn-s.png" />
+<p><tt class="docutils literal">status - A - B</tt> -- If it exists only in the <tt class="docutils literal">status</tt> it doesn't exist in
+reality, delete the ID from the status.</p>
+</li>
+</ul>
+<p>This algorithm assumes that items are immutable. In order to use it with
+mutable items, one could declare that modified items are treated as entirely
+new items.  If an item is changed in one set, it would be first deleted from,
+then created again at the other side. However elegant that approach might seem,
+it has two huge flaws:</p>
+<ul class="simple">
+<li>If an item is modified on both sides, both versions will be present on both
+sides. This is actually desirable in applications that don't know anything
+about the item content anyway (such as file sync), but in other cases this is
+nearly useless behavior.</li>
+<li>In practice, deleting and then creating often requires more API calls than a
+single update.</li>
+</ul>
+</div>
+<div class="section" id="the-problem-with-mutable-items">
+<h2>The problem with mutable items</h2>
+<p>Let's restate the problem above with mutable items:</p>
+<blockquote>
+<p>You are given two &quot;sets&quot; <tt class="docutils literal">A</tt> and <tt class="docutils literal">B</tt> of &quot;items&quot;, where each item has a
+globally unique ID and mutable content. Define the function <tt class="docutils literal">sync</tt>.</p>
+<ul class="simple">
+<li>If items are added to one set, then <tt class="docutils literal">sync(A, B)</tt> should copy those
+items to the other set.</li>
+<li>If items are deleted from one set, those deletions should also be
+performed on the other set.</li>
+<li>If items on one side are modified, they should replace the items on the
+other side.</li>
+</ul>
+</blockquote>
+<p>Let's also assume that there's a cheap way to determine a checksum (an
+<tt class="docutils literal">etag</tt>) for each item, cheap enough to be run for all items in both sets. In
+the case of a file sync tool you could use file's mtimes <a class="footnote-reference" href="#id2" id="id1">[1]</a>, or if you
+don't have too tight performance constraints, just hash the content of each
+file. The <tt class="docutils literal">etag</tt> for an item on side <tt class="docutils literal">A</tt> may differ from the <tt class="docutils literal">etag</tt> of
+the same exact item on side <tt class="docutils literal">B</tt>.</p>
+</div>
+<div class="section" id="the-algorithm">
+<h2>The algorithm</h2>
+<p>Before we create the algorithm, we need to redefine our <tt class="docutils literal">status</tt> from a set
+to a mapping. Now it not only has to keep track of the item IDs, but also has
+to map each item ID to a tuple of two etags: One for each side of <tt class="docutils literal">{A, B}</tt>.
+Here's an example:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="46%" />
+<col width="27%" />
+<col width="27%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>Item ID (index)</td>
+<td>ETag A</td>
+<td>ETag B</td>
+</tr>
+<tr><td>1</td>
+<td>771627ff</td>
+<td>caf893af</td>
+</tr>
+<tr><td>2</td>
+<td>dc165135</td>
+<td>07b92840</td>
+</tr>
+</tbody>
+</table>
+<img alt="/articles/sync-algorithm/simplevenn-abs.png" class="align-right" src="/articles/sync-algorithm/simplevenn-abs.png" />
+<p>A few additional cases have to be added if the item exists on <tt class="docutils literal">A, B, status</tt>:</p>
+<ul class="simple">
+<li>If the etag has changed on <tt class="docutils literal">A</tt> but not <tt class="docutils literal">B</tt>, copy from <tt class="docutils literal">A</tt> to <tt class="docutils literal">B</tt>.<ul>
+<li>If the etag has changed on <tt class="docutils literal">B</tt> but not <tt class="docutils literal">A</tt>, copy from <tt class="docutils literal">B</tt> to <tt class="docutils literal">A</tt>.</li>
+</ul>
+</li>
+<li>If the etag has changed on both <tt class="docutils literal">A</tt> and <tt class="docutils literal">B</tt>, invoke
+<tt class="docutils literal">conflict_resolution</tt>.</li>
+</ul>
+<p>And the following case has to be modified:</p>
+<ul class="simple">
+<li><tt class="docutils literal">A + B - status</tt> -- If the ID exists on side <tt class="docutils literal">A</tt> and side <tt class="docutils literal">B</tt>, but not
+in <tt class="docutils literal">status</tt>, we can <em>not</em> just create it in status, since the two items
+might contain different content each. Invoke <tt class="docutils literal">conflict_resolution</tt>.</li>
+</ul>
+<div class="section" id="conflict-resolution">
+<h3>Conflict resolution</h3>
+<p><tt class="docutils literal">conflict_resolution</tt> is its own routine, and what it actually does depends
+heavily on actual usecase and the amount of knowledge your application has of
+the underlying data. A few options for its implementation:</p>
+<ul class="simple">
+<li>Prompt the user which version is preferrable.</li>
+<li>Create both versions of each file under new IDs on both sides.</li>
+<li>Do some other thing that only works in specific situations.<ul>
+<li>Perhaps you have access to the last-modified date and can use that to
+determine the most up-to-date version?</li>
+<li>Perhaps you managed to save the old version from the previous sync and can
+perform a three-way merge?</li>
+<li>Perhaps the file format you're working with carries a full change history
+with it, and you can use that to get a usable merge?</li>
+</ul>
+</li>
+</ul>
+<p>What you always should do as part of conflict resolution is to check whether
+the item actually has different content on each side. When called the first
+time, the status is empty, so <tt class="docutils literal">sync</tt> will call <tt class="docutils literal">conflict_resolution</tt> for
+each item ID.</p>
+<table class="docutils footnote" frame="void" id="id2" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td><p class="first">The last-modified date of a file on POSIX. If you consider using
+that, keep in mind:</p>
+<ul class="simple">
+<li>Depending on the OS and filesystem, mtime's precision may be insufficient.
+On FAT, it has only 2-second resolution, and POSIX <tt class="docutils literal">st_mtime</tt> may vary
+in precision (there's also <tt class="docutils literal">st_mtime_ns</tt>). This means that mtime-based
+change detection might miss some changes, as mtime after file modification
+is the same as the old one.</li>
+<li>You can randomly touch files (updating their mtimes) without modifying
+their content, such that your application sees &quot;bogus changes&quot; in items.
+This might lead to more synchronization conflicts and unnecessary calls to
+<tt class="docutils literal">conflict_resolution</tt>.</li>
+</ul>
+<p class="last">Vdirsyncer uses mtimes only as an indicator that a file <em>might</em> have
+changed, and gets rid of false positives by comparing hashes of item's
+content.</p>
+</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+    </div>
+
+
+    
+
+    
+</div></div>
+        </div>
+
+        <footer id="footer">
+            <hr class="end" />
+            
+            <div class="copyright">
+                <p>© Copyright 2014-2017 by Markus Unterwaditzer. <br/>Content licensed under the <a href=https://creativecommons.org/licenses/by-nc-sa/3.0/>Creative Commons attribution-noncommercial-sharealike License</a>.</p>
+                <p>
+                    <span class="software">
+                        Powered by <a href="http://lab.lepture.com/liquidluck/">Felix Felicis</a> 3.8.1,
+                    </span>
+                    <span class="theme">
+                        Theme based on <a href="https://github.com/lepture/liquidluck-theme-moment" rel="nofollow">moment</a> 1.0 by <a href="http://lepture.com">Hsiaoming Yang</a>
+                    </span>
+                </p>
+            </div>
+        </footer>
+        <script type="text/javascript" src="../static/mobile.js?v=3b6df"></script>
+        
+    </body>
+</html>

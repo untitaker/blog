@@ -1,0 +1,175 @@
+<!DOCTYPE HTML>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>How to create a traceback object in Python - Markus Unterwaditzer</title>
+        <script>if (top !== self) top.location = self.location;</script>
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0" />
+        <link rel="stylesheet" href="../static/style.css?v=cd4de" />
+        <link rel="stylesheet" href="../static/pygments.css?v=c6adc" />
+        
+        <link rel="alternate" type="application/rss+xml" href="../feed.xml" title="Markus Unterwaditzer" />
+        <!--[if lt IE 9]>
+        <script type="text/javascript" src="../static/html5shiv.js?v=9a10c"></script>
+        <![endif]-->
+        
+        
+<link rel="canonical" href="../2018/python-custom-tracebacks.html" />
+
+
+    </head>
+    <body>
+        <header id="header">
+            <h1 id="brand"><a href="/">Markus Unterwaditzer</a></h1>
+            <nav id="nav" role="navigation">
+                
+                <a href="/contact.html">Contact</a>
+                <a href="/about.html">About</a>
+            </nav>
+        </header>
+
+        <div id="main">
+            <div class="container"><div class="hentry">
+    <h1 class="entry-title">How to create a traceback object in Python</h1>
+    <div class="entry-meta">
+        <time class="updated" datetime="2018-07-19T00:00:00+01:00" pubdate>
+            <a href="../2018/">2018-07-19</a>
+        </time>
+        <span class="author vcard">
+            by <span class="fn">Markus Unterwaditzer</span>
+        </span>
+    </div>
+    <div class="entry-content">
+        <p>I've been writing <a class="reference external" href="https://github.com/untitaker/shippai">a library for errorhandling when calling Rust code from
+Python</a>. One peculiar challenge I faced
+was when I wanted to have stacktraces that look like this:</p>
+<pre class="literal-block">
+Traceback (most recent call last):
+  File &quot;&lt;stdin&gt;&quot;, line 1, in &lt;module&gt;
+  File &quot;/home/untitaker/projects/shippai/examples/python/shippai_example/__init__.py&quot;, line 17, in authenticate
+    errors.check_exception(err[0])
+  File &quot;/home/untitaker/projects/shippai/python/shippai/__init__.py&quot;, line 110, in check_exception
+    _raise_with_more_frames(exc, frames)
+  File &quot;/home/untitaker/projects/shippai/python/shippai/__init__.py&quot;, line 228, in _raise_with_more_frames
+    func()
+  File &quot;/home/untitaker/projects/shippai/examples/python/rust/c/_cffi_backend.c&quot;, line 3025, in cdata_call
+  File &quot;/home/untitaker/projects/shippai/examples/python/rust/../src/x86/ffi64.c&quot;, line 525, in ffi_call
+  File &quot;/home/untitaker/projects/shippai/examples/python/rust/src/lib.rs&quot;, line 43, in authenticate
+    let res = authenticate_impl(
+  File &quot;/home/untitaker/projects/shippai/examples/python/rust/src/lib.rs&quot;, line 27, in shippai_example__authenticate_impl__h040a48b77826a8f4
+    return Err(MyError::UserWrong.into());
+[...]
+shippai.UserWrong: Invalid username
+</pre>
+<p>So when we call some Rust code from Python, and the Rust code fails, we get
+this merged traceback with the Rust frames stitched onto it. To me personally
+this kind of error reporting is very appealing. If you think this is too much
+magic, you will not like what comes next. We'll explore how to do exactly that,
+how to add extra frames to a traceback object.</p>
+<p>The Jinja templating engine has the same problem and its author Armin <a class="reference external" href="https://github.com/pallets/jinja/blob/fb7e12cce67b9849899f934e697f7e2a91d604c2/jinja2/debug.py">solved
+it extremely thoroughly</a>.
+This article is about a simpler version, and documents some known flaws. If you
+attempt to properly fix those, you'll probably end up with code similar to
+Jinja's. But there's a chance you'll be able to work around them in a simpler
+way that just fits your usecase.</p>
+<p>Tracebacks in Python are just objects. Unfortunately creating them is not
+directly possible:</p>
+<pre class="literal-block">
+&gt;&gt;&gt; try:
+...     1/0
+... except:
+...     import sys
+...     tb = sys.exc_info()[-1]
+...
+&gt;&gt;&gt; cls = type(tb)
+&gt;&gt;&gt; cls()
+TypeError: cannot create 'traceback' instances
+</pre>
+<p>However, <tt class="docutils literal">tb</tt> is already a traceback object. Printing its frames shows it's
+not quite where we want it yet:</p>
+<pre class="literal-block">
+&gt;&gt;&gt; import traceback
+&gt;&gt;&gt; traceback.print_tb(tb)
+File &quot;&lt;stdin&gt;&quot;, line 2, in &lt;module&gt;
+</pre>
+<p>Let's say we want to append the frame <tt class="docutils literal">File &quot;foo.rs&quot;, line 3, in foofun</tt>. We
+can do it like this:</p>
+<pre class="literal-block">
+&gt;&gt;&gt; filename = 'foo.rs'
+&gt;&gt;&gt; location = 'foofun'
+&gt;&gt;&gt; linenumber = 3
+&gt;&gt;&gt; code = compile('{}def {}(): 1/0'.format('\n' * (linenumber - 1), location), filename, 'exec')
+&gt;&gt;&gt; namespace = {}
+&gt;&gt;&gt; exec(code, namespace)
+&gt;&gt;&gt; foofun = namespace['foofun']
+&gt;&gt;&gt; foofun()
+Traceback (most recent call last):
+  File &quot;&lt;stdin&gt;&quot;, line 1, in &lt;module&gt;
+  File &quot;foo.rs&quot;, line 3, in foofun
+ZeroDivisionError: division by zero
+</pre>
+<p>The last frame now has a non-Python filename and linenumber like we wanted. How
+to append more frames? By <tt class="docutils literal">eval</tt>-ing more code:</p>
+<pre class="literal-block">
+&gt;&gt;&gt; filename = 'bar.rs'
+&gt;&gt;&gt; location = 'barfun'
+&gt;&gt;&gt; linenumber = 4
+&gt;&gt;&gt; code = compile('{}def {}(): foofun()'.format('\n' * (linenumber - 1), location), filename, 'exec')
+&gt;&gt;&gt; namespace = {'foofun': foofun}
+&gt;&gt;&gt; exec(code, namespace)
+&gt;&gt;&gt; barfun = namespace['barfun']
+&gt;&gt;&gt; barfun()
+Traceback (most recent call last):
+  File &quot;&lt;stdin&gt;&quot;, line 1, in &lt;module&gt;
+  File &quot;foo.rs&quot;, line 3, in foofun
+  File &quot;bar.rs&quot;, line 4, in barfun
+ZeroDivisionError: division by zero
+</pre>
+<p>Using this technique you can already construct arbitrary tracebacks:</p>
+<ol class="arabic simple">
+<li>Create one codeobject (or function) that raises the exception.</li>
+<li>For each frame, create a new codeobject (or function) that calls the previous one.</li>
+</ol>
+<p>This code has a few problems:</p>
+<ul class="simple">
+<li><tt class="docutils literal">location</tt> must be a valid Python identifier. You cannot use a location
+with whitespace or special chars in it, or use a reserved keyword. Shippai
+contains some ugly sanitization logic for this, which is not even correct in
+the general case.</li>
+<li>A user stepping through our artificial frames with <tt class="docutils literal">pdb</tt> will be able to
+access our defined helper functions, call them again etc. This might be
+something you can live with.</li>
+<li>I'm sure it has many more.</li>
+</ul>
+<p>That's it for now. I'll eventually write a follow-up to this blogpost where we
+explore fixes for both problems. It will probably involve creating our own code
+objects, like Jinja does.</p>
+
+    </div>
+
+
+    
+
+    
+</div></div>
+        </div>
+
+        <footer id="footer">
+            <hr class="end" />
+            
+            <div class="copyright">
+                <p>© Copyright 2014-2017 by Markus Unterwaditzer. <br/>Content licensed under the <a href=https://creativecommons.org/licenses/by-nc-sa/3.0/>Creative Commons attribution-noncommercial-sharealike License</a>.</p>
+                <p>
+                    <span class="software">
+                        Powered by <a href="http://lab.lepture.com/liquidluck/">Felix Felicis</a> 3.8.1,
+                    </span>
+                    <span class="theme">
+                        Theme based on <a href="https://github.com/lepture/liquidluck-theme-moment" rel="nofollow">moment</a> 1.0 by <a href="http://lepture.com">Hsiaoming Yang</a>
+                    </span>
+                </p>
+            </div>
+        </footer>
+        <script type="text/javascript" src="../static/mobile.js?v=3b6df"></script>
+        
+    </body>
+</html>

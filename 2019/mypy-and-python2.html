@@ -1,0 +1,228 @@
+<!DOCTYPE HTML>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Using type hints in Python 2 libraries - Markus Unterwaditzer</title>
+        <script>if (top !== self) top.location = self.location;</script>
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0" />
+        <link rel="stylesheet" href="../static/style.css?v=cd4de" />
+        <link rel="stylesheet" href="../static/pygments.css?v=c6adc" />
+        
+        <link rel="alternate" type="application/rss+xml" href="../feed.xml" title="Markus Unterwaditzer" />
+        <!--[if lt IE 9]>
+        <script type="text/javascript" src="../static/html5shiv.js?v=9a10c"></script>
+        <![endif]-->
+        
+        
+<link rel="canonical" href="../2019/mypy-and-python2.html" />
+
+
+    </head>
+    <body>
+        <header id="header">
+            <h1 id="brand"><a href="/">Markus Unterwaditzer</a></h1>
+            <nav id="nav" role="navigation">
+                
+                <a href="/contact.html">Contact</a>
+                <a href="/about.html">About</a>
+            </nav>
+        </header>
+
+        <div id="main">
+            <div class="container"><div class="hentry">
+    <h1 class="entry-title">Using type hints in Python 2 libraries</h1>
+    <div class="entry-meta">
+        <time class="updated" datetime="2019-06-25T00:00:00+01:00" pubdate>
+            <a href="../2019/">2019-06-25</a>
+        </time>
+        <span class="author vcard">
+            by <span class="fn">Markus Unterwaditzer</span>
+        </span>
+    </div>
+    <div class="entry-content">
+        <p>With <a class="reference external" href="https://www.python.org/dev/peps/pep-0484/">PEP 484</a> Python allows you to annotate variables and functions with
+their types:</p>
+<pre class="literal-block">
+from typing import Iterable
+
+def stringify_list(xs: Iterable[int]) -&gt; Iterable[str]:
+    return [str(x) for x in xs]
+</pre>
+<p>Why is this useful?</p>
+<ul class="simple">
+<li>You can use <a class="reference external" href="http://mypy-lang.org/">mypy</a> to lint your code against mismatching types.</li>
+<li><a class="reference external" href="https://www.jetbrains.com/pycharm/">PyCharm</a> supports those type annotations.</li>
+</ul>
+<p>For application developers this is a great story. The <tt class="docutils literal">typing</tt> module is part
+of Python 3's standard library, and for Python 2 <a class="reference external" href="https://pypi.org/project/typing/">a PyPI package</a> exists.
+They don't care about the extra dependency because their app has already too
+many. Or they port their app to Python 3 first.</p>
+<p>What about libraries? At <a class="reference external" href="https://sentry.io">Sentry</a> we recently added type hints to our <a class="reference external" href="https://sentry.io/for/python/">SDK for
+Python</a>. The motivation was to give IDE users nicer autocompletion and find a
+few bugs in our own code.</p>
+<p>We defined two requirements. They apply to a lot of libraries that support
+Python 2:</p>
+<ul class="simple">
+<li><strong>No new install dependencies, no new runtime dependencies.</strong> Sure, <a class="reference external" href="https://glyph.twistedmatrix.com/2016/08/python-packaging.html">pip is
+good now</a>, but the majority of our users don't use type hints and
+won't see the value of having to install <tt class="docutils literal">typing</tt>.  We have users who
+forked our SDK to remove all dependencies because of their constrained legacy
+environment. This would become a harder job if every file imported types
+from <tt class="docutils literal">typing</tt>.</li>
+<li><strong>As little runtime cost as possible.</strong> Importing <tt class="docutils literal">typing</tt> is runtime cost,
+defining types is runtime cost. There's no reason for any of that to happen
+when using our library outside of development.</li>
+</ul>
+<p>This blogpost is about the decisions we made within those requirements. We had
+two options: Stub files and type hint comments.</p>
+<div class="section" id="stub-files">
+<h2>Stub files</h2>
+<p><a class="reference external" href="https://mypy.readthedocs.io/en/latest/stubs.html#stub-files">Stub files</a> are a way to annotate regular Python 2-compatible code in Python
+3 syntax. For each <tt class="docutils literal">.py</tt> file one would have a <tt class="docutils literal">.pyi</tt> file that contains
+function and type definitions in Python 3 syntax, but with empty function
+bodies.</p>
+<p>This satisfies our requirements because all imports from <tt class="docutils literal">typing</tt> would only
+live in the <tt class="docutils literal">.pyi</tt> files, which are not used at runtime.</p>
+<p>Stub files seem to overwrite what mypy would've otherwise found out about
+the real code:</p>
+<pre class="literal-block">
+# File: test.py
+def stringify_list(xs, random_new_parameter):
+    return [str(x) for x in xs]
+
+# File: test.pyi
+from typing import Iterable
+
+def stringify_list(xs: Iterable[int]) -&gt; Iterable[str]:
+    return [str(x) for x in xs]
+</pre>
+<p>Even though we added a new argument to <tt class="docutils literal">stringify_list</tt>, mypy still accepts
+this code because it thinks the function takes one argument. For this reason we
+decided against using stub files because we feared that those could get out of
+sync with their companion <tt class="docutils literal">.py</tt> files.</p>
+</div>
+<div class="section" id="type-hint-comments">
+<h2>Type hint comments</h2>
+<p>We chose the only other option: Use <a class="reference external" href="https://mypy.readthedocs.io/en/latest/python2.html">type hint comments</a>. Those work across
+Python 2 and 3 as well as stub files do, but can't get out of sync with the
+implementation:</p>
+<pre class="literal-block">
+from typing import Iterable
+
+def stringify_list(xs, random_new_parameter):
+    # type: (Iterable[int]) -&gt; Iterable[str]
+    return [str(x) for x in xs]
+</pre>
+<p>This time mypy rejects the code with <tt class="docutils literal">error: Type signature has too few arguments</tt>.</p>
+</div>
+<div class="section" id="eliminating-imports">
+<h2>Eliminating imports</h2>
+<p>With this approach we need to import <tt class="docutils literal">typing</tt>. This adds runtime cost, and
+while that alone would be negligible, we also now have to install the
+<tt class="docutils literal">typing</tt> module under Python 2.</p>
+<p>Luckily there is a cheap way to get rid of these pesky imports:</p>
+<pre class="literal-block">
+if False:
+    from typing import Iterable
+
+def stringify_list(xs, random_new_parameter):
+    # type: (Iterable[int]) -&gt; Iterable[str]
+    return [str(x) for x in xs]
+</pre>
+<p>This avoids importing the <tt class="docutils literal">typing</tt> module at runtime while keeping mypy
+happy. We had this version in use for quite a while until we discovered that
+mypy had a more official way that didn't depend on undocumented quirks:</p>
+<pre class="literal-block">
+MYPY = False
+if MYPY:
+    from typing import Iterable
+
+&lt;rest of the code as above&gt;
+</pre>
+<p>The mypy documentation mentions this hack as a <a class="reference external" href="https://mypy.readthedocs.io/en/latest/common_issues.html#import-cycles">solution to import cycles while
+type-checking</a>, but
+it works just as well for our purposes.</p>
+</div>
+<div class="section" id="function-overloading">
+<h2>Function overloading</h2>
+<p>All of our imports are now disabled at runtime. This works for type hint
+comments, but some other annotations are not comments. For example, function
+overloads:</p>
+<pre class="literal-block">
+from typing import Union, overload
+
+&#64;overload
+def foo(x):
+    # type: (int) -&gt; None
+    pass
+
+&#64;overload
+def foo(x):
+    # type: (str) -&gt; None
+    pass
+
+def foo(x):
+    # type: (Union[int, str]) -&gt; None
+    pass
+</pre>
+<p>The issue is the <tt class="docutils literal">overload</tt> decorator. Wrapping only the first two function
+declarations in <tt class="docutils literal">if MYPY</tt> confuses mypy so much it thinks the last
+declaration is an unnecessary redefinition. Other approaches we tried typecheck
+successfully but require more duplicated type signatures which could get out of
+sync unnoticed.</p>
+<p>Our solution is:</p>
+<pre class="literal-block">
+MYPY = False
+
+if MYPY:
+    from typing import Union, overload
+else:
+    def overload(x):
+        return x
+
+&lt;rest of the code as above&gt;
+</pre>
+<p>This is not quite zero runtime overhead but close enough.</p>
+</div>
+<div class="section" id="conclusion">
+<h2>Conclusion</h2>
+<p>What we have right now gives us nicer code intelligence in IDEs without
+disrupting the rest of our users with added dependencies or runtime
+overhead. The majority of our SDK is still untyped or weakly typed, but we did
+find some bugs in the SDK using mypy.</p>
+<p>Mypy is generally a good, useful piece of software. Unfortunately the story for
+annotating existing Python 2 code ignores the issues that come from additional
+dependencies. Documented workarounds like <tt class="docutils literal">if MYPY</tt> are an afterthought even
+for their intended purpose. This will likely slow down adoption of type hints
+in libraries and make the <a class="reference external" href="https://github.com/python/typeshed">typeshed</a> (the repository of type annotations for
+third-party packages that don't have any) a permanent necessity.</p>
+</div>
+
+    </div>
+
+
+    
+
+    
+</div></div>
+        </div>
+
+        <footer id="footer">
+            <hr class="end" />
+            
+            <div class="copyright">
+                <p>© Copyright 2014-2017 by Markus Unterwaditzer. <br/>Content licensed under the <a href=https://creativecommons.org/licenses/by-nc-sa/3.0/>Creative Commons attribution-noncommercial-sharealike License</a>.</p>
+                <p>
+                    <span class="software">
+                        Powered by <a href="http://lab.lepture.com/liquidluck/">Felix Felicis</a> 3.8.1,
+                    </span>
+                    <span class="theme">
+                        Theme based on <a href="https://github.com/lepture/liquidluck-theme-moment" rel="nofollow">moment</a> 1.0 by <a href="http://lepture.com">Hsiaoming Yang</a>
+                    </span>
+                </p>
+            </div>
+        </footer>
+        <script type="text/javascript" src="../static/mobile.js?v=3b6df"></script>
+        
+    </body>
+</html>

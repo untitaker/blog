@@ -1,0 +1,1009 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <title>Markus Unterwaditzer</title>
+    <link href="https://unterwaditzer.net/feed.xml" rel="self" />
+    <link href="https://unterwaditzer.net/" />
+    <updated>2020-01-30T16:30:28+01:00</updated>
+    <id>https://unterwaditzer.net/</id>
+    <entry>
+        <title type="html"><![CDATA[Using type hints in Python 2 libraries]]></title>
+        <author><name>Markus Unterwaditzer</name></author>
+        <link href="https://unterwaditzer.net/2019/mypy-and-python2.html"/>
+        <published>2019-06-25T00:00:00+01:00</published>
+        <updated>2020-01-30T16:30:28+01:00</updated>
+        <id>https://unterwaditzer.net/2019/mypy-and-python2.html</id>
+        <category scheme="https://unterwaditzer.net/tag/python/" term="python" label="python" />
+        <category scheme="https://unterwaditzer.net/tag/mypy/" term="mypy" label="mypy" />
+        <category scheme="https://unterwaditzer.net/tag/sentry/" term="sentry" label="sentry" />
+        <content type="html" xml:base="https://unterwaditzer.net/" xml:lang="en">
+            <![CDATA[ <p>With <a class="reference external" href="https://www.python.org/dev/peps/pep-0484/">PEP 484</a> Python allows you to annotate variables and functions with
+their types:</p>
+<pre class="literal-block">
+from typing import Iterable
+
+def stringify_list(xs: Iterable[int]) -&gt; Iterable[str]:
+    return [str(x) for x in xs]
+</pre>
+<p>Why is this useful?</p>
+<ul class="simple">
+<li>You can use <a class="reference external" href="http://mypy-lang.org/">mypy</a> to lint your code against mismatching types.</li>
+<li><a class="reference external" href="https://www.jetbrains.com/pycharm/">PyCharm</a> supports those type annotations.</li>
+</ul>
+<p>For application developers this is a great story. The <tt class="docutils literal">typing</tt> module is part
+of Python 3's standard library, and for Python 2 <a class="reference external" href="https://pypi.org/project/typing/">a PyPI package</a> exists.
+They don't care about the extra dependency because their app has already too
+many. Or they port their app to Python 3 first.</p>
+<p>What about libraries? At <a class="reference external" href="https://sentry.io">Sentry</a> we recently added type hints to our <a class="reference external" href="https://sentry.io/for/python/">SDK for
+Python</a>. The motivation was to give IDE users nicer autocompletion and find a
+few bugs in our own code.</p>
+<p>We defined two requirements. They apply to a lot of libraries that support
+Python 2:</p>
+<ul class="simple">
+<li><strong>No new install dependencies, no new runtime dependencies.</strong> Sure, <a class="reference external" href="https://glyph.twistedmatrix.com/2016/08/python-packaging.html">pip is
+good now</a>, but the majority of our users don't use type hints and
+won't see the value of having to install <tt class="docutils literal">typing</tt>.  We have users who
+forked our SDK to remove all dependencies because of their constrained legacy
+environment. This would become a harder job if every file imported types
+from <tt class="docutils literal">typing</tt>.</li>
+<li><strong>As little runtime cost as possible.</strong> Importing <tt class="docutils literal">typing</tt> is runtime cost,
+defining types is runtime cost. There's no reason for any of that to happen
+when using our library outside of development.</li>
+</ul>
+<p>This blogpost is about the decisions we made within those requirements. We had
+two options: Stub files and type hint comments.</p>
+<div class="section" id="stub-files">
+<h2>Stub files</h2>
+<p><a class="reference external" href="https://mypy.readthedocs.io/en/latest/stubs.html#stub-files">Stub files</a> are a way to annotate regular Python 2-compatible code in Python
+3 syntax. For each <tt class="docutils literal">.py</tt> file one would have a <tt class="docutils literal">.pyi</tt> file that contains
+function and type definitions in Python 3 syntax, but with empty function
+bodies.</p>
+<p>This satisfies our requirements because all imports from <tt class="docutils literal">typing</tt> would only
+live in the <tt class="docutils literal">.pyi</tt> files, which are not used at runtime.</p>
+<p>Stub files seem to overwrite what mypy would've otherwise found out about
+the real code:</p>
+<pre class="literal-block">
+# File: test.py
+def stringify_list(xs, random_new_parameter):
+    return [str(x) for x in xs]
+
+# File: test.pyi
+from typing import Iterable
+
+def stringify_list(xs: Iterable[int]) -&gt; Iterable[str]:
+    return [str(x) for x in xs]
+</pre>
+<p>Even though we added a new argument to <tt class="docutils literal">stringify_list</tt>, mypy still accepts
+this code because it thinks the function takes one argument. For this reason we
+decided against using stub files because we feared that those could get out of
+sync with their companion <tt class="docutils literal">.py</tt> files.</p>
+</div>
+<div class="section" id="type-hint-comments">
+<h2>Type hint comments</h2>
+<p>We chose the only other option: Use <a class="reference external" href="https://mypy.readthedocs.io/en/latest/python2.html">type hint comments</a>. Those work across
+Python 2 and 3 as well as stub files do, but can't get out of sync with the
+implementation:</p>
+<pre class="literal-block">
+from typing import Iterable
+
+def stringify_list(xs, random_new_parameter):
+    # type: (Iterable[int]) -&gt; Iterable[str]
+    return [str(x) for x in xs]
+</pre>
+<p>This time mypy rejects the code with <tt class="docutils literal">error: Type signature has too few arguments</tt>.</p>
+</div>
+<div class="section" id="eliminating-imports">
+<h2>Eliminating imports</h2>
+<p>With this approach we need to import <tt class="docutils literal">typing</tt>. This adds runtime cost, and
+while that alone would be negligible, we also now have to install the
+<tt class="docutils literal">typing</tt> module under Python 2.</p>
+<p>Luckily there is a cheap way to get rid of these pesky imports:</p>
+<pre class="literal-block">
+if False:
+    from typing import Iterable
+
+def stringify_list(xs, random_new_parameter):
+    # type: (Iterable[int]) -&gt; Iterable[str]
+    return [str(x) for x in xs]
+</pre>
+<p>This avoids importing the <tt class="docutils literal">typing</tt> module at runtime while keeping mypy
+happy. We had this version in use for quite a while until we discovered that
+mypy had a more official way that didn't depend on undocumented quirks:</p>
+<pre class="literal-block">
+MYPY = False
+if MYPY:
+    from typing import Iterable
+
+&lt;rest of the code as above&gt;
+</pre>
+<p>The mypy documentation mentions this hack as a <a class="reference external" href="https://mypy.readthedocs.io/en/latest/common_issues.html#import-cycles">solution to import cycles while
+type-checking</a>, but
+it works just as well for our purposes.</p>
+</div>
+<div class="section" id="function-overloading">
+<h2>Function overloading</h2>
+<p>All of our imports are now disabled at runtime. This works for type hint
+comments, but some other annotations are not comments. For example, function
+overloads:</p>
+<pre class="literal-block">
+from typing import Union, overload
+
+&#64;overload
+def foo(x):
+    # type: (int) -&gt; None
+    pass
+
+&#64;overload
+def foo(x):
+    # type: (str) -&gt; None
+    pass
+
+def foo(x):
+    # type: (Union[int, str]) -&gt; None
+    pass
+</pre>
+<p>The issue is the <tt class="docutils literal">overload</tt> decorator. Wrapping only the first two function
+declarations in <tt class="docutils literal">if MYPY</tt> confuses mypy so much it thinks the last
+declaration is an unnecessary redefinition. Other approaches we tried typecheck
+successfully but require more duplicated type signatures which could get out of
+sync unnoticed.</p>
+<p>Our solution is:</p>
+<pre class="literal-block">
+MYPY = False
+
+if MYPY:
+    from typing import Union, overload
+else:
+    def overload(x):
+        return x
+
+&lt;rest of the code as above&gt;
+</pre>
+<p>This is not quite zero runtime overhead but close enough.</p>
+</div>
+<div class="section" id="conclusion">
+<h2>Conclusion</h2>
+<p>What we have right now gives us nicer code intelligence in IDEs without
+disrupting the rest of our users with added dependencies or runtime
+overhead. The majority of our SDK is still untyped or weakly typed, but we did
+find some bugs in the SDK using mypy.</p>
+<p>Mypy is generally a good, useful piece of software. Unfortunately the story for
+annotating existing Python 2 code ignores the issues that come from additional
+dependencies. Documented workarounds like <tt class="docutils literal">if MYPY</tt> are an afterthought even
+for their intended purpose. This will likely slow down adoption of type hints
+in libraries and make the <a class="reference external" href="https://github.com/python/typeshed">typeshed</a> (the repository of type annotations for
+third-party packages that don't have any) a permanent necessity.</p>
+</div>
+]]>
+        </content>
+    </entry><entry>
+        <title type="html"><![CDATA[How to create a traceback object in Python]]></title>
+        <author><name>Markus Unterwaditzer</name></author>
+        <link href="https://unterwaditzer.net/2018/python-custom-tracebacks.html"/>
+        <published>2018-07-19T00:00:00+01:00</published>
+        <updated>2018-07-29T16:17:29+01:00</updated>
+        <id>https://unterwaditzer.net/2018/python-custom-tracebacks.html</id>
+        <category scheme="https://unterwaditzer.net/tag/shippai/" term="shippai" label="shippai" />
+        <category scheme="https://unterwaditzer.net/tag/python/" term="python" label="python" />
+        <category scheme="https://unterwaditzer.net/tag/traceback/" term="traceback" label="traceback" />
+        <category scheme="https://unterwaditzer.net/tag/failure/" term="failure" label="failure" />
+        <category scheme="https://unterwaditzer.net/tag/error/" term="error" label="error" />
+        <category scheme="https://unterwaditzer.net/tag/hack/" term="hack" label="hack" />
+        <content type="html" xml:base="https://unterwaditzer.net/" xml:lang="en">
+            <![CDATA[ <p>I've been writing <a class="reference external" href="https://github.com/untitaker/shippai">a library for errorhandling when calling Rust code from
+Python</a>. One peculiar challenge I faced
+was when I wanted to have stacktraces that look like this:</p>
+<pre class="literal-block">
+Traceback (most recent call last):
+  File &quot;&lt;stdin&gt;&quot;, line 1, in &lt;module&gt;
+  File &quot;/home/untitaker/projects/shippai/examples/python/shippai_example/__init__.py&quot;, line 17, in authenticate
+    errors.check_exception(err[0])
+  File &quot;/home/untitaker/projects/shippai/python/shippai/__init__.py&quot;, line 110, in check_exception
+    _raise_with_more_frames(exc, frames)
+  File &quot;/home/untitaker/projects/shippai/python/shippai/__init__.py&quot;, line 228, in _raise_with_more_frames
+    func()
+  File &quot;/home/untitaker/projects/shippai/examples/python/rust/c/_cffi_backend.c&quot;, line 3025, in cdata_call
+  File &quot;/home/untitaker/projects/shippai/examples/python/rust/../src/x86/ffi64.c&quot;, line 525, in ffi_call
+  File &quot;/home/untitaker/projects/shippai/examples/python/rust/src/lib.rs&quot;, line 43, in authenticate
+    let res = authenticate_impl(
+  File &quot;/home/untitaker/projects/shippai/examples/python/rust/src/lib.rs&quot;, line 27, in shippai_example__authenticate_impl__h040a48b77826a8f4
+    return Err(MyError::UserWrong.into());
+[...]
+shippai.UserWrong: Invalid username
+</pre>
+<p>So when we call some Rust code from Python, and the Rust code fails, we get
+this merged traceback with the Rust frames stitched onto it. To me personally
+this kind of error reporting is very appealing. If you think this is too much
+magic, you will not like what comes next. We'll explore how to do exactly that,
+how to add extra frames to a traceback object.</p>
+<p>The Jinja templating engine has the same problem and its author Armin <a class="reference external" href="https://github.com/pallets/jinja/blob/fb7e12cce67b9849899f934e697f7e2a91d604c2/jinja2/debug.py">solved
+it extremely thoroughly</a>.
+This article is about a simpler version, and documents some known flaws. If you
+attempt to properly fix those, you'll probably end up with code similar to
+Jinja's. But there's a chance you'll be able to work around them in a simpler
+way that just fits your usecase.</p>
+<p>Tracebacks in Python are just objects. Unfortunately creating them is not
+directly possible:</p>
+<pre class="literal-block">
+&gt;&gt;&gt; try:
+...     1/0
+... except:
+...     import sys
+...     tb = sys.exc_info()[-1]
+...
+&gt;&gt;&gt; cls = type(tb)
+&gt;&gt;&gt; cls()
+TypeError: cannot create 'traceback' instances
+</pre>
+<p>However, <tt class="docutils literal">tb</tt> is already a traceback object. Printing its frames shows it's
+not quite where we want it yet:</p>
+<pre class="literal-block">
+&gt;&gt;&gt; import traceback
+&gt;&gt;&gt; traceback.print_tb(tb)
+File &quot;&lt;stdin&gt;&quot;, line 2, in &lt;module&gt;
+</pre>
+<p>Let's say we want to append the frame <tt class="docutils literal">File &quot;foo.rs&quot;, line 3, in foofun</tt>. We
+can do it like this:</p>
+<pre class="literal-block">
+&gt;&gt;&gt; filename = 'foo.rs'
+&gt;&gt;&gt; location = 'foofun'
+&gt;&gt;&gt; linenumber = 3
+&gt;&gt;&gt; code = compile('{}def {}(): 1/0'.format('\n' * (linenumber - 1), location), filename, 'exec')
+&gt;&gt;&gt; namespace = {}
+&gt;&gt;&gt; exec(code, namespace)
+&gt;&gt;&gt; foofun = namespace['foofun']
+&gt;&gt;&gt; foofun()
+Traceback (most recent call last):
+  File &quot;&lt;stdin&gt;&quot;, line 1, in &lt;module&gt;
+  File &quot;foo.rs&quot;, line 3, in foofun
+ZeroDivisionError: division by zero
+</pre>
+<p>The last frame now has a non-Python filename and linenumber like we wanted. How
+to append more frames? By <tt class="docutils literal">eval</tt>-ing more code:</p>
+<pre class="literal-block">
+&gt;&gt;&gt; filename = 'bar.rs'
+&gt;&gt;&gt; location = 'barfun'
+&gt;&gt;&gt; linenumber = 4
+&gt;&gt;&gt; code = compile('{}def {}(): foofun()'.format('\n' * (linenumber - 1), location), filename, 'exec')
+&gt;&gt;&gt; namespace = {'foofun': foofun}
+&gt;&gt;&gt; exec(code, namespace)
+&gt;&gt;&gt; barfun = namespace['barfun']
+&gt;&gt;&gt; barfun()
+Traceback (most recent call last):
+  File &quot;&lt;stdin&gt;&quot;, line 1, in &lt;module&gt;
+  File &quot;foo.rs&quot;, line 3, in foofun
+  File &quot;bar.rs&quot;, line 4, in barfun
+ZeroDivisionError: division by zero
+</pre>
+<p>Using this technique you can already construct arbitrary tracebacks:</p>
+<ol class="arabic simple">
+<li>Create one codeobject (or function) that raises the exception.</li>
+<li>For each frame, create a new codeobject (or function) that calls the previous one.</li>
+</ol>
+<p>This code has a few problems:</p>
+<ul class="simple">
+<li><tt class="docutils literal">location</tt> must be a valid Python identifier. You cannot use a location
+with whitespace or special chars in it, or use a reserved keyword. Shippai
+contains some ugly sanitization logic for this, which is not even correct in
+the general case.</li>
+<li>A user stepping through our artificial frames with <tt class="docutils literal">pdb</tt> will be able to
+access our defined helper functions, call them again etc. This might be
+something you can live with.</li>
+<li>I'm sure it has many more.</li>
+</ul>
+<p>That's it for now. I'll eventually write a follow-up to this blogpost where we
+explore fixes for both problems. It will probably involve creating our own code
+objects, like Jinja does.</p>
+]]>
+        </content>
+    </entry><entry>
+        <title type="html"><![CDATA[Be careful with todo.txt, or: Dropbox isn't the solution to every problem]]></title>
+        <author><name>Markus Unterwaditzer</name></author>
+        <link href="https://unterwaditzer.net/2017/todo-txt.html"/>
+        <published>2017-01-26T00:00:00+01:00</published>
+        <updated>2018-07-29T16:17:29+01:00</updated>
+        <id>https://unterwaditzer.net/2017/todo-txt.html</id>
+        <category scheme="https://unterwaditzer.net/tag/sync/" term="sync" label="sync" />
+        <category scheme="https://unterwaditzer.net/tag/dropbox/" term="dropbox" label="dropbox" />
+        <category scheme="https://unterwaditzer.net/tag/todo.txt/" term="todo.txt" label="todo.txt" />
+        <category scheme="https://unterwaditzer.net/tag/unix/" term="unix" label="unix" />
+        <content type="html" xml:base="https://unterwaditzer.net/" xml:lang="en">
+            <![CDATA[ <p>This is one of those posts that I didn't originally consider writing, but given
+that the situation hasn't changed in the slightest, and that people are still
+unaware of the general problem, I guess it's time for a blogpost.</p>
+<p>You may or may not know <a class="reference external" href="http://todotxt.com/">todo.txt</a>. It is a very simple
+task management script, basically a thin wrapper around a single textfile that
+stores all your tasks. On desktop it is very easy to edit that file by hand, on
+mobile devices, todo.txt offers various apps that are wrappers around this
+plaintext format. Since this is just a file you're editing, it seems natural to
+use Dropbox to synchronize your tasks between your devices. In fact Dropbox is
+what the offered mobile apps integrate with.</p>
+<p>Unfortunately, that idea comes with severe drawbacks. Just take two devices
+offline and edit your task list on either of them. Then take the devices online
+again, and let Dropbox sync. Of course Dropbox does not know anything about the
+file format, so it doesn't dare to merge and creates a separate file (for
+example <tt class="docutils literal">todo (hostname's conflicted copy <span class="pre">2017-01-26).txt</span></tt>) that contains the
+version of your tasklist from the other device instead. So whenever you edit
+anything on two devices while they're offline, you're left with merging two
+textfiles manually.</p>
+<p>This wouldn't be so bad in situations where you are directly interacting with
+the filesystem anyway, such as when editing the file on desktop with a normal
+texteditor. But when you use the mobile apps, the entire point is that you
+don't have to edit textfiles with a on-screen keyboard. At least the Android
+application doesn't do anything about this either. It ignores all the files
+that Dropbox may have created.</p>
+<div class="section" id="the-leakiest-abstractions-are-the-most-unixoid-ones">
+<h2>The leakiest abstractions are the most unixoid ones</h2>
+<p>Aesthetically, this separation of data editing and synchronization and the fact
+that you have very direct control and knowledge of the underlying datastructure
+is very appealing to the average Unix-Fan, and if I had to guess, the feel of
+control one gains from this design made todo.txt a success.</p>
+<p>My main gripe is with a certain belief it creates: The idea that arbitrary file
+synchronization programs are suitable for synchronizing arbitrary data.
+Sometimes your constraints force you into a situation where you have to use
+Dropbox to sync your data, but it appears that most users don't consider the
+tradeoffs that come with this solution.</p>
+</div>
+]]>
+        </content>
+    </entry><entry>
+        <title type="html"><![CDATA[XSS vulnerabilities in Flattr]]></title>
+        <author><name>Markus Unterwaditzer</name></author>
+        <link href="https://unterwaditzer.net/2016/flattr-xss.html"/>
+        <published>2016-05-13T00:00:00+01:00</published>
+        <updated>2018-07-29T16:17:29+01:00</updated>
+        <id>https://unterwaditzer.net/2016/flattr-xss.html</id>
+        <category scheme="https://unterwaditzer.net/tag/flattr/" term="flattr" label="flattr" />
+        <category scheme="https://unterwaditzer.net/tag/security/" term="security" label="security" />
+        <category scheme="https://unterwaditzer.net/tag/disclosure/" term="disclosure" label="disclosure" />
+        <content type="html" xml:base="https://unterwaditzer.net/" xml:lang="en">
+            <![CDATA[ <p>Last week (May 7th) I disclosed multiple security vulnerabilities to Flattr,
+which have since been fixed.  I'm posting them here for sake of transparency,
+also because Flattr doesn't have a policy to do so themselves.</p>
+<p>Flattr basically lets you send money to any user, with any URL as payment
+reference. For that purpose, it allows you to embed JavaScript buttons on your
+site that take the user to Flattr. The main difference to other donation
+systems is that it doesn't require you to register each piece of content
+separately at Flattr, while still allowing you to gather statistics due to
+which content the user donated.</p>
+<p>If you don't want to use the Flattr button, you can also use <a class="reference external" href="http://developers.flattr.net/auto-submit/">Auto-submit URLs</a>:</p>
+<blockquote>
+Instead of the embedded buttons you can use a specific kind of URL that just
+like the button will autocreate, &quot;auto-submit&quot;, a Flattr thing on its first
+flattr. This is useful for when you can't use javascript on a site (or don’t
+want to) – just create a static link to an auto-submit URL instead.</blockquote>
+<p>The simplest example looks like this:</p>
+<pre class="literal-block">
+https://flattr.com/submit/auto?user_id=[USERNAME]&amp;url=[URL]
+</pre>
+<p>Here are the two vulnerabilities:</p>
+<ul class="simple">
+<li><tt class="docutils literal">user_id</tt> was part of the response body, unescaped, allowing for a very
+simple reflected XSS.</li>
+<li><tt class="docutils literal">url</tt> could have any scheme. This also includes <tt class="docutils literal">data</tt> and <tt class="docutils literal">javascript</tt>
+URIs, which run within the linking site's origin. This means that
+<tt class="docutils literal">javascript:alert(document.cookie)</tt> would give you cookies for
+<tt class="docutils literal">flattr.com</tt>, and so does the slightly more complex
+<tt class="docutils literal"><span class="pre">data:text/html,&lt;script&gt;alert(document.cookie)&lt;/script&gt;</span></tt>.</li>
+</ul>
+<p>They have been fixed each:</p>
+<ul class="simple">
+<li>Flattr didn't check whether the user specified in <tt class="docutils literal">user_id</tt> exists. They
+now do. A valid user ID has such a narrow character range, it makes XSS
+impossible.</li>
+<li><tt class="docutils literal">url</tt> is now restricted to only a few schemes. It appears that only
+<tt class="docutils literal">http</tt> and <tt class="docutils literal">https</tt> work.</li>
+</ul>
+<p>Those have been successfully tested with Firefox 46. Chrome seems not to work
+with the second vulnerability <a class="reference external" href="https://bugzilla.mozilla.org/show_bug.cgi?id=1016491">as it violates the spec for a reason</a>.</p>
+<p>Below the full conversation.</p>
+<hr class="docutils" />
+<p><strong>You wrote:</strong></p>
+<blockquote>
+<p>Hello,</p>
+<p>What is an appropriate contact/email address for security vulnerability disclosures?</p>
+</blockquote>
+<p><strong>Flattr replied:</strong></p>
+<blockquote>
+<p>Hi</p>
+<p>Simplest is to do it here =)</p>
+<p>Regards Linus</p>
+</blockquote>
+<p><strong>You wrote:</strong></p>
+<blockquote>
+<p>Please visit the following URL:</p>
+<p><a class="reference external" href="https://flattr.com/submit/auto?user_id=%3Cscript%3Ealert%28document.cookie%29;%3C/script%3E&amp;url=https://unterwaditzer.net/2014/vdirsyncer.html">https://flattr.com/submit/auto?user_id=%3Cscript%3Ealert%28document.cookie%29;%3C/script%3E&amp;url=https://unterwaditzer.net/2014/vdirsyncer.html</a></p>
+<p>Furthermore it is possible to use auto-submit with URLs with the javascript-scheme, which can be used for a subset of the things the above XSS already allows. Try clicking the thing's URL here:</p>
+<p><a class="reference external" href="https://flattr.com/submit/auto?user_id=untitaker&amp;url=javascript:alert%28document.cookie%29">https://flattr.com/submit/auto?user_id=untitaker&amp;url=javascript:alert%28document.cookie%29</a></p>
+</blockquote>
+<p><strong>Flattr replied:</strong></p>
+<blockquote>
+<p>Hi</p>
+<p>Thanks we will look into it asap.</p>
+<p>Regards Linus</p>
+</blockquote>
+<p><strong>Flattr replied:</strong></p>
+<blockquote>
+<p>Hi</p>
+<p>It should now have been fixed. We would love if you also could check.</p>
+<p>And you have our extreme appreciation!</p>
+<p>Regards Linus</p>
+</blockquote>
+<p><strong>You wrote:</strong></p>
+<blockquote>
+<p><a class="reference external" href="https://flattr.com/submit/auto?user_id=untitaker&amp;url=data:text/html,%3Cscript%3Ealert(document.cookie)%3C/script%3E">https://flattr.com/submit/auto?user_id=untitaker&amp;url=data:text/html,%3Cscript%3Ealert(document.cookie)%3C/script%3E</a></p>
+<p>Please use a whitelist of URI schemes</p>
+</blockquote>
+<p><strong>You wrote:</strong></p>
+<blockquote>
+Also UX-wise I'm not sure if responding with a 400 Bad Request (making flattring for such URIs impossible) is better rather than just fixing the XSS?</blockquote>
+<p><strong>You wrote:</strong></p>
+<blockquote>
+BTW the remedy against the first attack seems fine. I suspect you're now rejecting unknown user_ids?</blockquote>
+<p><strong>Flattr replied:</strong></p>
+<blockquote>
+<p>Until now I thought it would be enough to just escape the output, but I failed to account for the &quot;data:&quot; construct.</p>
+<p>I'm now filtering the url before it's used which also allowed me to, as you suggested, return an error instead of just sanitizing.</p>
+<p>Feel free to mail me directly at [REDACTED] if you have further input or find other issues.</p>
+<p>Best regards, Leif</p>
+</blockquote>
+<p><strong>You wrote:</strong></p>
+<blockquote>
+<p>The fix seems to be appropriate. Thanks for your quick responses.</p>
+<p>Two things:</p>
+<ol class="arabic simple">
+<li>It would be nice if there were more documentation about how to disclose security issues. Even if that information was specified on /contact/, I don't think using the contact field was a good idea for that, since those messages are publicly visible for anybody knowing the URL. And those URLs are transmitted over unencrypted email for notification.</li>
+<li>May I publicly disclose this conversation?</li>
+</ol>
+</blockquote>
+<p><strong>Flattr replied:</strong></p>
+<blockquote>
+<p>Hi,</p>
+<p>Sorry for the late reply, things are quite crazy at the moment.</p>
+<p>You are welcome to publicly disclose the details concerning this issue.</p>
+<p>You are absolutely right that we should be more informative about how to handle security issues and no this contact form is not ideal. We'll try to improve in that area as well.</p>
+<p>Thanks again! Leif</p>
+</blockquote>
+]]>
+        </content>
+    </entry><entry>
+        <title type="html"><![CDATA[A bad citizen in Pythonland]]></title>
+        <author><name>Markus Unterwaditzer</name></author>
+        <link href="https://unterwaditzer.net/2016/pythonland.html"/>
+        <published>2016-04-18T00:00:00+01:00</published>
+        <updated>2018-07-29T16:17:29+01:00</updated>
+        <id>https://unterwaditzer.net/2016/pythonland.html</id>
+        <category scheme="https://unterwaditzer.net/tag/python/" term="python" label="python" />
+        <category scheme="https://unterwaditzer.net/tag/fanfic/" term="fanfic" label="fanfic" />
+        <content type="html" xml:base="https://unterwaditzer.net/" xml:lang="en">
+            <![CDATA[ <p>You are born as a fully-grown adult. God decides that some bodyparts are not
+appropriate. Those are dynamically replaced and patched to fit God's plan. He
+doesn't care if the new parts are rejected by the body: God doesn't ask for
+permission. Either way, since you are already an adult, you are ready to start
+a job. You ask the universe for a vehicle, and the universe gives you a generic
+object. You can't tell what it is. However, you do see what appears to be a
+steering wheel. You carefully put your hand on it. Suddenly, you hear a motor
+starting, and the object moves. After a short time, the police stops you.
+Apparently you are driving a racecar, without license plate. You are confused.
+&quot;I can't see that this is a racecar, I only see the steering wheel. Why can
+they?&quot;. Maybe they're checking the type? &quot;But that's illegal!&quot; Deeply irritated
+that the authorities would break their own rules, you pay your fine and
+continue driving to work.</p>
+<p>At work you tell a colleague of the incident with the police. But after you
+finished the first sentence, the colleague starts foaming at the mouth, and
+screams: &quot;Unicode decode error!&quot; A flash of light, and the colleague
+disappears. He had it coming, you think to yourself. Was probably coming from
+the old, sort-of-deprecated version of the universe. No way that will ever
+happen to you.</p>
+<p>For lunch, you and your colleagues go to the canteen. On your tablet, there is
+already a free default meal. There are also some other paid choices available,
+but you are not aware of them. You eat your free meal. You die. You are reborn,
+but this time you are told to avoid the default meal. At the canteen you order
+a paid meal this time. Turns out the default option is poisonous. The canteen
+had some problems preparing your meal, but this time you at least don't die
+from it.</p>
+<p>After some years you do die of natural causes. Most of your organs begin to
+decompose, but some organs continue to exist until your planet explodes. The
+words &quot;resource warning&quot; appear in the sky, for nobody to see them.</p>
+<hr class="docutils" />
+<p>This was inspired by (but is not completely analogous to) <a class="reference external" href="https://darrenhobbs.com/2006/04/22/a-bad-citizen-in-javaland/">&quot;A bad citizen in
+Javaland&quot;</a>.</p>
+]]>
+        </content>
+    </entry><entry>
+        <title type="html"><![CDATA[A simple synchronization algorithm]]></title>
+        <author><name>Markus Unterwaditzer</name></author>
+        <link href="https://unterwaditzer.net/2016/sync-algorithm.html"/>
+        <published>2016-01-25T00:00:00+01:00</published>
+        <updated>2018-07-29T16:17:29+01:00</updated>
+        <id>https://unterwaditzer.net/2016/sync-algorithm.html</id>
+        <category scheme="https://unterwaditzer.net/tag/vdirsyncer/" term="vdirsyncer" label="vdirsyncer" />
+        <category scheme="https://unterwaditzer.net/tag/algorithm/" term="algorithm" label="algorithm" />
+        <category scheme="https://unterwaditzer.net/tag/sync/" term="sync" label="sync" />
+        <content type="html" xml:base="https://unterwaditzer.net/" xml:lang="en">
+            <![CDATA[ <p>I am writing this article out of my experience with writing <a class="reference external" href="https://github.com/untitaker/vdirsyncer">vdirsyncer</a>, a
+simple synchronization program for calendar events. The same ideas can be used
+for file synchronization. The whole article is targeted at people who need to
+write some sort of &quot;cloud synchronization&quot; and have no idea where to start,
+and/or when journal-based approaches are not an option due to API restrictions.</p>
+<div class="section" id="recap-the-problem-and-offlineimap-s-approach">
+<h2>Recap: The problem and OfflineIMAP's approach</h2>
+<p>For a start, read <a class="reference external" href="http://blog.ezyang.com/2012/08/how-offlineimap-works/">How OfflineIMAP works by E.Z. Yang</a>. It deals
+with the synchronization algorithm used by OfflineIMAP, a program that can be
+used to synchronize emails between IMAP accounts and/or <a class="reference external" href="https://cr.yp.to/proto/maildir.html">Maildir</a> folders.</p>
+<p>OfflineIMAP's algorithmic problem can be summarized as follows:</p>
+<blockquote>
+You are given two &quot;sets&quot; <tt class="docutils literal">A</tt> and <tt class="docutils literal">B</tt> of &quot;items&quot;, where the items have
+immutable content and globally unique IDs. Define the function <tt class="docutils literal">sync</tt>.
+If items are added to one set, then <tt class="docutils literal">sync(A, B)</tt> should copy those items
+to the other set. If items are deleted from one set, those deletions should
+also be performed on the other set.</blockquote>
+<p>The presented solution involves maintaining a third set, called the <tt class="docutils literal">status</tt>,
+that keeps track of the item IDs (not content) that were present after the
+previous sync process. On first synchronization, that set is empty.</p>
+<p>For each item ID (from <tt class="docutils literal">A, B, status</tt>), there are several possibilities as to
+which sets it is in:</p>
+<ul>
+<li><img alt="/articles/sync-algorithm/simplevenn-a.png" class="first align-right" src="/articles/sync-algorithm/simplevenn-a.png" />
+<p><tt class="docutils literal">A - B - status</tt> -- If the ID exists on side <tt class="docutils literal">A</tt>, but not on <tt class="docutils literal">B</tt> or the
+<tt class="docutils literal">status</tt>, it must have been created on <tt class="docutils literal">A</tt>. Copy the item from <tt class="docutils literal">A</tt> to
+<tt class="docutils literal">B</tt> and also insert it into <tt class="docutils literal">status</tt>.</p>
+<ul>
+<li><img alt="/articles/sync-algorithm/simplevenn-b.png" class="first align-right" src="/articles/sync-algorithm/simplevenn-b.png" />
+<p><tt class="docutils literal">B - A - status</tt> -- Likewise if the ID exists only in <tt class="docutils literal">B</tt>, it must have
+been created there.</p>
+</li>
+</ul>
+</li>
+<li><img alt="/articles/sync-algorithm/simplevenn-as.png" class="first align-right" src="/articles/sync-algorithm/simplevenn-as.png" />
+<p><tt class="docutils literal">A + status - B</tt> -- If the ID exists on side <tt class="docutils literal">A</tt> and the status, but not
+on <tt class="docutils literal">B</tt>, it has been deleted on <tt class="docutils literal">B</tt>. Delete it from <tt class="docutils literal">A</tt> and the
+<tt class="docutils literal">status</tt>.</p>
+<ul>
+<li><img alt="/articles/sync-algorithm/simplevenn-bs.png" class="first align-right" src="/articles/sync-algorithm/simplevenn-bs.png" />
+<p><tt class="docutils literal">B + status - A</tt> -- If the ID exists on side <tt class="docutils literal">B</tt> and the status, but
+not on <tt class="docutils literal">A</tt>, it has been deleted on <tt class="docutils literal">A</tt>.</p>
+</li>
+</ul>
+</li>
+<li><img alt="/articles/sync-algorithm/simplevenn-ab.png" class="first align-right" src="/articles/sync-algorithm/simplevenn-ab.png" />
+<p><tt class="docutils literal">A + B - status</tt> -- If it exists on side <tt class="docutils literal">A</tt> and side <tt class="docutils literal">B</tt>, but not in
+<tt class="docutils literal">status</tt>, add the ID to the status.</p>
+</li>
+<li><img alt="/articles/sync-algorithm/simplevenn-s.png" class="first align-right" src="/articles/sync-algorithm/simplevenn-s.png" />
+<p><tt class="docutils literal">status - A - B</tt> -- If it exists only in the <tt class="docutils literal">status</tt> it doesn't exist in
+reality, delete the ID from the status.</p>
+</li>
+</ul>
+<p>This algorithm assumes that items are immutable. In order to use it with
+mutable items, one could declare that modified items are treated as entirely
+new items.  If an item is changed in one set, it would be first deleted from,
+then created again at the other side. However elegant that approach might seem,
+it has two huge flaws:</p>
+<ul class="simple">
+<li>If an item is modified on both sides, both versions will be present on both
+sides. This is actually desirable in applications that don't know anything
+about the item content anyway (such as file sync), but in other cases this is
+nearly useless behavior.</li>
+<li>In practice, deleting and then creating often requires more API calls than a
+single update.</li>
+</ul>
+</div>
+<div class="section" id="the-problem-with-mutable-items">
+<h2>The problem with mutable items</h2>
+<p>Let's restate the problem above with mutable items:</p>
+<blockquote>
+<p>You are given two &quot;sets&quot; <tt class="docutils literal">A</tt> and <tt class="docutils literal">B</tt> of &quot;items&quot;, where each item has a
+globally unique ID and mutable content. Define the function <tt class="docutils literal">sync</tt>.</p>
+<ul class="simple">
+<li>If items are added to one set, then <tt class="docutils literal">sync(A, B)</tt> should copy those
+items to the other set.</li>
+<li>If items are deleted from one set, those deletions should also be
+performed on the other set.</li>
+<li>If items on one side are modified, they should replace the items on the
+other side.</li>
+</ul>
+</blockquote>
+<p>Let's also assume that there's a cheap way to determine a checksum (an
+<tt class="docutils literal">etag</tt>) for each item, cheap enough to be run for all items in both sets. In
+the case of a file sync tool you could use file's mtimes <a class="footnote-reference" href="#id2" id="id1">[1]</a>, or if you
+don't have too tight performance constraints, just hash the content of each
+file. The <tt class="docutils literal">etag</tt> for an item on side <tt class="docutils literal">A</tt> may differ from the <tt class="docutils literal">etag</tt> of
+the same exact item on side <tt class="docutils literal">B</tt>.</p>
+</div>
+<div class="section" id="the-algorithm">
+<h2>The algorithm</h2>
+<p>Before we create the algorithm, we need to redefine our <tt class="docutils literal">status</tt> from a set
+to a mapping. Now it not only has to keep track of the item IDs, but also has
+to map each item ID to a tuple of two etags: One for each side of <tt class="docutils literal">{A, B}</tt>.
+Here's an example:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="46%" />
+<col width="27%" />
+<col width="27%" />
+</colgroup>
+<tbody valign="top">
+<tr><td>Item ID (index)</td>
+<td>ETag A</td>
+<td>ETag B</td>
+</tr>
+<tr><td>1</td>
+<td>771627ff</td>
+<td>caf893af</td>
+</tr>
+<tr><td>2</td>
+<td>dc165135</td>
+<td>07b92840</td>
+</tr>
+</tbody>
+</table>
+<img alt="/articles/sync-algorithm/simplevenn-abs.png" class="align-right" src="/articles/sync-algorithm/simplevenn-abs.png" />
+<p>A few additional cases have to be added if the item exists on <tt class="docutils literal">A, B, status</tt>:</p>
+<ul class="simple">
+<li>If the etag has changed on <tt class="docutils literal">A</tt> but not <tt class="docutils literal">B</tt>, copy from <tt class="docutils literal">A</tt> to <tt class="docutils literal">B</tt>.<ul>
+<li>If the etag has changed on <tt class="docutils literal">B</tt> but not <tt class="docutils literal">A</tt>, copy from <tt class="docutils literal">B</tt> to <tt class="docutils literal">A</tt>.</li>
+</ul>
+</li>
+<li>If the etag has changed on both <tt class="docutils literal">A</tt> and <tt class="docutils literal">B</tt>, invoke
+<tt class="docutils literal">conflict_resolution</tt>.</li>
+</ul>
+<p>And the following case has to be modified:</p>
+<ul class="simple">
+<li><tt class="docutils literal">A + B - status</tt> -- If the ID exists on side <tt class="docutils literal">A</tt> and side <tt class="docutils literal">B</tt>, but not
+in <tt class="docutils literal">status</tt>, we can <em>not</em> just create it in status, since the two items
+might contain different content each. Invoke <tt class="docutils literal">conflict_resolution</tt>.</li>
+</ul>
+<div class="section" id="conflict-resolution">
+<h3>Conflict resolution</h3>
+<p><tt class="docutils literal">conflict_resolution</tt> is its own routine, and what it actually does depends
+heavily on actual usecase and the amount of knowledge your application has of
+the underlying data. A few options for its implementation:</p>
+<ul class="simple">
+<li>Prompt the user which version is preferrable.</li>
+<li>Create both versions of each file under new IDs on both sides.</li>
+<li>Do some other thing that only works in specific situations.<ul>
+<li>Perhaps you have access to the last-modified date and can use that to
+determine the most up-to-date version?</li>
+<li>Perhaps you managed to save the old version from the previous sync and can
+perform a three-way merge?</li>
+<li>Perhaps the file format you're working with carries a full change history
+with it, and you can use that to get a usable merge?</li>
+</ul>
+</li>
+</ul>
+<p>What you always should do as part of conflict resolution is to check whether
+the item actually has different content on each side. When called the first
+time, the status is empty, so <tt class="docutils literal">sync</tt> will call <tt class="docutils literal">conflict_resolution</tt> for
+each item ID.</p>
+<table class="docutils footnote" frame="void" id="id2" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td><p class="first">The last-modified date of a file on POSIX. If you consider using
+that, keep in mind:</p>
+<ul class="simple">
+<li>Depending on the OS and filesystem, mtime's precision may be insufficient.
+On FAT, it has only 2-second resolution, and POSIX <tt class="docutils literal">st_mtime</tt> may vary
+in precision (there's also <tt class="docutils literal">st_mtime_ns</tt>). This means that mtime-based
+change detection might miss some changes, as mtime after file modification
+is the same as the old one.</li>
+<li>You can randomly touch files (updating their mtimes) without modifying
+their content, such that your application sees &quot;bogus changes&quot; in items.
+This might lead to more synchronization conflicts and unnecessary calls to
+<tt class="docutils literal">conflict_resolution</tt>.</li>
+</ul>
+<p class="last">Vdirsyncer uses mtimes only as an indicator that a file <em>might</em> have
+changed, and gets rid of false positives by comparing hashes of item's
+content.</p>
+</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+]]>
+        </content>
+    </entry><entry>
+        <title type="html"><![CDATA[I hope WebDAV dies]]></title>
+        <author><name>Markus Unterwaditzer</name></author>
+        <link href="https://unterwaditzer.net/2015/kill-webdav.html"/>
+        <published>2015-09-14T00:00:00+01:00</published>
+        <updated>2018-07-29T16:17:29+01:00</updated>
+        <id>https://unterwaditzer.net/2015/kill-webdav.html</id>
+        <category scheme="https://unterwaditzer.net/tag/webdav/" term="webdav" label="webdav" />
+        <category scheme="https://unterwaditzer.net/tag/remotestorage/" term="remotestorage" label="remotestorage" />
+        <category scheme="https://unterwaditzer.net/tag/vdirsyncer/" term="vdirsyncer" label="vdirsyncer" />
+        <category scheme="https://unterwaditzer.net/tag/contacts/" term="contacts" label="contacts" />
+        <category scheme="https://unterwaditzer.net/tag/calendar/" term="calendar" label="calendar" />
+        <content type="html" xml:base="https://unterwaditzer.net/" xml:lang="en">
+            <![CDATA[ <div class="section" id="webdav">
+<h2>WebDAV</h2>
+<p><a class="reference external" href="https://en.wikipedia.org/wiki/WebDAV">WebDAV</a> is a file access and transfer protocol created in the 90s. It has
+support for file locks, arbitrary key-value properties attached to folders,
+file mimetypes, and many other features that extend this standard. It also has
+powerful access control features.</p>
+<p>There are also two protocols that extend WebDAV. This blogpost is more about
+them:</p>
+<ul class="simple">
+<li>CalDAV, a protocol for accessing calendars. Basically you send a few requests
+to retrieve URLs to special folders that represent a calendar each. Inside
+those calendar folders are events, each represented as a file in the
+<a class="reference external" href="https://tools.ietf.org/html/rfc5545">iCalendar</a> format.</li>
+<li>CardDAV, the same thing as CalDAV, but for addressbooks. It uses <a class="reference external" href="https://tools.ietf.org/html/rfc6350">VCard</a> for
+serialization of contacts.</li>
+</ul>
+<p>Both of those protocols are authored by Apple, which uses them to synchronize
+data between iCloud and the built-in apps on iOS. FOSS-software like <a class="reference external" href="http://owncloud.org/">ownCloud</a>
+or <a class="reference external" href="http://baikal-server.com/">Baikal</a> also supports them. Nowadays those are the standard protocols for
+accessing calendar and contacts data from a server.</p>
+<p>Both protocols are neither a superset nor a subset of WebDAV: While their RFC
+mandates that such servers have to fully support WebDAV, they can (<em>should</em>)
+reject invalid iCalendar/VCard data. And obviously the folder structure is
+limited. You can't create a calendar folder inside another calendar folder, for
+example.</p>
+<p>The spec authors also added new queries to both CardDAV and CalDAV, specific to
+their datamodels. For example, in WebDAV, you can send a <tt class="docutils literal">PROPFIND</tt> HTTP
+request (yes, that's a HTTP method) with a <tt class="docutils literal">Depth: 1</tt> header and the
+following XML as payload to a folder URL:</p>
+<pre class="literal-block">
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+&lt;D:propfind xmlns:D=&quot;DAV:&quot;&gt;
+    &lt;D:prop&gt;
+        &lt;D:getcontenttype/&gt;
+        &lt;D:getetag/&gt;
+    &lt;/D:prop&gt;
+&lt;/D:propfind&gt;
+</pre>
+<p>The WebDAV server then responds with another XML document that enlists URLs for
+each file in that folder. It also includes the requested properties for each
+file. In this case, we requested the current etag and the MIME-type. You can
+also change the <tt class="docutils literal">Depth</tt>-header to recursively list files in subfolders, kind
+of like what the <tt class="docutils literal">find</tt>-command does. The server has to support all these fun
+queries, otherwise clients will break. Or some of them. You never know.</p>
+<p>And even though the WebDAV protocol allows for so many slightly different
+queries, there was one feature missing: You can't <em>filter</em> folder listings. In
+the case of CalDAV, that means you can't get a listing for a specific
+timerange. You will have to download <em>all events from the server</em> when
+synchronizing a calendar. This is not feasible, not only bandwidth-wise <a class="footnote-reference" href="#id2" id="id1">[1]</a>,
+but also in regards to space when considering mobile devices.</p>
+<table class="docutils footnote" frame="void" id="id2" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>This would be a ridiculous reason given that WebDAV already uses XML.</td></tr>
+</tbody>
+</table>
+<p>At this point it might have made sense to extend <tt class="docutils literal">PROPFIND</tt> requests to
+filter by properties. But the authors made a different decision. WebDAV also
+has a method called <tt class="docutils literal">REPORT</tt>. Of course you can send XML with that method
+too, why wouldn't you. Here's what it looks like:</p>
+<pre class="literal-block">
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+&lt;C:calendar-query xmlns:D=&quot;DAV:&quot;
+    xmlns:C=&quot;urn:ietf:params:xml:ns:caldav&quot;&gt;
+    &lt;D:prop&gt;
+        &lt;D:getcontenttype/&gt;
+        &lt;D:getetag/&gt;
+    &lt;/D:prop&gt;
+    &lt;C:filter&gt;
+        &lt;C:comp-filter name=&quot;VCALENDAR&quot;&gt;
+            &lt;C:comp-filter name=&quot;VEVENT&quot;&gt;
+                &lt;C:time-range start=&quot;20150909T000000Z&quot; end=&quot;20300909T000000Z&quot;/&gt;
+            &lt;/C:comp-filter&gt;
+        &lt;/C:comp-filter&gt;
+    &lt;/C:filter&gt;
+&lt;/C:calendar-query&gt;
+</pre>
+<p>And there you have your filtering feature, <em>all encapsulated in a new XML
+namespace like God intended it to be</em>. The filtering semantics can be explained
+like this: You're querying for a <tt class="docutils literal">VCALENDAR</tt> component (basically a container
+for events and timezone definitions), then you query for a <tt class="docutils literal">VEVENT</tt> component
+inside it, and since every event has a start and end property, you can finally
+filter by those too.</p>
+<p>But why would you want to filter by events? What else could there be inside of
+a calendar? Turns out you can also store tasks (<tt class="docutils literal">VTODO</tt>) and diary entries
+(<tt class="docutils literal">VJOURNAL</tt>) inside one. Remember that Apple uses this protocol? This is why
+when you delete a tasklist in the Tasks app, it warns you that your same-named
+calendar will also be deleted <a class="footnote-reference" href="#id4" id="id3">[2]</a>. This is how your iPhone calendar syncs to
+iCloud. And people think the legacy of HTTP or TCP is crippling.</p>
+<table class="docutils footnote" frame="void" id="id4" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id3">[2]</a></td><td>Tested on an old iPod touch, running iOS 6. I'm pretty sure nothing has
+changed since then.</td></tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="webdav-in-practice">
+<h2>WebDAV in practice</h2>
+<p><a class="reference external" href="https://github.com/WhisperSystems/Flock">Flock</a> was an Android app that offered end-to-end encrypted contact and
+calendar sync. Under the hood they used the CalDAV and CardDAV protocols. They
+shut down a few months ago. <a class="reference external" href="https://gist.github.com/rhodey/873ae9d527d8d2a38213">Their main developer wrote a short note on the
+technical reasons behind it</a>.</p>
+<p>The fact that CalDAV and CardDAV are based on WebDAV has fatal downsides in
+practice. I guess the idea was that you could just use an existing WebDAV
+client library to access your calendar data in an easy way. In practice, all of
+this complexity makes servers really hard to implement properly. Consequently
+most servers only implement a subset, which leads to massive compatibility
+problems, and leaves client developers with the challenge to find a subset of
+the protocol that is supported by the servers they care about. In practice, you
+can't use a WebDAV client library. In practice, you copy-paste XML from the
+examples in the RFC into your source code and hope for the best.</p>
+<p>I also wrote a client called &quot;vdirsyncer&quot;. I even <a class="reference external" href="https://unterwaditzer.net/2014/vdirsyncer.html">blogged about it</a>. Yes, CalDAV and CardDAV
+being derived from WebDAV does allow for some pretty cool tricks involving a
+WebDAV FUSE filesystem and a bunch of shellscripts that scrape the files in
+that filesystem and add them up to a listing of contacts and calendars. But
+that's about it with the upsides of that protocol. And in practice that trick
+works with only a few servers anyway.</p>
+<p>Vdirsyncer's integration tests spawn several popular WebDAV servers and run a
+massive amount of tests against them. In some servers, that testsuite found
+bugs that one couldn't even call edgecases. Things like renaming a calendar, or
+fetching multiple events in a single request were completely broken. The fact
+that those bugs don't seem to get noticed by the user shows how flexible
+clients are when it comes to working around buggy implementations. And those
+are just the ones that are actually testable in a sane way. The most broken
+servers are part of massive groupwares that would probably eat up all of the
+RAM in Travis' VMs.</p>
+</div>
+<div class="section" id="the-future">
+<h2>The future</h2>
+<p>I'm currently playing around with <a class="reference external" href="http://remotestorage.io/">remoteStorage</a>. It's a file transfer
+protocol, like WebDAV. But at least the protocol is simple, based on HTTP, and
+a little JSON for file listings. It doesn't support locks. It doesn't support
+ACLs, or whatever they are called. It doesn't support attaching arbitrary
+properties to a folder. It doesn't support all those crazy features that make
+CalDAV- and CardDAV-servers hard to implement, and as a result clients. Yes,
+it's slow to fetch all events, but so is parsing XML. And since remoteStorage
+doesn't restrict the way I store files, I can always change the way I store
+files to somehow implement that time-range querying feature CalDAV has. Or not,
+I don't want to end up with something like CalDAV. Perhaps I'll just run a
+cronjob to automatically delete old events, I don't know.</p>
+<p>The only thing that is more complex in remoteStorage than in WebDAV is
+authentication. RemoteStorage requires the server to support a subset of OAuth,
+and that's the only kind of authentication supported. It also requires
+WebFinger support instead of making it optional (like in WebDAV, where it's
+almost a luxury if the DAV client actually <em>finds</em> the HTTP endpoints it's
+supposed to use). It also has a simple permission system baked into the
+authentication protocol that actually gives the user control over the data
+applications can access.</p>
+<p>I'm hoping to replace WebDAV in my personal infrastructure as far as possible.
+It probably won't ever go away, but at least I can try. I've also <a class="reference external" href="https://github.com/untitaker/vdirsyncer/pull/265">extended
+vdirsyncer</a> so I can use it
+to synchronize a CalDAV/CardDAV-server with a remoteStorage-server. It's still
+a work-in-progress, but at least it's not a Sisyphean task like writing a
+CalDAV/CardDAV-client that actually works.</p>
+<p>For the users of vdirsyncer this means nothing, because I still rely on WebDAV
+myself. But as I dive deeper into the remoteStorage protocol, I'm less and less
+inclined to work around bugs in your stupid groupware.</p>
+<hr class="docutils" />
+<p>Thanks to <a class="reference external" href="https://twitter.com/skddc">&#64;skddc</a> for reviewing.</p>
+</div>
+]]>
+        </content>
+    </entry><entry>
+        <title type="html"><![CDATA[Why I created vdirsyncer]]></title>
+        <author><name>Markus Unterwaditzer</name></author>
+        <link href="https://unterwaditzer.net/2014/vdirsyncer.html"/>
+        <published>2014-11-16T00:00:00+01:00</published>
+        <updated>2018-07-29T16:17:29+01:00</updated>
+        <id>https://unterwaditzer.net/2014/vdirsyncer.html</id>
+        <category scheme="https://unterwaditzer.net/tag/vdirsyncer/" term="vdirsyncer" label="vdirsyncer" />
+        <category scheme="https://unterwaditzer.net/tag/contacts/" term="contacts" label="contacts" />
+        <category scheme="https://unterwaditzer.net/tag/calendar/" term="calendar" label="calendar" />
+        <content type="html" xml:base="https://unterwaditzer.net/" xml:lang="en">
+            <![CDATA[ <p>It was only after the introduction of Buzz and Google+ when I started looking
+for alternatives to Google's services, which I used wherever possible up to
+that point. I won't try to convince anybody to cease using certain web-services
+in this article, it's a trade-off between privacy and convenience everybody has
+to decide about on their own. I myself was mostly worried about my address
+books, calendars and private messages though. I didn't want to have anybody
+read those for sure, at the same time, I wanted to have them synchronized
+between all my devices.</p>
+<p>I eventually came across the Card- and CalDAV protocols for accessing contact
+and calendar data from a server, and promptly set up ownCloud. It did
+synchronize fine with my phone <a class="footnote-reference" href="#id5" id="id1">[1]</a>, but all the desktop apps I tried were
+tightly bound to a desktop environment. The only application whose feature set
+I found to be somewhat enjoyable was Evolution, but at that time, Evolution
+seemed to combine Email, Calendar and Contacts in one huge monolithic
+application for which the CPU of my underpowered laptop wasn't ready. I briefly
+tried to switch to KDE, but the software for this desktop environment did not
+only look terrible, but the dependency situation seemed to be much worse there,
+and everything seemed to somehow depend on MySQL which I found to be
+unacceptable.  It seems that with Gnome 3, calendars, contacts and email have
+now been separated into separate applications, but using those mean dealing
+with Gnome&nbsp;3.</p>
+<p>Two years later, I started to use CLI applications and avoid the ones with
+graphical interfaces. The reasons were entirely unrelated to the calendar and
+contacts situation: I didn't care that much about any keyboard shortcuts,
+although it has now become a primary reason why I wouldn't want to switch back.
+The real, and even more important reason was (and still is) that I wouldn't
+have to deal with gconf, dconf, or whichever clone of the Windows Registry they
+have now, as if the original was good idea to begin with. Yeah, global state is
+bad, and it's even worse if we can't guarantee that programs will delete their
+config keys when uninstalled, but storage is cheap on Desktop machines, so why
+bother, right? Command-line apps usually store their data in flat files which
+also turn into leaked state after uninstallation, but at least I can now safely
+delete state from one application without accidentally loosing my system
+settings.</p>
+<p>There is another advantage to storing data in flat (text) files, which I only
+realized when starting to use Mutt in combination with <a class="reference external" href="http://offlineimap.org/">OfflineIMAP</a> and
+<a class="reference external" href="http://notmuchmail.org/">notmuch</a>: Even if both programs fail you, you're still able to view your
+downloaded data with a simple text editor. This might not make a huge
+difference to the end user, but to me it does. It also allows you to check your
+data into a VCS such as Git, to prevent accidental deletion or file corruption,
+although I currently don't do that.</p>
+<p>Coming back to my calendar and contacts story, I couldn't find any CLI software
+which was able to synchronize with ownCloud <a class="footnote-reference" href="#id6" id="id2">[2]</a>. It seemed that most users in
+that area prefer storing their tasks in simple text file, but that solution
+would have provided me with basically no integration with Android's calendar
+and contact applications. At some point I was so desperate that I tried
+accessing my data in ownCloud through a WebDAV client.</p>
+<p>Since CalDAV/CardDAV standards are based on WebDAV <a class="footnote-reference" href="#id7" id="id3">[3]</a>, a file-management
+protocol, I thought it must be possible to mount my ownCloud calendars and
+contacts through a FUSE file system like davfs, and access them as normal
+files. It did actually work:</p>
+<pre class="literal-block">
+$ tree /mnt/contacts/default/
+/mnt/contacts/default/
+├── 08fdaec4-2791-4908-91ef-262b1669dfd7.vcf
+├── 0cb226b3-9259-4da2-bfac-a92ed9f6ab88.vcf
+├── 12c57540-c013-4e72-8754-a0f15e1a018d.vcf
+├── 185ff452-4e89-48d7-8e07-32011e151d24.vcf
+...
+</pre>
+<p>And the corresponding entry from my fstab:</p>
+<pre class="literal-block">
+https://owncloud.unterwaditzer.net/remote.php/carddav/addressbooks/untitaker/ /mnt/contacts davfs user,noauto,uid=untitaker,file_mode=600,dir_mode=700,_netdev 0 1
+</pre>
+<p>There is a patch for <a class="reference external" href="http://abook.sourceforge.net">abook</a> which adds a feature for importing <tt class="docutils literal">.vcf</tt> files,
+so I wrote a bash script that removed abook's current database and imported all
+files from the <tt class="docutils literal"><span class="pre">~/.contacts</span></tt> folder. I also wrote <a class="reference external" href="https://github.com/untitaker/watdo">watdo</a>, an extremely shitty
+task application for the command line which also accessed ownCloud's calendars
+through the mounted filesystem. I also added <a class="reference external" href="http://www.cis.upenn.edu/~bcpierce/unison/">unison</a>, a file synchronization
+tool, to make my data available offline.</p>
+<p>I ran ownCloud on a Raspberry Pi. Because both ownCloud and the Raspberry Pi
+are slow, I needed to switch to <a class="reference external" href="http://radicale.org/">Radicale</a>, which is a lightweight CalDAV and
+CardDAV server. The main problem I experienced was that Radicale only
+implements the subset that is needed to be compatible with the majority of
+clients <a class="footnote-reference" href="#id8" id="id4">[4]</a>. It wasn't possible to mount my contacts, calendars and tasks as a
+file system, so I had to write my own solution.</p>
+<p>I also stumbled upon <a class="reference external" href="http://lostpackets.de/khal/">khal</a>, which seemed to be the only CLI calendar
+application that was able to synchronize with CalDAV. However, khal storing its
+data in a sqlite database didn't really help me in any way with my task
+application, so I asked khal's author, Christian Geier, about a possible
+collaboration to standardize a storage format for events and contacts, storing
+data in flat files similarly to how <a class="reference external" href="http://cr.yp.to/proto/maildir.html">Maildir</a> (the storage format used by
+OfflineIMAP and Mutt) does it with emails. I wrote the first version of
+<a class="reference external" href="https://vdirsyncer.readthedocs.org/">vdirsyncer</a>. The storage format <a class="reference external" href="https://vdirsyncer.readthedocs.org/en/latest/vdir.html">vdir</a> matches exactly what ownCloud exposes
+when mounted via davfs, with some additional restrictions.</p>
+<table class="docutils footnote" frame="void" id="id5" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>Using <a class="reference external" href="http://dmfs.org/">CalDAV-Sync and CardDAV-Sync by dmfs</a>. Later
+his Tasks application also got added.</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id6" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[2]</a></td><td>I don't think <a class="reference external" href="http://lostpackets.de/khal/">khal</a> existed at this point, at least I wasn't able to
+find it. <a class="reference external" href="https://github.com/geier/pycarddav/">pycarddav</a> did exist but it didn't have more features than my
+hacked solution.</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id7" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id3">[3]</a></td><td>Which was probably <a class="reference external" href="http://evertpot.com/250/">not a good idea</a>.
+Because CardDAV and CalDAV are huge complex beasts, few servers fully
+implement them, so those protocols are not pleasant to work with from a
+client perspective either.</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id8" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id4">[4]</a></td><td><a class="reference external" href="http://radicale.org/technical_choices/#idid14">Which is an intentional choice made by the author</a>.</td></tr>
+</tbody>
+</table>
+]]>
+        </content>
+    </entry>
+</feed>
