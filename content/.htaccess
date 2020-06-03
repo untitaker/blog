@@ -1,8 +1,0 @@
-RewriteEngine On 
-RewriteCond %{SERVER_PORT} 80 
-RewriteRule ^(.*)$ https://unterwaditzer.net/$1 [R,L]
-
-RewriteRule ^wp-login\.php$ https://www.youtube.com/watch?v=dQw4w9WgXcQ [R,L]
-RewriteRule ^phpinfo\.php$ https://www.youtube.com/watch?v=dQw4w9WgXcQ [R,L]
-RewriteRule ^wp-admin https://www.youtube.com/watch?v=dQw4w9WgXcQ [R,L]
-RewriteRule ^\.env$ https://www.youtube.com/watch?v=dQw4w9WgXcQ [R,L]
