@@ -186,13 +186,11 @@ hr.end {
     text-align: center;
 }
 #brand a {
-    color: #dddfdf;
-    color: rgba(0,0,0,0.1);
+    color: #dadada;
     border-bottom: 0 none;
 }
 #brand a:hover {
-    color: #dadada;
-    color: rgba(0,0,0,0.16);
+    color: #444;
 }
 #nav {
     position: relative;
@@ -218,16 +216,6 @@ hr.end {
 #nav select {
     margin-top: 8px;
     font-size: 16px;
-}
-@media (max-width: 480px) {
-    #brand a {
-        color: rgba(0,0,0,0.8);
-    }
-    #nav {
-        position: absolute;
-        top: 0;
-        right: 10px;
-    }
 }
 #main {
     clear: both;
