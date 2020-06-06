@@ -34,13 +34,6 @@
         <header id="header">
             {% block header -%}
             <h1 id="brand"><a href="/">{{site.name}}</a></h1>
-            {%- block nav %}
-            <nav id="nav" role="navigation">
-                {% for item in theme.navigation %}
-                <a href="{{item.link}}">{{item.name}}</a>
-                {%- endfor %}
-            </nav>
-            {%- endblock %}
             {%- endblock %}
         </header>
 
@@ -51,9 +44,18 @@
             </div>
         </div>
 
+        <hr class="end" />
+
+        {%- block nav %}
+        <nav id="nav" role="navigation">
+            {% for item in theme.navigation %}
+            <a href="{{item.link}}">{{item.name}}</a>
+            {%- endfor %}
+        </nav>
+        {%- endblock %}
+
         <footer id="footer">
             {%- block footer %}
-            <hr class="end" />
             {% if theme.elsewhere -%}
             <nav class="elsewhere">
                 {% for item in theme.elsewhere -%}
