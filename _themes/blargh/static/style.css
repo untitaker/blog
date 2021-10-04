@@ -111,26 +111,21 @@ strong {
 /* code */
 pre, code, tt {
     font: 0.8em "Menlo", monospace;
+    background-color: #fbfbfb;
+    border: 1px solid #ddd;
+    color: #444;
+    border-radius: 3px;
 }
 pre {
     margin: 1em 0;
-    background-color: #fbfbfb;
-    border: 1px solid #ddd;
     padding: 8px;
     line-height: 1.5em;
-    color: #444;
-    overflow: scroll;
-    box-shadow: rgba(0,0,0,0.07) 0 1px 2px inset;
-    border-radius: 3px;
+    overflow: auto;
 }
 code, tt {
-    background-color: #fee9cc;
-    color: rgba(0, 0, 0, 0.75);
+    color: #d14;
     padding: 1px 3px;
     font-size: 0.75em;
-    -webkit-border-radius: 3px;
-    -moz-border-radius: 3px;
-    border-radius: 3px;
 }
 pre code {
     padding: 0;
