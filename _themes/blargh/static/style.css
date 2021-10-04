@@ -110,7 +110,7 @@ strong {
 
 /* code */
 pre, code, tt {
-    font: 14px "Menlo", monospace;
+    font: 0.8em "Menlo", monospace;
 }
 pre {
     margin: 1em 0;
@@ -127,7 +127,7 @@ code, tt {
     background-color: #fee9cc;
     color: rgba(0, 0, 0, 0.75);
     padding: 1px 3px;
-    font-size: 12px;
+    font-size: 0.75em;
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
     border-radius: 3px;

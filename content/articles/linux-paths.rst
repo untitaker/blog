@@ -214,7 +214,7 @@ to use different system calls that avoid changing the current working
 directory. <https://github.com/coreutils/coreutils/commit/b8616748f232f6e75dc330cee25069f45f1c6a21>`_
 But how does it work today?
 
-How rm traverses directories using entirely too many filedescriptors
+How ``rm`` traverses directories using entirely too many filedescriptors
 ------------------------------------------------------------------------
 
 Another round of ``strace``. Here’s the output towards the end:
