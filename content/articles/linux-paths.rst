@@ -1,5 +1,5 @@
 ======================================================================================
-Relative paths are faster than absolute paths in Linux (and other jokes I tell myself)
+Relative paths are faster than absolute paths on Linux (and other jokes I tell myself)
 ======================================================================================
 
 :date: 2021-10-04
