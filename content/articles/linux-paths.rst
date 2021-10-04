@@ -158,7 +158,7 @@ mean in practice?
 If we create a deeply nested directory tree using this simple Rust
 program:
 
-.. code:: bash
+.. code:: rust
 
    use std::fs;
    use std::env;
