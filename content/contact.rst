@@ -3,8 +3,8 @@ Contact
 
 - `GitHub <https://github.com/untitaker>`_
 
-  If it is about one of my projects, opening an issue instead is usually
-  preferrable.
+  If it is about one of my projects, opening an issue instead is the best way
+  to contact me.
 
 - `markus@unterwaditzer.net <markus@unterwaditzer.net>`_
 
@@ -14,6 +14,11 @@ Contact
   Download the key from `MIT
   <https://pgp.mit.edu/pks/lookup?op=get&search=0x31E9EFF9FAAC788C>`_ or `my
   server </markus.asc>`_.
+
+  **Please don't send me GPG-encrypted email** unless you're literally being
+  chased by secret services (and preferrably not even then). GPG is absolutely
+  dreadful to deal with on every level, and if I didn't have to sign something
+  once every decade I'd rather not have any GPG key at all.
 
 - `Twitter <https://twitter.com/untitaker>`_
 
