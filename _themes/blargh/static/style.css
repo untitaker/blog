@@ -1,13 +1,8 @@
-@import url(//fonts.googleapis.com/css?family=Rosario);
-@import url(//fonts.googleapis.com/css?family=PT+Sans);
 body {
     color: #444;
     padding: 0;
     margin: 0;
-    font: 16px/1.62 "Rosario", "Xin Gothic", "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", Arial, sans-serif;
-}
-h1, h2, h3, h4, h5, strong {
-    font-family: "PT Sans", "Xin Gothic", "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", Arial, sans-serif;
+    font: 16px/1.62 "Helvetica", "Helvetica Neue", arial, sans-serif;
 }
 h1 {
     margin-top: 0;
@@ -197,7 +192,6 @@ hr.end {
 }
 #nav a {
     font-weight: bold;
-    font-family: "Helvetica Neue", "Helvetica", arial, sans-serif;
     margin-right: 6px;
     padding: 8px 10px;
     line-height: 46px;
@@ -247,7 +241,6 @@ hr.end {
 /* article */
 .hentry {
     overflow: hidden;
-    font-family: 'Rosario', 'Xin Gothic', 'Hiragino Sans GB', 'Microsoft YaHei', 'WenQuanYi Micro Hei', Arial, sans-serif;
 }
 .entry-title, .hentry h2, .hentry h3, .hentry h4 {
     color: #222;
@@ -294,7 +287,6 @@ hr.end {
     margin-top: 40px;
     text-align: center;
     text-transform: uppercase;
-    font: normal 12px "Helvetica", arial, sans-serif;
     color: #9f9f99;
 }
 .pagination .prev {
