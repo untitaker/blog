@@ -20,10 +20,10 @@ Contact
   dreadful to deal with on every level, and if I didn't have to sign something
   once every decade I'd rather not have any GPG key at all.
 
-- `Twitter <https://twitter.com/untitaker>`_
+- `Twitter <https://twitter.com/untitaker>`_, `Mastodon <https://mastodon.social/@untitaker>`_
 
-  Twitter is not suitable for constructive or complex discussions, yet
-  discussions still happen there. Anyway, follow me on Twitter.
+  Neither are not suitable for constructive or complex discussions, yet
+  discussions still happen there. Anyway, follow me there.
 
 - My nickname is ``untitaker`` on IRC and most other services, but I may not
   respond at all.
