@@ -22,7 +22,7 @@ Contact
 
 - `Twitter <https://twitter.com/untitaker>`_, `Mastodon <https://mastodon.social/@untitaker>`_
 
-  Neither are not suitable for constructive or complex discussions, yet
+  Neither are suitable for constructive or complex discussions, yet
   discussions still happen there. Anyway, follow me there.
 
 - My nickname is ``untitaker`` on IRC and most other services, but I may not
