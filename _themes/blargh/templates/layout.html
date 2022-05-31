@@ -4,7 +4,7 @@
         <meta charset="UTF-8">
         <title>{% block title %}{{site.name}}{% endblock %}</title>
         <script>if (top !== self) top.location = self.location;</script>
-        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=1" />
         <link rel="stylesheet" href="{{static_url('style.css')}}" />
         {% if site.feed -%}
         <link rel="alternate" type="application/rss+xml" href="{{site.feed}}" title="{{site.name}}" />
