@@ -1,9 +1,9 @@
 Using type hints in Python 2 libraries
 ======================================
 
-:date: 2019-06-25
-:category: dev
-:tags: python, mypy, sentry
+.. raw:: html
+
+    <time>2019-06-25</time>
 
 With `PEP 484`_ Python allows you to annotate variables and functions with
 their types::

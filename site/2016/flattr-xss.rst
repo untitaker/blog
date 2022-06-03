@@ -1,9 +1,9 @@
 XSS vulnerabilities in Flattr
 =============================
 
-:date: 2016-05-13
-:category: dev
-:tags: flattr, security, disclosure
+.. raw:: html
+
+    <time>2016-05-13</time>
 
 Last week (May 7th) I disclosed multiple security vulnerabilities to Flattr,
 which have since been fixed.  I'm posting them here for sake of transparency,

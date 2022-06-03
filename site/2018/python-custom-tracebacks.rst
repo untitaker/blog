@@ -2,9 +2,9 @@
 How to create a traceback object in Python
 ==========================================
 
-:date: 2018-07-19
-:category: dev
-:tags: shippai, python, traceback, failure, error, hack
+.. raw:: html
+
+    <time>2018-07-19</time>
 
 I've been writing `a library for errorhandling when calling Rust code from
 Python <https://github.com/untitaker/shippai>`_. One peculiar challenge I faced

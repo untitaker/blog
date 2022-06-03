@@ -1,0 +1,106 @@
+[settings]
+# Stop on page processing errors?
+strict = true
+
+# Display progress?
+verbose = true
+
+# Display detailed debug output?
+debug = false
+
+# Where input files (pages and assets) are stored.
+site_dir = "site"
+
+# Where the output goes
+build_dir = "build"
+
+# Pages will other extensions are considered static assets
+# and copied to build/ unchanged
+page_file_extensions = ["htm", "html", "md", "rst", "adoc"]
+
+# Files with these extensions are ignored.
+ignore_extensions = ["draft"]
+
+# Treat files as content to insert in the template,
+# unless they have an <html> element in them.
+generator_mode = true
+complete_page_selector = "html"
+
+# Use templates/main.html file for the page template.
+default_template_file = "templates/main.html"
+
+# The content will be inserted into its <main> element,
+# after its last already existing child.
+default_content_selector = "main"
+default_content_action = "append_child"
+
+# Set the document type to HTML5, unless the page already has
+# a doctype declaration.
+doctype = "<!DOCTYPE html>"
+keep_doctype = true
+
+# Indent HTML tags for readability
+pretty_print_html = true
+
+clean_urls = false
+
+# Look for plugin files in plugins/
+plugin_discovery = true
+plugin_dirs = ["plugins"]
+
+[preprocessors]
+rst = 'pandoc -f rst -t html --no-highlight'
+
+[index.fields.title]
+selector = ["h1"]
+
+[index.fields.date]
+selector = ["time"]
+extract_attribute = "datetime"
+fallback_to_content = true
+
+[index]
+index = true
+sort_descending = true
+sort_type = "calendar"
+sort_by = "date"
+
+date_formats = ["%F"]
+
+[index.views.blog]
+path_regex = "[0-9]+/"
+index_selector = "#blog-index"
+index_item_template = """
+<p class="entry-item entry-item-title">{{date}}</p>
+<h2 class="entry-item"><a href="{{url}}">{{title}}</a></h2>
+"""
+
+[widgets.atom]
+widget = "atom"
+page = "index.html"
+feed_file = "feed.xml"
+
+[custom_options]
+atom_feeds = true
+site_url = "https://unterwaditzer.net/"
+site_author = "Markus Unterwaditzer"
+site_title = "Markus Unterwaditzer"
+site_logo = "https://unterwaditzer.net/favicon.ico"
+
+[widgets.remove-code-tags-in-pre]
+widget = "preprocess_element"
+selector = "pre"
+command = "sed -e 's/<code>//g' -e 's/<\\/code>//g'"
+parse = false
+
+[widgets.pygmentize]
+widget = "preprocess_element"
+action = "replace_element"
+selector = "pre[class^=sourceCode ]"
+command = "pygmentize -f html -l $(echo $ATTR_CLASS | sed -e 's/sourceCode //g') /dev/stdin"
+
+[widgets.set-page-title]
+widget = "title"
+selector = ["h1"]
+default = "Markus Unterwaditzer"
+append = " - Markus Unterwaditzer"

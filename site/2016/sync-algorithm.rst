@@ -1,9 +1,9 @@
 A simple synchronization algorithm
 ==================================
 
-:date: 2016-01-25
-:category: dev
-:tags: vdirsyncer, algorithm, sync
+.. raw:: html
+
+    <time>2016-01-25</time>
 
 I am writing this article out of my experience with writing vdirsyncer_, a
 simple synchronization program for calendar events. The same ideas can be used
@@ -33,39 +33,39 @@ previous sync process. On first synchronization, that set is empty.
 For each item ID (from ``A, B, status``), there are several possibilities as to
 which sets it is in:
 
-* .. image:: /articles/sync-algorithm/simplevenn-a.png
+* .. image:: ./sync-algorithm/simplevenn-a.png
      :align: right
   
   ``A - B - status`` -- If the ID exists on side ``A``, but not on ``B`` or the
   ``status``, it must have been created on ``A``. Copy the item from ``A`` to
   ``B`` and also insert it into ``status``.
 
-  + .. image:: /articles/sync-algorithm/simplevenn-b.png
+  + .. image:: ./sync-algorithm/simplevenn-b.png
        :align: right
 
     ``B - A - status`` -- Likewise if the ID exists only in ``B``, it must have
     been created there.
 
-* .. image:: /articles/sync-algorithm/simplevenn-as.png
+* .. image:: ./sync-algorithm/simplevenn-as.png
      :align: right
   
   ``A + status - B`` -- If the ID exists on side ``A`` and the status, but not
   on ``B``, it has been deleted on ``B``. Delete it from ``A`` and the
   ``status``.
 
-  + .. image:: /articles/sync-algorithm/simplevenn-bs.png
+  + .. image:: ./sync-algorithm/simplevenn-bs.png
        :align: right
     
     ``B + status - A`` -- If the ID exists on side ``B`` and the status, but
     not on ``A``, it has been deleted on ``A``.
 
-* .. image:: /articles/sync-algorithm/simplevenn-ab.png
+* .. image:: ./sync-algorithm/simplevenn-ab.png
      :align: right
 
   ``A + B - status`` -- If it exists on side ``A`` and side ``B``, but not in
   ``status``, add the ID to the status.
 
-* .. image:: /articles/sync-algorithm/simplevenn-s.png
+* .. image:: ./sync-algorithm/simplevenn-s.png
      :align: right
   
   ``status - A - B`` -- If it exists only in the ``status`` it doesn't exist in
@@ -125,7 +125,7 @@ Here's an example:
 | 2               | dc165135 | 07b92840 |
 +-----------------+----------+----------+
 
-.. image:: /articles/sync-algorithm/simplevenn-abs.png
+.. image:: ./sync-algorithm/simplevenn-abs.png
    :align: right
 
 A few additional cases have to be added if the item exists on ``A, B, status``:

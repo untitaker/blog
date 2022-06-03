@@ -6,7 +6,7 @@ Contact
   If it is about one of my projects, opening an issue instead is the best way
   to contact me.
 
-- `markus@unterwaditzer.net <markus@unterwaditzer.net>`_
+- `markus@unterwaditzer.net <mailto:markus@unterwaditzer.net>`_
 
   This is the most reliable way to get in contact with me.
 

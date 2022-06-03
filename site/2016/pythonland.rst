@@ -1,9 +1,9 @@
 A bad citizen in Pythonland
 ===========================
 
-:date: 2016-04-18
-:category: dev
-:tags: python, fanfic
+.. raw:: html
+
+    <time>2016-04-18</time>
 
 You are born as a fully-grown adult. God decides that some bodyparts are not
 appropriate. Those are dynamically replaced and patched to fit God's plan. He

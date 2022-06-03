@@ -2,9 +2,9 @@
 Relative paths are faster than absolute paths on Linux (and other jokes I tell myself)
 ======================================================================================
 
-:date: 2021-10-04
-:category: dev
-:tags: unix, posix, linux, gnu, filesystem, rust, walkdir
+.. raw:: html
+
+    <time>2021-10-04</time>
 
 Has this ever happened to you?
 

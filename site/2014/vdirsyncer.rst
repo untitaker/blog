@@ -1,9 +1,9 @@
 Why I created vdirsyncer
 ========================
 
-:date: 2014-11-16
-:category: dev
-:tags: vdirsyncer, contacts, calendar
+.. raw:: html
+
+    <time>2014-11-16</time>
 
 It was only after the introduction of Buzz and Google+ when I started looking
 for alternatives to Google's services, which I used wherever possible up to

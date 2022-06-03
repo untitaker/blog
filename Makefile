@@ -1,24 +1,25 @@
+SOUPAULT_TARBALL_PATH = soupault-4.0.1-linux-x86_64/soupault
+
+soupault:
+	curl https://files.baturin.org/software/soupault/4.0.1/soupault-4.0.1-linux-x86_64.tar.gz | \
+		tar xz $(SOUPAULT_TARBALL_PATH)
+	mv $(SOUPAULT_TARBALL_PATH) .
+	rmdir $$(dirname $(SOUPAULT_TARBALL_PATH))
+
 .venv/bin/python:
 	rm -fr .venv
 	virtualenv -ppython2 .venv
-	.venv/bin/pip install liquidluck tornado ghp-import
+	.venv/bin/pip install ghp-import
 
-build: .venv/bin/python
-	rm -fr deploy
-	.venv/bin/liquidluck build
+build: soupault
+	rm -fr build/
+	./soupault
 .PHONY: build
 
-serve: build
-	.venv/bin/liquidluck server
-.PHONY: serve
+linkcheck: build
+	hyperlink build/
+.PHONY: linkcheck
 
-open: serve
-	xdg-open http://localhost:8000
-.PHONY: open
-
-deploy: build
-	.venv/bin/ghp-import -pf deploy/
-
-deploy-legacy: build
-	rsync -acv --delete --chmod=755 ./deploy/ unti@draco.uberspace.de:~/virtual/unterwaditzer.net/
+deploy: build linkcheck .venv/bin/python
+	.venv/bin/ghp-import -pf build/
 .PHONY: deploy

@@ -227,7 +227,7 @@ hr.end {
 #footer .elsewhere a {
     margin: 0 10px;
 }
-#footer .copyright, #footer .system-info {
+#footer .copyright {
     margin: 0;
     color: #999;
     font-size: 12px;
@@ -245,25 +245,11 @@ hr.end {
 .entry-title, .hentry h2, .hentry h3, .hentry h4 {
     color: #222;
 }
-.entry-meta, .entry-meta a, .updated, .updated a , .entry-review, .entry-item-title a {
+main time, .entry-meta, .entry-meta a, .updated, .updated a , .entry-review, .entry-item-title {
     color: #999;
     font-size: 14px;
 }
-.entry-meta a:hover, .updated a:hover {
-    color: #d14;
-}
-.entry-tags {
-    margin: 20px 0;
-}
-.entry-tags a {
-    margin-right: 10px;
-}
-.entry-tags a:before {
-    content: "#";
-}
-.entry-tags a:hover {
-    color: #d14;
-}
+
 .entry-list {
     list-style-type: none;
     margin-left: 0;
@@ -315,14 +301,14 @@ hr.end {
 }
 
 /* syntax highlighting */
-.code .builtin {
+.code .builtin, pre .nb {
     color: #d14;
 }
 
-.code .keyword {
+.code .keyword, pre .k {
     color: #F29313;
 }
 
-.code .literal.string {
+.code .literal.string, pre .s2 {
     color: #45A804;
 }
