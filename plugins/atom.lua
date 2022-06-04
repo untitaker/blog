@@ -33,14 +33,16 @@ data["feed_logo"] = custom_options["site_logo"]
 entries = {}
 
 local n = 1
+local m = 1
 
 local count = size(site_index)
 while (n <= count) do
   entry = site_index[n]
   if entry["date"] then
     entry["date"] = Date.reformat(entry["date"], date_input_formats, "%Y-%m-%dT%H:%M:%S%:z")
+    entries[m] = entry
+    m = m + 1
   end
-  entries[n] = entry
   n = n + 1
 end
 
@@ -55,7 +57,7 @@ end
 data["entries"] = entries
 
 feed_template = [[
-<?xml version="1.0: encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
   <id>{{feed_id}}</id>
   <updated>{{feed_last_updated}}</updated>
