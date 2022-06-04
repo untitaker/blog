@@ -1,7 +1,7 @@
 # blog
 
 This is the code powering [unterwaditzer.net](https://unterwaditzer.net/). It
-is a set of RST and HTML files compiled with [soupault](https://soupault.app/).
+is a set of Markdown and HTML files compiled with [soupault](https://soupault.app/).
 
 ## Build
 

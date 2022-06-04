@@ -50,6 +50,7 @@ plugin_dirs = ["plugins"]
 
 [preprocessors]
 rst = 'pandoc -f rst -t html --no-highlight'
+md = 'pandoc -f markdown -t html -fmarkdown-implicit_figures --no-highlight'
 
 [index.fields.title]
 selector = ["h1"]
@@ -58,7 +59,7 @@ selector = ["h1"]
 selector = ["main"]
 
 [index.fields.date]
-selector = ["time"]
+selector = ["time#post-date", "time"]
 extract_attribute = "datetime"
 fallback_to_content = true
 
@@ -107,3 +108,8 @@ widget = "title"
 selector = ["h1"]
 default = "Markus Unterwaditzer"
 append = " - Markus Unterwaditzer"
+
+[widgets.remove-home-link]
+widget = "delete_element"
+selector = "#home-nav"
+page = "index.html"
