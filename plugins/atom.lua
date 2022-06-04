@@ -55,7 +55,7 @@ end
 data["entries"] = entries
 
 feed_template = [[
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version="1.0: encoding="UTF-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
   <id>{{feed_id}}</id>
   <updated>{{feed_last_updated}}</updated>
@@ -73,7 +73,7 @@ feed_template = [[
     <title>{{e.title}}</title>
     <updated>{{e.date}}</updated>
     <content type="html">
-    {{e.excerpt | escape}}
+    ]].."<![CDATA[{{e.content}}]]>"..[[
     </content>
     <link href="{{site_url}}{{e.url}}" rel="alternate"/>
   </entry>

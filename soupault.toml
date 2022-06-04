@@ -54,6 +54,9 @@ rst = 'pandoc -f rst -t html --no-highlight'
 [index.fields.title]
 selector = ["h1"]
 
+[index.fields.content]
+selector = ["main"]
+
 [index.fields.date]
 selector = ["time"]
 extract_attribute = "datetime"
