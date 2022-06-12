@@ -217,3 +217,7 @@ main time {
 .code .literal.string, pre .s2 {
     color: #45A804;
 }
+
+/* styles used by articles */
+.align-left { float: left }
+.align-right { float: right }
