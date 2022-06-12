@@ -1,4 +1,4 @@
-<h1 id=brand>Markus Unterwaditzer</h1>
+<h1 id=brand>Markus Unterwaditzer (a.k.a. untitaker)</h1>
 
 ## Social
 
