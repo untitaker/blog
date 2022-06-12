@@ -27,6 +27,6 @@
 
 </div>
 
-## Articles
+## Articles (<a href="/feed.xml">Atom Feed</a>)
 
 <ul id="blog-index" class="timeline"></ul>
