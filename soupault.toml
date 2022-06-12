@@ -75,13 +75,17 @@ date_formats = ["%F"]
 path_regex = "[0-9]+/"
 index_selector = "#blog-index"
 index_item_template = """
-<p class="entry-item entry-item-title">{{date}}</p>
-<h2 class="entry-item"><a href="{{url}}">{{title}}</a></h2>
+<li>
+<time id="post-date">{{date}}</time>
+<a href="{{url}}">
+{{title}}
+</a>
+</li>
 """
 
 [widgets.atom]
 widget = "atom"
-page = "index.html"
+page = "index.md"
 feed_file = "feed.xml"
 
 [custom_options]
@@ -92,24 +96,23 @@ site_title = "Markus Unterwaditzer"
 site_logo = "https://unterwaditzer.net/favicon.ico"
 
 [widgets.remove-code-tags-in-pre]
-widget = "preprocess_element"
+widget = "remove-code-tags"
 selector = "pre"
-command = "sed -e 's/<code>//g' -e 's/<\\/code>//g'"
 parse = false
 
 [widgets.pygmentize]
 widget = "preprocess_element"
 action = "replace_element"
 selector = "pre[class^=sourceCode ]"
-command = "pygmentize -f html -l $(echo $ATTR_CLASS | sed -e 's/sourceCode //g') /dev/stdin"
+command = "pygmentize -f html -l $(echo $ATTR_CLASS | sed -e 's/sourceCode //g')"
 
 [widgets.set-page-title]
 widget = "title"
-selector = ["h1"]
+selector = ["h1:not(#brand)"]
 default = "Markus Unterwaditzer"
 append = " - Markus Unterwaditzer"
 
 [widgets.remove-home-link]
 widget = "delete_element"
-selector = "#home-nav"
-page = "index.html"
+selector = ".home-link"
+page = "index.md"

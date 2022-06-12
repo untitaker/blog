@@ -20,6 +20,12 @@ linkcheck: build
 	hyperlink build/
 .PHONY: linkcheck
 
+serve:
+	cd build/ && python3 -mhttp.server
+
+watch:
+	find site/ templates/ Makefile soupault.toml | entr $(MAKE) build linkcheck
+
 deploy: build linkcheck .venv/bin/python
 	.venv/bin/ghp-import -pf build/
 .PHONY: deploy

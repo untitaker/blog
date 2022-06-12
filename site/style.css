@@ -37,9 +37,6 @@ p {
 
 .footnotes { font-size: 90%; }
 
-.align-left { float: left }
-.align-right { float: right }
-
 hr {
     border: none;
     border-bottom: 1px solid #dadada;
@@ -125,19 +122,24 @@ pre code {
     background: rgba(240,17,68,0.8);
     color: #fff;
 }
-main, footer {
+header, nav, main, footer {
     max-width: 768px;
     *width: 768px;
+    margin: 0 auto;
 }
 main {
-    margin: 0 auto;
     padding: 20px;
 }
-#brand {
-    margin: 0;
+
+h2#brand {
+    margin-top: 20px;
     font-size: 26px;
-    text-align: center;
 }
+
+h2#brand:before {
+    content: "\2190";
+}
+
 #brand a {
     color: #999;
     border-bottom: 0 none;
@@ -145,13 +147,12 @@ main {
 #brand a:hover {
     color: #444;
 }
+
 nav {
     position: relative;
     height: 46px;
-    width: 100%;
     zoom: 1;
     z-index: 9;
-    text-align: center;
 }
 nav a {
     font-weight: bold;
@@ -166,9 +167,8 @@ nav a:hover {
     margin-bottom: -6px;
 }
 footer {
-    text-align: center;
     padding: 20px;
-    margin: 0 auto 30px;
+    margin-bottom: 30px;
     text-align: left;
     color: #999;
     font-size: 12px;
@@ -181,19 +181,27 @@ footer a:hover {
     color: #d14;
 }
 /* article */
-main time, .entry-meta, .entry-meta a, .updated, .updated a , .entry-review, .entry-item-title {
+main time {
     color: #999;
     font-size: 14px;
 }
-.entry-item {
+
+.timeline time {
+    margin: 0.1em 1em 0.1em 0;
+    display: inline-block;
+    min-width: 72px;
+    text-align: right;
+}
+
+.timeline li {
     margin: 12px 0;
+    list-style: none;
     zoom: 1;
 }
-.entry-item a {
-    margin: 0.2em 1em;
-}
-.entry-item-title {
-    margin-top: 24px;
+
+.timeline p {
+    margin: 0;
+    padding: 0;
 }
 
 /* syntax highlighting */
