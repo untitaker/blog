@@ -71,7 +71,7 @@ img {
     max-width: 100%;
 }
 a {
-    color: #000;
+    color: #3465a4;
     text-decoration: none;
     overflow: hidden;
     word-wrap: break-word;
@@ -149,6 +149,7 @@ h2#brand:before {
 }
 
 nav {
+    text-align: center;
     position: relative;
     height: 46px;
     zoom: 1;
@@ -167,9 +168,9 @@ nav a:hover {
     margin-bottom: -6px;
 }
 footer {
+    text-align: center;
     padding: 20px;
     margin-bottom: 30px;
-    text-align: left;
     color: #999;
     font-size: 12px;
 }
