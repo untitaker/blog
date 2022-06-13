@@ -116,6 +116,7 @@ pre code {
     color: #444;
     border: none;
     background: inherit;
+    font-size: inherit;
 }
 
 ::selection {

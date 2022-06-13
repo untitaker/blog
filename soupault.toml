@@ -95,16 +95,26 @@ site_author = "Markus Unterwaditzer"
 site_title = "Markus Unterwaditzer"
 site_logo = "https://unterwaditzer.net/favicon.ico"
 
+# Remove code tags such that we have an easier time passing the data to pygmentize
 [widgets.remove-code-tags-in-pre]
 widget = "remove-code-tags"
 selector = "pre"
 parse = false
 
 [widgets.pygmentize]
+after = "remove-code-tags-in-pre"
 widget = "preprocess_element"
 action = "replace_element"
 selector = "pre[class^=sourceCode ]"
 command = "pygmentize -f html -l $(echo $ATTR_CLASS | sed -e 's/sourceCode //g')"
+
+# Re-adding code tags such that firefox reader mode works
+[widgets.add-code-tags-to-pre]
+after = "pygmentize"
+widget = "preprocess_element"
+action = "replace_content"
+selector = "div.highlight pre"
+command = "printf '<code>' && cat && printf '</code>'"
 
 [widgets.set-page-title]
 widget = "title"
