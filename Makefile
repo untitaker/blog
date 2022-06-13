@@ -16,8 +16,8 @@ soupault:
 
 .venv/bin/python:
 	rm -fr .venv
-	virtualenv -ppython2 .venv
-	.venv/bin/pip install ghp-import
+	virtualenv -ppython3 .venv
+	.venv/bin/python -m pip install ghp-import
 
 build: soupault
 	rm -fr build/
