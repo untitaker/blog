@@ -39,8 +39,9 @@ default_content_action = "append_child"
 doctype = "<!DOCTYPE html>"
 keep_doctype = true
 
-# Indent HTML tags for readability
-pretty_print_html = true
+# Do not indent HTML tags, as it causes whitespace issues in Firefox
+# https://github.com/PataphysicalSociety/soupault/issues/46
+pretty_print_html = false
 
 clean_urls = false
 
@@ -77,9 +78,7 @@ index_selector = "#blog-index"
 index_item_template = """
 <li>
 <time id="post-date">{{date}}</time>
-<a href="{{url}}">
-{{title}}
-</a>
+<a href="{{url}}">{{title}}</a>
 </li>
 """
 
