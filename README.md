@@ -13,6 +13,7 @@ Following additional software needs to be installed:
 
 * `pandoc` for converting RST to HTML
 * `pygmentize` for syntax-highlighting source snippets
-* `curl`, `tar`, `sed`, `python3`, `virtualenv`
+* `curl`, `tar`, `sed`, `python3`
+* [Rust and Cargo](https://rustup.rs/)
 
 Then, `make build` should build the entire static site to `build/`. It will take care of downloading soupault.

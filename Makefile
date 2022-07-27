@@ -14,18 +14,13 @@ soupault:
 	mv $(SOUPAULT_TARBALL_PATH) .
 	rmdir $$(dirname $(SOUPAULT_TARBALL_PATH))
 
-.venv/bin/python:
-	rm -fr .venv
-	virtualenv -ppython3 .venv
-	.venv/bin/python -m pip install ghp-import
-
 build: soupault
 	rm -fr build/
 	./soupault
 .PHONY: build
 
-linkcheck: build
-	hyperlink build/
+linkcheck: build crates/bin/hyperlink
+	crates/bin/hyperlink build/
 .PHONY: linkcheck
 
 serve:
@@ -47,6 +42,10 @@ html-diff:
 	cd build-old && git diff
 .PHONY: html-diff
 
-deploy: build linkcheck .venv/bin/python
-	.venv/bin/ghp-import -pf build/
+deploy: build linkcheck crates/bin/ghp
+	crates/bin/ghp build
+	git push -f origin gh-pages
 .PHONY: deploy
+
+crates/bin/%:
+	cargo install --root $$(pwd)/crates/ $$(basename $@/)

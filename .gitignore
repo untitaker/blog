@@ -1,4 +1,4 @@
 build/
 build-old/
 soupault
-.venv
+crates/
