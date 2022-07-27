@@ -1,4 +1,4 @@
-<h1 id="brand">Markus <span id="surname">Unterwaditzer</span></h1>
+<h1 id="brand">Markus <span id="surname">Unterwaditzer</span> (a.k.a. untitaker)</h1>
 
 <script>
 var surnames = [
