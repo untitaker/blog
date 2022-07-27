@@ -1,4 +1,18 @@
-# Markus Unterwaditzer (a.k.a. untitaker) {#brand}
+<h1 id="brand">Markus <span id="surname">Unterwaditzer</span></h1>
+
+<script>
+var surnames = [
+    "Unterwaditzer",
+    "Underwhat'sit",
+    "Underwhatever",
+    "Underwater",
+];
+var surnameIndex = 0;
+document.getElementById("surname").onclick = function() {
+    surnameIndex = (surnameIndex + 1) % surnames.length;
+    this.innerText = surnames[surnameIndex];
+};
+</script>
 
 ## Social
 
