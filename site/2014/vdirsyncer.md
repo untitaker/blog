@@ -124,4 +124,4 @@ additional restrictions.
     with from a client perspective either.
 
 [^4]: [Which is an intentional choice made by the
-    author](http://radicale.org/technical_choices/#idid14).
+    author](https://radicale.org/v3.html#technical-choices).

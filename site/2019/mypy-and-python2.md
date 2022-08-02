@@ -51,7 +51,7 @@ Stub files
 ----------
 
 [Stub
-files](https://mypy.readthedocs.io/en/latest/stubs.html#stub-files) are
+files](https://mypy.readthedocs.io/en/stable/getting_started.html#stubs-files-and-typeshed) are
 a way to annotate regular Python 2-compatible code in Python 3 syntax.
 For each `.py` file one would have a `.pyi` file that contains function
 and type definitions in Python 3 syntax, but with empty function bodies.
@@ -81,7 +81,7 @@ Type hint comments
 ------------------
 
 We chose the only other option: Use [type hint
-comments](https://mypy.readthedocs.io/en/latest/python2.html). Those
+comments](https://peps.python.org/pep-0484/#suggested-syntax-for-python-2-7-and-straddling-code). Those
 work across Python 2 and 3 as well as stub files do, but can\'t get out
 of sync with the implementation:
 
