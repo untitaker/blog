@@ -7,6 +7,7 @@ else
 endif
 
 SOUPAULT_TARBALL_PATH = $(SOUPAULT_ARTIFACT_NAME)/soupault
+export PYTHONPATH := pypi/
 
 soupault:
 	curl https://files.baturin.org/software/soupault/4.0.1/$(SOUPAULT_ARTIFACT_NAME).tar.gz | \
@@ -16,7 +17,7 @@ soupault:
 
 build: soupault pypi/bin/pygmentize
 	rm -fr build/
-	PYTHONPATH=$$(echo pypi/lib/*/site-packages/) ./soupault
+	./soupault
 .PHONY: build
 
 linkcheck: build crates/bin/hyperlink
@@ -54,4 +55,4 @@ pypi/bin/pygmentize:
 	$(MAKE) pypi/bin/pygments
 
 pypi/bin/%:
-	python3 -m pip install --system --isolated -I --root . --prefix pypi $$(basename $@)
+	python3 -m pip install --system --isolated -I --target pypi/ $$(basename $@)
