@@ -8,6 +8,7 @@ endif
 
 SOUPAULT_TARBALL_PATH = $(SOUPAULT_ARTIFACT_NAME)/soupault
 export PYTHONPATH := pypi/
+PYTHON = python3
 
 soupault:
 	curl https://files.baturin.org/software/soupault/4.0.1/$(SOUPAULT_ARTIFACT_NAME).tar.gz | \
@@ -25,7 +26,7 @@ linkcheck: build crates/bin/hyperlink
 .PHONY: linkcheck
 
 serve:
-	cd build/ && python3 -mhttp.server
+	cd build/ && $(PYTHON) -mhttp.server
 
 watch:
 	find site/ templates/ Makefile soupault.toml | entr $(MAKE) build linkcheck
@@ -54,7 +55,7 @@ crates/bin/%:
 pypi/bin/python:
 	# https://www.youtube.com/watch?v=OXmYKh0eTQ8&list=PLWBKAf81pmOaP9naRiNAqug6EBnkPakvY
 	curl https://bootstrap.pypa.io/virtualenv.pyz -o virtualenv.pyz
-	python3 virtualenv.pyz pypi/
+	$(PYTHON) virtualenv.pyz pypi/
 
 pypi/bin/pygmentize:
 	$(MAKE) pypi/bin/pygments
