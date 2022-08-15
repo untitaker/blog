@@ -54,4 +54,4 @@ pypi/bin/pygmentize:
 	$(MAKE) pypi/bin/pygments
 
 pypi/bin/%:
-	python3 -m pip install --isolated -I --root . --prefix pypi $$(basename $@)
+	python3 -m pip install --system --isolated -I --root . --prefix pypi $$(basename $@)
