@@ -2,3 +2,4 @@ build/
 build-old/
 soupault
 crates/
+.venv/

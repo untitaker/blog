@@ -49,3 +49,13 @@ deploy: build linkcheck crates/bin/ghp
 
 crates/bin/%:
 	cargo install --root $$(pwd)/crates/ $$(basename $@/)
+
+.venv/bin/python:
+	rm -rf .venv
+	python3 -m venv .venv
+
+.venv/bin/pygmentize:
+	$(MAKE) .venv/bin/pygments
+
+.venv/bin/%: .venv/bin/python
+	.venv/bin/pip install $$(basename $@)

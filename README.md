@@ -12,7 +12,6 @@ The build process has only been tested on Linux.
 Following additional software needs to be installed:
 
 * `pandoc` for converting RST to HTML
-* `pygmentize` for syntax-highlighting source snippets
 * `curl`, `tar`, `sed`, `python3`
 * [Rust and Cargo](https://rustup.rs/)
 
