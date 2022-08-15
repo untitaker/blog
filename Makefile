@@ -55,4 +55,4 @@ pypi/bin/pygmentize:
 	$(MAKE) pypi/bin/pygments
 
 pypi/bin/%:
-	python3 -m pip install --system --isolated -I --target pypi/ $$(basename $@)
+	python3 -m pip install --system --isolated -I --target pypi/ $$(basename $@) --upgrade
