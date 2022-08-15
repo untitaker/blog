@@ -66,3 +66,6 @@ pypi/bin/%: pypi/bin/python
 
 install-rustup:
 	which cargo || curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+
+cloudflare-pages-build:
+	$(MAKE) CARGO=$$HOME/.cargo/bin/ install-rustup build linkcheck
