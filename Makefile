@@ -14,7 +14,7 @@ soupault:
 	mv $(SOUPAULT_TARBALL_PATH) .
 	rmdir $$(dirname $(SOUPAULT_TARBALL_PATH))
 
-build: soupault .venv/bin/pygmentize
+build: soupault pypi/bin/pygmentize
 	rm -fr build/
 	./soupault
 .PHONY: build
@@ -50,12 +50,8 @@ deploy: build linkcheck crates/bin/ghp
 crates/bin/%:
 	cargo install --root $$(pwd)/crates/ $$(basename $@/)
 
-.venv/bin/python:
-	rm -rf .venv
-	python3 -m venv .venv
+pypi/bin/pygmentize:
+	$(MAKE) pypi/bin/pygments
 
-.venv/bin/pygmentize:
-	$(MAKE) .venv/bin/pygments
-
-.venv/bin/%: .venv/bin/python
-	.venv/bin/pip install $$(basename $@)
+pypi/bin/%:
+	python3 -m pip install -I --root . --prefix pypi $$(basename $@)
