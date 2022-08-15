@@ -64,6 +64,7 @@ pypi/bin/%: pypi/bin/python
 
 hyperlink:
 	curl https://github.com/untitaker/hyperlink/releases/download/0.1.25/$(HYPERLINK_ARTIFACT_NAME) -o hyperlink
+	chmod +x ./hyperlink
 
 cloudflare-pages-build:
 	$(MAKE) PYTHON=python3.7 build linkcheck
