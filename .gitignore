@@ -1,6 +1,6 @@
 build/
 build-old/
 soupault
-crates/
 pypi/
 virtualenv.pyz
+hyperlink
