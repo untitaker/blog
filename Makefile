@@ -12,7 +12,7 @@ SOUPAULT_TARBALL_PATH = $(SOUPAULT_ARTIFACT_NAME)/soupault
 PYTHON = python3
 
 soupault:
-	curl https://files.baturin.org/software/soupault/4.0.1/$(SOUPAULT_ARTIFACT_NAME).tar.gz | \
+	curl -L https://github.com/PataphysicalSociety/soupault/releases/download/4.0.1/$(SOUPAULT_ARTIFACT_NAME).tar.gz | \
 		tar xz $(SOUPAULT_TARBALL_PATH)
 	mv $(SOUPAULT_TARBALL_PATH) .
 	rmdir $$(dirname $(SOUPAULT_TARBALL_PATH))
