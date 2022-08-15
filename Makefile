@@ -24,7 +24,7 @@ build: soupault pypi/bin/pygmentize
 .PHONY: build
 
 linkcheck: build hyperlink
-	hyperlink build/
+	./hyperlink build/
 .PHONY: linkcheck
 
 serve:
