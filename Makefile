@@ -46,11 +46,6 @@ html-diff:
 	cd build-old && git diff
 .PHONY: html-diff
 
-deploy: build linkcheck crates/bin/ghp
-	crates/bin/ghp build
-	git push -f origin gh-pages
-.PHONY: deploy
-
 pypi/bin/python:
 	# https://www.youtube.com/watch?v=OXmYKh0eTQ8&list=PLWBKAf81pmOaP9naRiNAqug6EBnkPakvY
 	curl https://bootstrap.pypa.io/virtualenv.pyz -o virtualenv.pyz
