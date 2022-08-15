@@ -14,7 +14,7 @@ soupault:
 	mv $(SOUPAULT_TARBALL_PATH) .
 	rmdir $$(dirname $(SOUPAULT_TARBALL_PATH))
 
-build: soupault
+build: soupault .venv/bin/pygmentize
 	rm -fr build/
 	./soupault
 .PHONY: build
