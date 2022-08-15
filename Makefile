@@ -9,7 +9,6 @@ else
 endif
 
 SOUPAULT_TARBALL_PATH = $(SOUPAULT_ARTIFACT_NAME)/soupault
-export PYTHONPATH := pypi/
 PYTHON = python3
 
 soupault:
