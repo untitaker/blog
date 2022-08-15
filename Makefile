@@ -51,12 +51,13 @@ deploy: build linkcheck crates/bin/ghp
 crates/bin/%:
 	cargo install --root $$(pwd)/crates/ $$(basename $@/)
 
+pypi/bin/python:
+	# https://www.youtube.com/watch?v=OXmYKh0eTQ8&list=PLWBKAf81pmOaP9naRiNAqug6EBnkPakvY
+	curl https://bootstrap.pypa.io/virtualenv.pyz -o virtualenv.pyz
+	python3 virtualenv.pyz pypi/
+
 pypi/bin/pygmentize:
 	$(MAKE) pypi/bin/pygments
 
-pypi/bin/pip:
-	python3 -m pip install --system --isolated -I --target pypi/ pip --upgrade
-
-pypi/bin/%: pypi/bin/pip
-	pypi/bin/pip install --isolated -I --target pypi/ $$(basename $@) --upgrade
-	find pypi/
+pypi/bin/%: pypi/bin/python
+	pypi/bin/pip install $$(basename $@)
