@@ -16,7 +16,7 @@ soupault:
 
 build: soupault pypi/bin/pygmentize
 	rm -fr build/
-	./soupault
+	PYTHONPATH=$$(echo pypi/lib/*/site-packages/) ./soupault
 .PHONY: build
 
 linkcheck: build crates/bin/hyperlink
