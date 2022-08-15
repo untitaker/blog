@@ -9,6 +9,7 @@ endif
 SOUPAULT_TARBALL_PATH = $(SOUPAULT_ARTIFACT_NAME)/soupault
 export PYTHONPATH := pypi/
 PYTHON = python3
+CARGO = cargo
 
 soupault:
 	curl https://files.baturin.org/software/soupault/4.0.1/$(SOUPAULT_ARTIFACT_NAME).tar.gz | \
@@ -50,7 +51,7 @@ deploy: build linkcheck crates/bin/ghp
 .PHONY: deploy
 
 crates/bin/%:
-	cargo install --root $$(pwd)/crates/ $$(basename $@/)
+	$(CARGO) install --root $$(pwd)/crates/ $$(basename $@/)
 
 pypi/bin/python:
 	# https://www.youtube.com/watch?v=OXmYKh0eTQ8&list=PLWBKAf81pmOaP9naRiNAqug6EBnkPakvY
@@ -62,3 +63,6 @@ pypi/bin/pygmentize:
 
 pypi/bin/%: pypi/bin/python
 	pypi/bin/pip install $$(basename $@)
+
+install-rustup:
+	which cargo || curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
