@@ -3,19 +3,30 @@ UNAME_S = $(shell uname)
 ifeq ($(UNAME_S),Darwin)
 	SOUPAULT_ARTIFACT_NAME = soupault-4.0.1-macos-x86_64
 	HYPERLINK_ARTIFACT_NAME = hyperlink-mac-x86_64
+	PANDOC_ARTIFACT_NAME = pandoc-2.19.2-macOS.zip
+	PANDOC_EXTRACT_COMMAND = cat > tmp.zip && unzip tmp.zip pandoc-2.19.2/bin/pandoc -d $(PANDOC_ARTIFACT_NAME) && rm tmp.zip
 else
 	SOUPAULT_ARTIFACT_NAME = soupault-4.0.1-linux-x86_64
 	HYPERLINK_ARTIFACT_NAME = hyperlink-linux-x86_64
+	PANDOC_ARTIFACT_NAME = pandoc-2.19.2-linux-arm64.tar.gz
+	PANDOC_EXTRACT_COMMAND = tar xz $(PANDOC_ARTIFACT_NAME)
 endif
 
 SOUPAULT_TARBALL_PATH = $(SOUPAULT_ARTIFACT_NAME)/soupault
+PANDOC_TARBALL_PATH = $(SOUPAULT_ARTIFACT_NAME)/bin/pandoc
 PYTHON = python3
+
+pandoc:
+	curl -L https://github.com/jgm/pandoc/releases/download/2.19.2/$(PANDOC_ARTIFACT_NAME) | \
+		$(PANDOC_EXTRACT_COMMAND)
+	 mv $(PANDOC_ARTIFACT_NAME)/*/bin/pandoc .
+	 rm -r $(PANDOC_ARTIFACT_NAME)
 
 soupault:
 	curl -L https://github.com/PataphysicalSociety/soupault/releases/download/4.0.1/$(SOUPAULT_ARTIFACT_NAME).tar.gz | \
 		tar xz $(SOUPAULT_TARBALL_PATH)
 	mv $(SOUPAULT_TARBALL_PATH) .
-	rmdir $$(dirname $(SOUPAULT_TARBALL_PATH))
+	rmdir $(SOUPAULT_ARTIFACT_NAME)
 
 build: soupault pypi/bin/pygmentize
 	rm -fr build/

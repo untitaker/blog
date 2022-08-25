@@ -50,8 +50,8 @@ plugin_discovery = true
 plugin_dirs = ["plugins"]
 
 [preprocessors]
-rst = 'pandoc -f rst -t html --no-highlight'
-md = 'pandoc -f markdown -t html -fmarkdown-implicit_figures --no-highlight'
+rst = './pandoc -f rst -t html --no-highlight'
+md = './pandoc -f markdown -t html -fmarkdown-implicit_figures --no-highlight'
 
 [index.fields.title]
 selector = ["h1"]

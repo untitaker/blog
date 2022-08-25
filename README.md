@@ -11,7 +11,6 @@ The build process has only been tested on Linux.
 
 Following additional software needs to be installed:
 
-* `pandoc` for converting RST to HTML
 * `curl`, `tar`, `sed`, `python3`
 
 Then, `make build` should build the entire static site to `build/`. It will take care of downloading soupault.
