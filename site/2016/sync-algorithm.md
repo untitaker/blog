@@ -36,34 +36,34 @@ set is empty.
 For each item ID (from `A, B, status`), there are several possibilities
 as to which sets it is in:
 
--   ![image](./simplevenn-a.png){.align-right}
+-   ![image](./sync-algorithm/simplevenn-a.png){.align-right}
 
     `A - B - status` \-- If the ID exists on side `A`, but not on `B` or
     the `status`, it must have been created on `A`. Copy the item from
     `A` to `B` and also insert it into `status`.
 
-    -   ![image](./simplevenn-b.png){.align-right}
+    -   ![image](./sync-algorithm/simplevenn-b.png){.align-right}
 
         `B - A - status` \-- Likewise if the ID exists only in `B`, it
         must have been created there.
 
--   ![image](./simplevenn-as.png){.align-right}
+-   ![image](./sync-algorithm/simplevenn-as.png){.align-right}
 
     `A + status - B` \-- If the ID exists on side `A` and the status,
     but not on `B`, it has been deleted on `B`. Delete it from `A` and
     the `status`.
 
-    -   ![image](./simplevenn-bs.png){.align-right}
+    -   ![image](./sync-algorithm/simplevenn-bs.png){.align-right}
 
         `B + status - A` \-- If the ID exists on side `B` and the
         status, but not on `A`, it has been deleted on `A`.
 
--   ![image](./simplevenn-ab.png){.align-right}
+-   ![image](./sync-algorithm/simplevenn-ab.png){.align-right}
 
     `A + B - status` \-- If it exists on side `A` and side `B`, but not
     in `status`, add the ID to the status.
 
--   ![image](./simplevenn-s.png){.align-right}
+-   ![image](./sync-algorithm/simplevenn-s.png){.align-right}
 
     `status - A - B` \-- If it exists only in the `status` it doesn\'t
     exist in reality, delete the ID from the status.
@@ -123,7 +123,7 @@ of `{A, B}`. Here\'s an example:
 A few additional cases have to be added if the item exists on
 `A, B, status`:
 
-![image](./simplevenn-abs.png){.align-right}
+![image](./sync-algorithm/simplevenn-abs.png){.align-right}
 
 -   If the etag has changed on `A` but not `B`, copy from `A` to `B`.
     -   If the etag has changed on `B` but not `A`, copy from `B` to
