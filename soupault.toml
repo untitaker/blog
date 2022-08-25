@@ -43,7 +43,7 @@ keep_doctype = true
 # https://github.com/PataphysicalSociety/soupault/issues/46
 pretty_print_html = false
 
-clean_urls = false
+clean_urls = true
 
 # Look for plugin files in plugins/
 plugin_discovery = true
