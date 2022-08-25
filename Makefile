@@ -28,7 +28,7 @@ soupault:
 	mv $(SOUPAULT_TARBALL_PATH) .
 	rmdir $(SOUPAULT_ARTIFACT_NAME)
 
-build: soupault pypi/bin/pygmentize
+build: soupault pypi/bin/pygmentize pandoc
 	rm -fr build/
 	./soupault
 .PHONY: build
