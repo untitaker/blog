@@ -77,7 +77,7 @@ path_regex = "[0-9]+/"
 index_selector = "#blog-index"
 index_item_template = """
 <li>
-<time id="post-date">{{date}}</time>
+<time class="post-date">{{date}}</time>
 <a href="{{url}}">{{title}}</a>
 </li>
 """
