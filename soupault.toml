@@ -94,6 +94,12 @@ site_author = "Markus Unterwaditzer"
 site_title = "Markus Unterwaditzer"
 site_logo = "https://unterwaditzer.net/favicon.ico"
 
+[widgets.canonical]
+widget = "canonical"
+selector = "link[rel=canonical]"
+site_url = "https://unterwaditzer.net"
+parse = false
+
 # Remove code tags such that we have an easier time passing the data to pygmentize
 [widgets.remove-code-tags-in-pre]
 widget = "remove-code-tags"
