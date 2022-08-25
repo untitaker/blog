@@ -9,7 +9,7 @@ else
 	SOUPAULT_ARTIFACT_NAME = soupault-4.0.1-linux-x86_64
 	HYPERLINK_ARTIFACT_NAME = hyperlink-linux-x86_64
 	PANDOC_ARTIFACT_NAME = pandoc-2.19.2-linux-arm64.tar.gz
-	PANDOC_EXTRACT_COMMAND = tar xz
+	PANDOC_EXTRACT_COMMAND = tar xz -C $(PANDOC_ARTIFACT_NAME)
 endif
 
 SOUPAULT_TARBALL_PATH = $(SOUPAULT_ARTIFACT_NAME)/soupault
@@ -17,6 +17,7 @@ PANDOC_TARBALL_PATH = $(SOUPAULT_ARTIFACT_NAME)/bin/pandoc
 PYTHON = python3
 
 pandoc:
+	mkdir $(PANDOC_ARTIFACT_NAME)/
 	curl -L https://github.com/jgm/pandoc/releases/download/2.19.2/$(PANDOC_ARTIFACT_NAME) | \
 		$(PANDOC_EXTRACT_COMMAND)
 	 mv $(PANDOC_ARTIFACT_NAME)/*/bin/pandoc .
