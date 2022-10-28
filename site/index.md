@@ -19,6 +19,7 @@ document.getElementById("surname").onclick = function() {
 * [GitHub](https://github.com/untitaker)
 * [Twitter](https://twitter.com/untitaker)
 * [Mastodon](https://mastodon.social/@untitaker)
+* [Cohost](https://cohost.org/untitaker)
 
 ## Projects
 
