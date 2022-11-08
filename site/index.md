@@ -16,10 +16,10 @@ document.getElementById("surname").onclick = function() {
 
 ## Social
 
-* [GitHub](https://github.com/untitaker)
-* [Twitter](https://twitter.com/untitaker)
-* [Mastodon](https://mastodon.social/@untitaker)
-* [Cohost](https://cohost.org/untitaker)
+* <a href="https://github.com/untitaker">GitHub</a>
+* <a href="https://twitter.com/untitaker">Twitter</a>
+* <a href="https://mastodon.social/@untitaker" rel="me">Mastodon</a>
+* <a href="https://cohost.org/untitaker">Cohost</a>
 
 ## Projects
 
