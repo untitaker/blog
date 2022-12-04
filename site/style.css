@@ -1,5 +1,6 @@
 body {
-    color: #444;
+    background: rgb(25, 25, 25);
+    color: rgba(255, 255, 255, 0.81);
     padding: 0;
     margin: 0;
     font: 16px/1.62 "Helvetica", "Helvetica Neue", arial, sans-serif;
@@ -22,7 +23,6 @@ blockquote {
     border-left: 0.4em solid #ddd;
     margin: 15px 0;
     padding: 0 15px;
-    color: #777;
 }
 blockquote blockquote {
     padding: 0 0 0 1em;
@@ -57,10 +57,10 @@ li ul {
 table {
     border-collapse: collapse;
     border-spacing: 0;
-    border-color: #bbb;
+    border-color: #333;
 }
 table tr:nth-child(2n) {
-    background: #eee;
+    background: rgba(135, 131, 120, 0.15);
 }
 table th, table td {
     text-align: left;
@@ -71,15 +71,14 @@ img {
     max-width: 100%;
 }
 a {
-    color: #3465a4;
-    text-decoration: none;
+    color: #3984B3;
     overflow: hidden;
     word-wrap: break-word;
     border-bottom: 1px dotted #ddd;
     border-bottom: 1px dotted rgba(0,0,0,0.2);
 }
 a:hover {
-    color: #d14;
+    color: #45B7FF;
     cursor: pointer;
     -webkit-transition: color .5s ease;
     -moz-transition: color .5s ease;
@@ -95,9 +94,7 @@ strong {
 /* code */
 pre, code, tt {
     font: 0.8em "Menlo", monospace;
-    background-color: #fbfbfb;
-    border: 1px solid #ddd;
-    color: #444;
+    border: 1px solid #333;
     border-radius: 3px;
 }
 pre {
@@ -107,20 +104,22 @@ pre {
     overflow: auto;
 }
 code, tt {
-    color: #d14;
+    color: #FF5E5E;
+    background-color: rgba(135, 131, 120, 0.15);
+    border-radius: 3px;
     padding: 1px 3px;
     font-size: 0.75em;
 }
 pre code {
     padding: 0;
-    color: #444;
+    color: rgba(255, 255, 255, 0.81);
     border: none;
     background: inherit;
     font-size: inherit;
 }
 
 ::selection {
-    background: rgba(240,17,68,0.8);
+    background: #FF5E5E;
     color: #fff;
 }
 header, nav, main, footer {
@@ -156,6 +155,7 @@ nav {
     zoom: 1;
     z-index: 9;
 }
+
 nav a {
     font-weight: bold;
     margin-right: 6px;
@@ -163,11 +163,7 @@ nav a {
     line-height: 46px;
     border-bottom: 0 none;
 }
-nav a:hover {
-    color: #d00;
-    border-bottom: 6px solid #d14;
-    margin-bottom: -6px;
-}
+
 footer {
     text-align: center;
     padding: 20px;
@@ -179,9 +175,7 @@ footer a {
     margin: 0;
     color: #999;
 }
-footer a:hover {
-    color: #d14;
-}
+
 /* article */
 main time {
     color: #999;
@@ -208,15 +202,15 @@ main time {
 
 /* syntax highlighting */
 .code .builtin, pre .nb {
-    color: #d14;
+    color: #FF5E5E;
 }
 
 .code .keyword, pre .k {
-    color: #F29313;
+    color: #FFFD78;
 }
 
 .code .literal.string, pre .s2 {
-    color: #45A804;
+    color: #90FF52;
 }
 
 /* styles used by articles */
