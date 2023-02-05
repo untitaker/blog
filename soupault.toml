@@ -91,7 +91,6 @@ page = "index.md"
 feed_file = "feed.xml"
 
 [custom_options]
-atom_feeds = true
 site_url = "https://unterwaditzer.net"
 site_author = "Markus Unterwaditzer"
 site_title = "Markus Unterwaditzer"

@@ -11,10 +11,6 @@ feed_file = config["feed_file"]
 custom_options = soupault_config["custom_options"]
 
 if not Table.has_key(custom_options, "site_url") then
-  Plugin.exit([[Atom feed generation is not enabled in the config. If you want to enable it, set custom_options.atom_feeds = true]])
-end
-
-if not Table.has_key(custom_options, "site_url") then
   Plugin.fail([[custom_options["site_url"] option is required when feed generation is enabled]])
 end
 
@@ -40,6 +36,10 @@ while (n <= count) do
   entry = site_index[n]
   if entry["date"] then
     entry["date"] = Date.reformat(entry["date"], date_input_formats, "%Y-%m-%dT%H:%M:%S%:z")
+    content = HTML.parse(entry["content"])
+    HTML.delete(HTML.select_one(content, "h1"))
+    HTML.delete(HTML.parent(HTML.select_one(content, "time#post-date")))
+    entry["content"] = HTML.to_string(content)
     entries[m] = entry
     m = m + 1
   end
