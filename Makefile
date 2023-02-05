@@ -1,12 +1,15 @@
 UNAME_S = $(shell uname)
 
+SOUPAULT_VERSION = 4.4.0
+HYPERLINK_VERSION = 0.1.25
+
 ifeq ($(UNAME_S),Darwin)
-	SOUPAULT_ARTIFACT_NAME = soupault-4.0.1-macos-x86_64
+	SOUPAULT_ARTIFACT_NAME = soupault-$(SOUPAULT_VERSION)-macos-x86_64
 	HYPERLINK_ARTIFACT_NAME = hyperlink-mac-x86_64
 	PANDOC_ARTIFACT_NAME = pandoc-2.19.2-macOS.zip
 	PANDOC_EXTRACT_COMMAND = cat > tmp.zip && unzip tmp.zip pandoc-2.19.2/bin/pandoc -d $(PANDOC_ARTIFACT_NAME) && rm tmp.zip
 else
-	SOUPAULT_ARTIFACT_NAME = soupault-4.0.1-linux-x86_64
+	SOUPAULT_ARTIFACT_NAME = soupault-$(SOUPAULT_VERSION)-linux-x86_64
 	HYPERLINK_ARTIFACT_NAME = hyperlink-linux-x86_64
 	PANDOC_ARTIFACT_NAME = pandoc-2.19.2-linux-amd64.tar.gz
 	PANDOC_EXTRACT_COMMAND = tar xz -C $(PANDOC_ARTIFACT_NAME)
@@ -24,8 +27,8 @@ pandoc:
 	 rm -r $(PANDOC_ARTIFACT_NAME)
 
 soupault:
-	curl -L https://github.com/PataphysicalSociety/soupault/releases/download/4.0.1/$(SOUPAULT_ARTIFACT_NAME).tar.gz | \
-		tar xz $(SOUPAULT_TARBALL_PATH)
+	curl -L https://github.com/PataphysicalSociety/soupault/releases/download/$(SOUPAULT_VERSION)/$(SOUPAULT_ARTIFACT_NAME).tar.gz | \
+		tar xz ./$(SOUPAULT_TARBALL_PATH)
 	mv $(SOUPAULT_TARBALL_PATH) .
 	rmdir $(SOUPAULT_ARTIFACT_NAME)
 
@@ -69,7 +72,7 @@ pypi/bin/%: pypi/bin/python
 	pypi/bin/pip install $$(basename $@)
 
 hyperlink:
-	curl -L https://github.com/untitaker/hyperlink/releases/download/0.1.25/$(HYPERLINK_ARTIFACT_NAME) -o hyperlink
+	curl -L https://github.com/untitaker/hyperlink/releases/download/$(HYPERLINK_VERSION)/$(HYPERLINK_ARTIFACT_NAME) -o hyperlink
 	chmod +x ./hyperlink
 
 cloudflare-pages-build:
