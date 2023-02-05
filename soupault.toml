@@ -1,4 +1,7 @@
 [settings]
+caching = true
+cache_dir = ".soupault-cache"
+
 # Stop on page processing errors?
 strict = true
 

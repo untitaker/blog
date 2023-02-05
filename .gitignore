@@ -5,3 +5,4 @@ pypi/
 virtualenv.pyz
 hyperlink
 pandoc
+/.soupault-cache
