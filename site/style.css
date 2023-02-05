@@ -1,6 +1,6 @@
 body {
     background: rgb(25, 25, 25);
-    color: rgba(255, 255, 255, 0.81);
+    color: white;
     padding: 0;
     margin: 0;
     font: 16px/1.62 "Helvetica", "Helvetica Neue", arial, sans-serif;
@@ -71,18 +71,11 @@ img {
     max-width: 100%;
 }
 a {
-    color: #3984B3;
+    color: #b3b3b3;
     overflow: hidden;
     word-wrap: break-word;
     border-bottom: 1px dotted #ddd;
     border-bottom: 1px dotted rgba(0,0,0,0.2);
-}
-a:hover {
-    color: #45B7FF;
-    cursor: pointer;
-    -webkit-transition: color .5s ease;
-    -moz-transition: color .5s ease;
-    transition: color .5s ease;
 }
 a img {
     vertical-align: middle;
@@ -109,7 +102,7 @@ code, tt {
 }
 pre code {
     padding: 0;
-    color: rgba(255, 255, 255, 0.81);
+    color: white;
     border: none;
     background: inherit;
     font-size: inherit;
@@ -138,11 +131,7 @@ h2#brand:before {
 }
 
 #brand a {
-    color: #999;
     border-bottom: 0 none;
-}
-#brand a:hover {
-    color: #444;
 }
 
 nav {
