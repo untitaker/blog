@@ -134,22 +134,6 @@ h2#brand:before {
     border-bottom: 0 none;
 }
 
-nav {
-    text-align: center;
-    position: relative;
-    height: 46px;
-    zoom: 1;
-    z-index: 9;
-}
-
-nav a {
-    font-weight: bold;
-    margin-right: 6px;
-    padding: 8px 10px;
-    line-height: 46px;
-    border-bottom: 0 none;
-}
-
 footer {
     text-align: center;
     padding: 20px;

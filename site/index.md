@@ -14,12 +14,13 @@ document.getElementById("surname").onclick = function() {
 };
 </script>
 
-## Social
+## Social and Contact
 
 * <a href="https://github.com/untitaker">GitHub</a>
 * <a href="https://twitter.com/untitaker">Twitter</a>
 * <a href="https://woodland.cafe/@untitaker" rel="me">Mastodon</a>
 * <a href="https://cohost.org/untitaker">Cohost</a>
+* <a href="mailto:markus@unterwaditzer.net">Email</a>
 
 ## Projects
 
