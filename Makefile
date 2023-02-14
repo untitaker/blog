@@ -28,7 +28,7 @@ pandoc:
 
 soupault:
 	curl -L https://github.com/PataphysicalSociety/soupault/releases/download/$(SOUPAULT_VERSION)/$(SOUPAULT_ARTIFACT_NAME).tar.gz | \
-		tar xz ./$(SOUPAULT_TARBALL_PATH)
+		tar xz $(SOUPAULT_TARBALL_PATH)
 	mv $(SOUPAULT_TARBALL_PATH) .
 	rmdir $(SOUPAULT_ARTIFACT_NAME)
 
