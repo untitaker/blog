@@ -71,12 +71,13 @@ img {
     max-width: 100%;
 }
 a {
-    color: #b3b3b3;
+    color: #bcc5ce;
     overflow: hidden;
     word-wrap: break-word;
+    text-decoration: none;
     border-bottom: 1px dotted #ddd;
-    border-bottom: 1px dotted rgba(0,0,0,0.2);
 }
+
 a img {
     vertical-align: middle;
 }
@@ -128,10 +129,6 @@ h2#brand {
 
 h2#brand:before {
     content: "\2190";
-}
-
-#brand a {
-    border-bottom: 0 none;
 }
 
 footer {
