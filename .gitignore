@@ -1,8 +1,8 @@
-build/
-build-old/
-soupault
-pypi/
-virtualenv.pyz
-hyperlink
-pandoc
 /.soupault-cache
+bin/hyperlink
+bin/pandoc
+bin/soupault
+bin/virtualenv.pyz
+build-old/
+build/
+pypi/

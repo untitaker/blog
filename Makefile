@@ -19,26 +19,26 @@ SOUPAULT_TARBALL_PATH = $(SOUPAULT_ARTIFACT_NAME)/soupault
 PANDOC_TARBALL_PATH = $(SOUPAULT_ARTIFACT_NAME)/bin/pandoc
 PYTHON = python3
 
-pandoc:
+bin/pandoc:
 	mkdir $(PANDOC_ARTIFACT_NAME)/
 	curl -L https://github.com/jgm/pandoc/releases/download/2.19.2/$(PANDOC_ARTIFACT_NAME) | \
 		$(PANDOC_EXTRACT_COMMAND)
-	 mv $(PANDOC_ARTIFACT_NAME)/*/bin/pandoc .
+	 mv $(PANDOC_ARTIFACT_NAME)/*/bin/pandoc bin/
 	 rm -r $(PANDOC_ARTIFACT_NAME)
 
-soupault:
+bin/soupault:
 	curl -L https://github.com/PataphysicalSociety/soupault/releases/download/$(SOUPAULT_VERSION)/$(SOUPAULT_ARTIFACT_NAME).tar.gz | \
 		tar xz $(SOUPAULT_TARBALL_PATH)
-	mv $(SOUPAULT_TARBALL_PATH) .
+	mv $(SOUPAULT_TARBALL_PATH) bin/
 	rmdir $(SOUPAULT_ARTIFACT_NAME)
 
-build: soupault pypi/bin/pygmentize pandoc
+build: bin/soupault pypi/bin/pygmentize bin/pandoc
 	rm -rf build/
-	./soupault
+	./bin/soupault
 .PHONY: build
 
-linkcheck: build hyperlink
-	./hyperlink build/
+linkcheck: build bin/hyperlink
+	./bin/hyperlink build/
 .PHONY: linkcheck
 
 serve:
@@ -65,8 +65,8 @@ html-diff:
 
 pypi/bin/python:
 	# https://www.youtube.com/watch?v=OXmYKh0eTQ8&list=PLWBKAf81pmOaP9naRiNAqug6EBnkPakvY
-	curl https://bootstrap.pypa.io/virtualenv.pyz -o virtualenv.pyz
-	$(PYTHON) virtualenv.pyz pypi/
+	curl https://bootstrap.pypa.io/virtualenv.pyz -o bin/virtualenv.pyz
+	$(PYTHON) bin/virtualenv.pyz pypi/
 
 pypi/bin/pygmentize:
 	$(MAKE) pypi/bin/pygments
@@ -74,9 +74,9 @@ pypi/bin/pygmentize:
 pypi/bin/%: pypi/bin/python
 	pypi/bin/pip install $$(basename $@)
 
-hyperlink:
-	curl -L https://github.com/untitaker/hyperlink/releases/download/$(HYPERLINK_VERSION)/$(HYPERLINK_ARTIFACT_NAME) -o hyperlink
-	chmod +x ./hyperlink
+bin/hyperlink:
+	curl -L https://github.com/untitaker/hyperlink/releases/download/$(HYPERLINK_VERSION)/$(HYPERLINK_ARTIFACT_NAME) -o bin/hyperlink
+	chmod +x ./bin/hyperlink
 
 cloudflare-pages-build:
 	$(MAKE) PYTHON=python3.7 build linkcheck
