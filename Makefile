@@ -33,7 +33,7 @@ soupault:
 	rmdir $(SOUPAULT_ARTIFACT_NAME)
 
 build: soupault pypi/bin/pygmentize pandoc
-	rm -fr build/
+	rm -rf build/
 	./soupault
 .PHONY: build
 
@@ -42,10 +42,13 @@ linkcheck: build hyperlink
 .PHONY: linkcheck
 
 serve:
-	cd build/ && $(PYTHON) -mhttp.server
+	$(PYTHON) -mhttp.server -d build/
 
 watch:
 	find site/ templates/ Makefile soupault.toml | entr $(MAKE) build linkcheck
+
+dev:
+	$(MAKE) -j2 serve watch
 
 html-diff:
 	rm -rf build-old
