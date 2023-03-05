@@ -3,18 +3,18 @@ body {
     color: white;
     padding: 0;
     margin: 0;
-    font: 16px/1.62 "Helvetica", "Helvetica Neue", arial, sans-serif;
+    font: 1.25em/1.62 "Helvetica", "Helvetica Neue", arial, sans-serif;
 }
 h1 {
     margin-top: 0;
-    font-size: 28px;
+    font-size: 1.6em;
 }
 h2 {
-    font-size: 22px;
+    font-size: 1.4em;
     margin: 45px 0 15px;
 }
 h3 {
-    font-size: 18px;
+    font-size: 0.9em;
     margin: 30px 0 10px;
 }
 
@@ -124,7 +124,7 @@ main {
 
 h2#brand {
     margin-top: 20px;
-    font-size: 26px;
+    font-size: inherit;
 }
 
 h2#brand:before {
@@ -136,7 +136,7 @@ footer {
     padding: 20px;
     margin-bottom: 30px;
     color: #999;
-    font-size: 12px;
+    font-size: 0.75em;
 }
 footer a {
     margin: 0;
@@ -146,13 +146,13 @@ footer a {
 /* article */
 main time {
     color: #999;
-    font-size: 14px;
+    font-size: 0.8em;
 }
 
 .timeline time {
     margin: 0.1em 1em 0.1em 0;
     display: inline-block;
-    min-width: 72px;
+    min-width: 4.5em;
     text-align: right;
 }
 
