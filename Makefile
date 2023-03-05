@@ -47,8 +47,11 @@ serve:
 watch:
 	find site/ templates/ Makefile soupault.toml | entr $(MAKE) build linkcheck
 
+open:
+	open http://localhost:8000 || xdg-open http://localhost:8000
+
 dev:
-	$(MAKE) -j2 serve watch
+	$(MAKE) -j3 serve watch open
 
 html-diff:
 	rm -rf build-old
