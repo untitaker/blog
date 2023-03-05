@@ -149,10 +149,18 @@ main time {
     font-size: 0.8em;
 }
 
+.timeline, .timeline > ul {
+    padding: 0;
+}
+
 .timeline time {
-    margin: 0.1em 1em 0.1em 0;
+    margin: 0.1em 0.5em 0.1em 0;
     display: inline-block;
-    min-width: 4.5em;
+    /* this is just hardcoded based off of the width of some items in Work section
+     * using em doesn't work properly
+     * if you see this, please help, i have no idea what i'm doing
+     * */
+    min-width: 69px;
     text-align: right;
 }
 
