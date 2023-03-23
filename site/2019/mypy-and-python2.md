@@ -6,10 +6,12 @@ Using type hints in Python 2 libraries
 With [PEP 484](https://www.python.org/dev/peps/pep-0484/) Python allows
 you to annotate variables and functions with their types:
 
-    from typing import Iterable
+``` {.sourceCode .python}
+from typing import Iterable
 
-    def stringify_list(xs: Iterable[int]) -> Iterable[str]:
-        return [str(x) for x in xs]
+def stringify_list(xs: Iterable[int]) -> Iterable[str]:
+    return [str(x) for x in xs]
+```
 
 Why is this useful?
 
@@ -62,15 +64,17 @@ only live in the `.pyi` files, which are not used at runtime.
 Stub files seem to overwrite what mypy would\'ve otherwise found out
 about the real code:
 
-    # File: test.py
-    def stringify_list(xs, random_new_parameter):
-        return [str(x) for x in xs]
+``` {.sourceCode .python}
+# File: test.py
+def stringify_list(xs, random_new_parameter):
+    return [str(x) for x in xs]
 
-    # File: test.pyi
-    from typing import Iterable
+# File: test.pyi
+from typing import Iterable
 
-    def stringify_list(xs: Iterable[int]) -> Iterable[str]:
-        return [str(x) for x in xs]
+def stringify_list(xs: Iterable[int]) -> Iterable[str]:
+    return [str(x) for x in xs]
+```
 
 Even though we added a new argument to `stringify_list`, mypy still
 accepts this code because it thinks the function takes one argument. For
@@ -85,11 +89,13 @@ comments](https://peps.python.org/pep-0484/#suggested-syntax-for-python-2-7-and-
 work across Python 2 and 3 as well as stub files do, but can\'t get out
 of sync with the implementation:
 
-    from typing import Iterable
+``` {.sourceCode .python}
+from typing import Iterable
 
-    def stringify_list(xs, random_new_parameter):
-        # type: (Iterable[int]) -> Iterable[str]
-        return [str(x) for x in xs]
+def stringify_list(xs, random_new_parameter):
+    # type: (Iterable[int]) -> Iterable[str]
+    return [str(x) for x in xs]
+```
 
 This time mypy rejects the code with
 `error: Type signature has too few arguments`.
@@ -103,23 +109,27 @@ the `typing` module under Python 2.
 
 Luckily there is a cheap way to get rid of these pesky imports:
 
-    if False:
-        from typing import Iterable
+``` {.sourceCode .python}
+if False:
+    from typing import Iterable
 
-    def stringify_list(xs, random_new_parameter):
-        # type: (Iterable[int]) -> Iterable[str]
-        return [str(x) for x in xs]
+def stringify_list(xs, random_new_parameter):
+    # type: (Iterable[int]) -> Iterable[str]
+    return [str(x) for x in xs]
+```
 
 This avoids importing the `typing` module at runtime while keeping mypy
 happy. We had this version in use for quite a while until we discovered
 that mypy had a more official way that didn\'t depend on undocumented
 quirks:
 
-    MYPY = False
-    if MYPY:
-        from typing import Iterable
+``` {.sourceCode .python}
+MYPY = False
+if MYPY:
+    from typing import Iterable
 
-    <rest of the code as above>
+<rest of the code as above>
+```
 
 The mypy documentation mentions this hack as a [solution to import
 cycles while
@@ -133,21 +143,23 @@ All of our imports are now disabled at runtime. This works for type hint
 comments, but some other annotations are not comments. For example,
 function overloads:
 
-    from typing import Union, overload
+```{.sourceCode .python}
+from typing import Union, overload
 
-    @overload
-    def foo(x):
-        # type: (int) -> None
-        pass
+@overload
+def foo(x):
+    # type: (int) -> None
+    pass
 
-    @overload
-    def foo(x):
-        # type: (str) -> None
-        pass
+@overload
+def foo(x):
+    # type: (str) -> None
+    pass
 
-    def foo(x):
-        # type: (Union[int, str]) -> None
-        pass
+def foo(x):
+    # type: (Union[int, str]) -> None
+    pass
+```
 
 The issue is the `overload` decorator. Wrapping only the first two
 function declarations in `if MYPY` confuses mypy so much it thinks the
@@ -157,15 +169,17 @@ which could get out of sync unnoticed.
 
 Our solution is:
 
-    MYPY = False
+```{.sourceCode .python}
+MYPY = False
 
-    if MYPY:
-        from typing import Union, overload
-    else:
-        def overload(x):
-            return x
+if MYPY:
+    from typing import Union, overload
+else:
+    def overload(x):
+        return x
 
-    <rest of the code as above>
+<rest of the code as above>
+```
 
 This is not quite zero runtime overhead but close enough.
 
