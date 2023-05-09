@@ -175,17 +175,27 @@ main time {
     padding: 0;
 }
 
-/* syntax highlighting */
-.code .builtin, pre .nb {
-    color: #FF5E5E;
+/* syntax highlighting, inspired by base16-bright colors colors copied from my
+ * own alacritty config, which are in turn copied from
+ * https://github.com/aaron-williamson/base16-alacritty */
+.code .builtin, pre .nb, pre .fm {
+    color: #fb0120;
 }
 
-.code .keyword, pre .k {
-    color: #FFFD78;
+.code .keyword, pre .k, pre .cp, pre .kd {
+    color: #d381c3;
 }
 
-.code .literal.string, pre .s2 {
-    color: #90FF52;
+.code .literal.string, pre .s2, pre .s {
+    color: #a1c659;
+}
+
+pre .nd, pre .nf {
+    color: #6fb3d2;
+}
+
+pre .mi, pre .kc {
+    color: #fda331;
 }
 
 /* styles used by articles */
