@@ -14,6 +14,11 @@ document.getElementById("surname").onclick = function() {
 };
 </script>
 
+
+## Articles (<a href="/feed.xml">Atom Feed</a>)
+
+<ul id="blog-index" class="timeline"></ul>
+
 ## Social and Contact
 
 * <a href="https://github.com/untitaker">GitHub</a>
@@ -43,7 +48,3 @@ document.getElementById("surname").onclick = function() {
 * <time>2017-2018</time> [Runtastic](https://www.runtastic.com/)
 
 </div>
-
-## Articles (<a href="/feed.xml">Atom Feed</a>)
-
-<ul id="blog-index" class="timeline"></ul>
