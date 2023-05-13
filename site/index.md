@@ -15,10 +15,6 @@ document.getElementById("surname").onclick = function() {
 </script>
 
 
-## Articles (<a href="/feed.xml">Atom Feed</a>)
-
-<ul id="blog-index" class="timeline"></ul>
-
 ## Social and Contact
 
 * <a href="https://github.com/untitaker">GitHub</a>
@@ -26,6 +22,10 @@ document.getElementById("surname").onclick = function() {
 * <a href="https://woodland.cafe/@untitaker" rel="me">Mastodon</a>
 * <a href="https://cohost.org/untitaker">Cohost</a>
 * <a href="mailto:markus@unterwaditzer.net">Email</a>
+
+## Articles (<a href="/feed.xml">Atom Feed</a>)
+
+<ul id="blog-index" class="timeline"></ul>
 
 ## Projects
 
