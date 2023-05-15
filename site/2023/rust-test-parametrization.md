@@ -104,5 +104,26 @@ I want to programmatically generate testcases in Rust in a way that is as low-bo
 
 I made a rough sketch of what the surface-level experience would look like by releasing [script-macro](https://github.com/untitaker/script-macro), but while RHAI is a pretty nice scripting language, it is not normal Rust code, and now you have a significant amount of complexity on top of all the problems coming with the code generation approach. In going down that particular prototyping rabbithole I also found [inline-proc](https://github.com/SabrinaJewson/inline-proc.rs), which is a proc macro shelling out to cargo.
 
+## Addendum
+
+* <time>2023-05-15</time> Several peope have pointed out that an easy way to
+  solve test parametrization is to execute all tests within a single test item
+  as such:
+
+  ```{.sourceCode .rust}
+  #[test]
+  fn test_add() {
+      for value in [1, 2, 3] {
+          assert_eq!(value + value, 2 * value);
+      }
+  }
+  ```
+
+  This works, and is a very popular approach to running multiple tests, but now
+  your "subtests" are not a first-class test item, which comes with some
+  disadvantages (bad CLI ergonomics, bad debuggability). So to me this is
+  probably the most viable approach right now, but also really a non-solution
+  to the problem.
+
 [^1]: For example, a list of `n` files and `m` possible configuration profiles,
   effectively running the test function `n * m` times.
