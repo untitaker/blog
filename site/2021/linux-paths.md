@@ -145,7 +145,7 @@ Okay, mystery kind of solved, now let's explore a different question:
 
 The answer is: [There is no
 limit.](https://unix.stackexchange.com/a/596656/31598) There's a limit
-on the path lenghts that you can pass to syscalls. What does that mean
+on the path lengths that you can pass to syscalls. What does that mean
 in practice?
 
 If we create a deeply nested directory tree using this simple Rust
