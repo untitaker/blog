@@ -22,6 +22,7 @@ document.getElementById("surname").onclick = function() {
     .socials {
         list-style: none;
         text-align: center;
+        line-height: 2.5em;
     }
 
     .socials li {
