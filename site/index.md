@@ -17,10 +17,10 @@ document.getElementById("surname").onclick = function() {
 
 ## Social and Contact
 
-* <a href="https://github.com/untitaker">GitHub</a>
-* <a href="https://twitter.com/untitaker">Twitter</a>
-* <a href="https://woodland.cafe/@untitaker" rel="me">Mastodon</a>
-* <a href="https://cohost.org/untitaker">Cohost</a>
+* <a style='color: #d381c3' href="https://github.com/untitaker">GitHub</a>
+* <a style='color: #76c7b7' href="https://twitter.com/untitaker">Twitter</a>
+* <a style='color: #6fb3d2' href="https://woodland.cafe/@untitaker" rel="me">Mastodon</a>
+* <a style='color: #fb0120' href="https://cohost.org/untitaker">Cohost</a>
 * <a href="mailto:markus@unterwaditzer.net">Email</a>
 
 ## Articles (<a href="/feed.xml">Atom Feed</a>)
