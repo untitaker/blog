@@ -179,7 +179,7 @@ main time {
  * own alacritty config, which are in turn copied from
  * https://github.com/aaron-williamson/base16-alacritty */
 .code .builtin, pre .nb, pre .fm {
-    color: #fb0120;
+    color: #FF5E5E;
 }
 
 .code .keyword, pre .k, pre .cp, pre .kd {

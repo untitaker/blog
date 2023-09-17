@@ -37,7 +37,7 @@ document.getElementById("surname").onclick = function() {
 <li><a style='color: #d381c3' href="https://github.com/untitaker">GitHub</a></li>
 <li><a style='color: #76c7b7' href="https://twitter.com/untitaker">Twitter</a></li>
 <li><a style='color: #6fb3d2' href="https://woodland.cafe/@untitaker" rel="me">Mastodon</a></li>
-<li><a style='color: #fb0120' href="https://cohost.org/untitaker">Cohost</a></li>
+<li><a style='color: #FF5E5E' href="https://cohost.org/untitaker">Cohost</a></li>
 <li><a href="mailto:markus@unterwaditzer.net">Email</a></li>
 
 </ul>
