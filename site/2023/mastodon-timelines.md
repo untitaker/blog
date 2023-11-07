@@ -9,7 +9,7 @@ This post is about the opposite extreme: Mastodon’s chronological timeline, wh
 
 I encountered the following problems with Mastodon:
 
-- Chronological sorting makes it hard to catch up with posts across timezones. If you log onto Mastodon at the same every day, you mostly get to see posts from people in your timezone or whoever happens to post at that time. If anybody posts while you are asleep, you are unlikely to see it. This is bad if your social circle is distributed across timezones, and probably irrelevant if it isn’t.
+- Chronological sorting makes it hard to catch up with posts across timezones. If you log onto Mastodon at the same time every day, you mostly get to see posts from people in your timezone or whoever happens to post at that time. If anybody posts while you are asleep, you are unlikely to see it. This is bad if your social circle is distributed across timezones, and probably irrelevant if it isn’t.
 - In order to work around this issue (and to kind of “game” the algorithm), people boost (=retweet) their own posts a few times per day. This is very annoying if you are a heavy lurker and are seeing the same post pop up on your timeline multiple times.
 - Chronological sorting strongly favors active posters over inactive ones, with no regard over whether one poster has a greater signal/noise ration than the other. This is really noticeable if you try to follow a few friends who post about once per day, and then the automatic feed of a major newssite that posts every hour.
 - This one is specific to Mastodon: When a post becomes popular, you see boosts of the same post multiple times on your own timeline.
