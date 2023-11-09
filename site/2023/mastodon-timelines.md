@@ -59,9 +59,9 @@ I have all of those lists configured as tabs in [Tusky](https://tusky.app/). Swi
 
 However, this approach has limitations too. The list bot can only make decisions on a per-account basis, and in order to not overwhelm the API, it cannot make them in realtime. This limits the amount of interesting programmatic lists one can create.
 
-I would like to have something like [fediview](https://fediview.com/) but without the extra hassle of having to go to a separate website to read content. Ideally in whichever Mastodon client I already use, or alternatively in my email inbox or RSS reader, but certainly not on an entirely separate website I have to regularly visit.
-
 ## Lists, but as a vehicle for algorithmic timelines?
+
+I would like to have something like [fediview](https://fediview.com/) but without the extra hassle of having to go to a separate website to read content. Ideally in whichever Mastodon client I already use, or alternatively in my email inbox or RSS reader, but certainly not on an entirely separate website I have to regularly visit.
 
 If there was an API with which Mastodon apps could insert arbitrary posts into a list (instead of just adding and removing accounts), people could experiment with algorithmic timelines in Mastodon that integrate into all clients that support lists, without binding up more resources from the core team, and could iterate on them without the extremely long update cycles that most Mastodon servers have.
 
