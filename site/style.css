@@ -114,7 +114,7 @@ pre code {
     color: #fff;
 }
 header, nav, main, footer {
-    max-width: 768px;
+    max-width: 720px;
     *width: 768px;
     margin: 0 auto;
 }
