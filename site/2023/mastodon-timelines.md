@@ -66,3 +66,7 @@ I would like to have something like [fediview](https://fediview.com/) but withou
 If there was an API with which Mastodon apps could insert arbitrary posts into a list (instead of just adding and removing accounts), people could experiment with algorithmic timelines in Mastodon that integrate into all clients that support lists, without binding up more resources from the core team, and could iterate on them without the extremely long update cycles that most Mastodon servers have.
 
 This sounds resource-intensive for server operators, but for most kinds of low-frequency feeds, one could probably get away with a very strict rate limit per user. Also this new API would likely only write to Redis, not Postgres.
+
+## Addendum
+
+* <time>2023-11-11</time> [There is an open Mastodon issue](https://github.com/mastodon/mastodon/issues/3782) that discusses this as well.
