@@ -111,15 +111,14 @@ pre code {
 
 header, nav, main, footer {
     max-width: 720px;
-    *width: 768px;
-    margin: 0 auto;
-}
-main {
-    padding: 20px;
+    *width: 720px;
+    margin: 20px auto 50px;
+    padding-left: 20px;
+    padding-right: 20px;
 }
 
 h2#brand {
-    margin-top: 20px;
+    margin-top: 0;
     font-size: inherit;
 }
 
@@ -129,8 +128,6 @@ h2#brand:before {
 
 footer {
     text-align: center;
-    padding: 20px;
-    margin-bottom: 30px;
     color: #999;
     font-size: 0.75em;
 }
