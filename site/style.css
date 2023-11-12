@@ -11,6 +11,8 @@ h1 {
 }
 h2 {
     font-size: 1.4em;
+}
+h2, .multi-heading {
     margin: 45px 0 15px;
 }
 h3 {
@@ -172,26 +174,38 @@ main time {
 /* syntax highlighting, inspired by base16-bright colors colors copied from my
  * own alacritty config, which are in turn copied from
  * https://github.com/aaron-williamson/base16-alacritty */
-.code .builtin, pre .nb, pre .fm {
+.code .builtin, pre .nb, pre .fm, .c-red {
     color: #FF5E5E;
 }
 
-.code .keyword, pre .k, pre .cp, pre .kd {
+.code .keyword, pre .k, pre .cp, pre .kd, .c-purple {
     color: #d381c3;
 }
 
-.code .literal.string, pre .s2, pre .s {
+.code .literal.string, pre .s2, pre .s, .c-green {
     color: #a1c659;
 }
 
-pre .nd, pre .nf {
+pre .nd, pre .nf, .c-blue {
     color: #6fb3d2;
 }
 
-pre .mi, pre .kc {
+pre .mi, pre .kc, .c-orange {
     color: #fda331;
+}
+
+.c-cyan {
+    color: #76c7b7;
 }
 
 /* styles used by articles */
 .align-left { float: left }
 .align-right { float: right }
+
+.multi-heading h2 {
+    display: inline;
+}
+
+.multi-heading a {
+    margin-left: 0.5em;
+}
