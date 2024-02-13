@@ -37,4 +37,4 @@ I can only assume that the way that Cloudflare justifies this sort of URL rewrit
 
 However I think it would be a gross misinterpretation of that article if your takeaway is to plainly remove `.html` from all URLs and issue permanent redirects. If your URL prettification happens in a way that can easily break when moving between static site hosts, you have not made URLs more stable, you just made them prettier. In fact, Cloudflare Pages now made my URLs more brittle and less cool, because they now not only depend on the choices made by my static site generator, but also on my choice of static site host.
 
-This blog will continue to serve cool-but-ugly URLs. If I ever attempt to make them prettier, I will do so with intent, and not on accident. And probably as part of static site generation, not in the routing layer of a random cloud service.
+This blog will continue to serve cool-but-ugly URLs. If I ever attempt to make them prettier, I will do so with intent, and not by accident. And probably as part of static site generation, not in the routing layer of a random cloud service.
