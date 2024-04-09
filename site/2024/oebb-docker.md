@@ -1,5 +1,5 @@
-ÖBB WiFi issues with Docker
-===========================
+ÖBB WiFi issues: cannot connect to railnet.oebb.at
+==================================================
 
 <time id=post-date>2024-04-09</time>
 
