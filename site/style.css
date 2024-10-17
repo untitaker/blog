@@ -171,11 +171,11 @@ main time {
 /* syntax highlighting, inspired by base16-bright colors colors copied from my
  * own alacritty config, which are in turn copied from
  * https://github.com/aaron-williamson/base16-alacritty */
-.code .builtin, pre .nb, pre .fm, .c-red {
+.code .builtin, pre .nb, pre .fm, .c-red, pre .kn {
     color: #FF5E5E;
 }
 
-.code .keyword, pre .k, pre .cp, pre .kd, .c-purple {
+.code .keyword, pre .k, pre .cp, pre .kd, .c-purple, pre .ow {
     color: #d381c3;
 }
 
@@ -193,6 +193,10 @@ pre .mi, pre .kc, .c-orange {
 
 .c-cyan {
     color: #76c7b7;
+}
+
+pre .c1 {
+    color: #888888;
 }
 
 /* styles used by articles */
