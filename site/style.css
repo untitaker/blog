@@ -210,3 +210,14 @@ pre .c1 {
 .multi-heading a {
     margin-left: 0.5em;
 }
+
+#likes button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+}
+
+#likes button:hover {
+  color: #a1c659;
+}
