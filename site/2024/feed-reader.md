@@ -5,7 +5,7 @@ A modern feed reader
 
 I used to operate a public [Nitter](https://github.com/zedeus/nitter) instance for half of 2023. Nitter is a public proxy of Twitter, which gives a stripped-down view of Twitter in spite of whatever strange changes are being made there.
 
-But the bigger problem were (and are) scrapers of Twitter. RSS feeds were crucial to make Nitter an attractive target for them, because Nitter's feeds are complete and actually useful. The scraping in turn caused issues for regular users, as it competes with them for API quota and server resources. [Even for regular blogs, the volume of feed readers can become a problem](https://rachelbythebay.com/w/2024/06/28/fsr/).
+A big problem were (and are) scrapers. RSS feeds were crucial to make Nitter an attractive target for them, because Nitter's feeds are complete and actually useful. The scraping in turn caused issues for regular users, as it competes with them for API quota and server resources. [Even for regular blogs, the volume of feed readers can become a problem](https://rachelbythebay.com/w/2024/06/28/fsr/).
 
 Eventually, most of the Nitter network of public instances shut down due to a variety of reasons, and the few that remain don't have RSS feeds, leaving everybody miserable.
 
