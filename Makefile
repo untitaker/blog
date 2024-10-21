@@ -41,6 +41,17 @@ linkcheck: build bin/hyperlink
 	./bin/hyperlink build/
 .PHONY: linkcheck
 
+linkcheck-ext: build bin/hyperlink
+	hyperlink dump-external-links build/ | \
+		rg '^https?://' | \
+		rg -v '^http://developers.flattr.net/auto-submit/' | \
+		rg -v '^https://docs.rsshub.app/' | \
+		rg -v '^https://twitter.com/' | \
+		rg -v '^https://crates.io/' | \
+		rg -v '^https://gts.woodland.cafe/@untitaker' | \
+		xargs -P20 -I{} bash -c 'curl -ILf "{}" &> /dev/null || (echo "{}" && exit 1)'
+.PHONY: linkcheck-ext
+
 serve:
 	$(PYTHON) -mhttp.server -d build/
 
