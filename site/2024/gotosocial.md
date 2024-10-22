@@ -8,9 +8,12 @@ I recently moved my Mastodon instance to GoToSocial, for these reasons:
 - Mastodon is resource-intensive for single-user instances. The cost was, and continues to be, less than 5 EUR/month, but in the case of Mastodon it takes a lot of tweaking to get there, due to tradeoffs in its design that only make sense for larger instances (particularly with regard to media retention).
     - Command to keep it under 5 EUR/month for me was to run this + PG vacuum as a cronjob. It’s probably cheaper to use Cloudflare R2 — I used the disk that came with my VPS.
     
-    ```jsx
-    tootctl media remove -c 1 --days 1 && tootctl media remove -c 1 --prune-profiles --days 1 && tootctl preview_cards remove -c 1 --days 1 && tootctl statuses remove --days 1
-    ```
+      ```{.sourceCode .bash}
+      tootctl media remove -c 1 --days 1 && \
+          tootctl media remove -c 1 --prune-profiles --days 1 && \
+          tootctl preview_cards remove -c 1 --days 1 && \
+          tootctl statuses remove --days 1
+      ```
     
     - Because Mastodon is being kinda stupid about it, and rarely refetches stuff, some inactive profiles on your server will lose all their avatars with the above command. That is certainly buggy behavior but hasn’t been a practical issue for me. (Also, with a single-user instance you will be browsing other Mastodon instances directly anyway, instead of viewing their users through your instance)
     - Varnish cache was necessary in front of Mastodon to make it load reasonably fast, adding more complexity next to Sidekiq and Postgres.
