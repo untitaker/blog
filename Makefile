@@ -1,6 +1,6 @@
 UNAME_S = $(shell uname)
 
-SOUPAULT_VERSION = 4.4.0
+SOUPAULT_VERSION = 4.11.0
 HYPERLINK_VERSION = 0.1.40
 
 ifeq ($(UNAME_S),Darwin)
