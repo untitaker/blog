@@ -218,6 +218,10 @@ pre .c1 {
   color: inherit;
 }
 
-#likes button:hover {
+#likes button:disabled {
+  cursor: default;
+}
+
+#likes button:hover:not(:disabled) {
   color: #a1c659;
 }

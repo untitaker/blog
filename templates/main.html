@@ -25,26 +25,30 @@
     <footer>
        <!-- https://github.com/dddddddddzzzz/OpenHeart -->
       <div id="likes">
-        <form action="https://api.oh.dddddddddzzzz.org/unterwaditzer.net/main" method="POST" enctype="text/plain" target="_blank">
-          <button title="Give this page a like!" name="👍">
-            <span>&hellip;</span> likes
-            👍
-          </button>
-        </form>
+        <button title="Give this page a like!" name="👍">
+          <span>&hellip;</span>
+          👍
+        </button>
       </div>
 
       <script>
+        let url = "https://api.oh.dddddddddzzzz.org/unterwaditzer.net/mainv2";
+        let emoji = "👍";
+
         window.reloadLikes = async () => {
-          const res = await fetch("https://api.oh.dddddddddzzzz.org/unterwaditzer.net/main");
+          const res = await fetch(url);
           const json = await res.json();
-          document.querySelector("#likes span").innerText = json["👍"];
+          document.querySelector("#likes span").innerText = `${json[emoji]} likes`;
         };
         reloadLikes();
 
-        document.querySelector("#likes form").onsubmit = (e) => {
-          const val = parseInt(document.querySelector("#likes-count").innerText) + 1;
-          document.querySelector("#likes span").innerText = val;
-        };
+        document.querySelector("#likes button").addEventListener("click", (e) => {
+          // who cares about error handling
+          fetch(url, {method: "POST", body: emoji, mode: "no-cors"});
+          const val = parseInt(document.querySelector("#likes span").innerText) + 1;
+          document.querySelector("#likes span").innerText = `${val} likes. thank you!`;
+          document.querySelector("#likes button").disabled = true;
+        });
       </script>
 
       <p>© Copyright Markus Unterwaditzer.
