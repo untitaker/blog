@@ -44,6 +44,8 @@ document.getElementById("surname").onclick = function() {
 
 <ul id="blog-index" class="timeline"></ul>
 
+[All posts](/archive)
+
 ## Projects
 
 <div class="timeline">
@@ -52,7 +54,7 @@ document.getElementById("surname").onclick = function() {
 
 * <time>2013-2017</time> Former [maintainer](https://palletsprojects.com/people/) of [Flask](https://palletsprojects.com/p/flask/)
 
-* (For other, smaller projects, see my [GitHub](https://github.com/untitaker/))
+[More projects on GitHub](https://github.com/untitaker/)
 
 </div>
 

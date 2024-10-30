@@ -203,7 +203,7 @@ pre .c1 {
 .align-left { float: left }
 .align-right { float: right }
 
-.multi-heading h2 {
+.multi-heading * {
     display: inline;
 }
 

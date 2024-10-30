@@ -75,15 +75,15 @@ sort_by = "date"
 
 date_formats = ["%F"]
 
-[index.views.blog]
-path_regex = "[0-9]+/"
+[index.views.blog_truncated]
+path_regex = "/[0-9]+/"
 index_selector = "#blog-index"
-index_item_template = """
-<li>
-<time class="post-date">{{date}}</time>
-<a href="{{url}}">{{title}}</a>
-</li>
-"""
+index_processor = "scripts/render-index 3"
+
+[index.views.blog_full]
+path_regex = "/[0-9]+/"
+index_selector = "#blog-index-full"
+index_processor = "scripts/render-index"
 
 [widgets.atom]
 widget = "atom"

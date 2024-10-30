@@ -56,7 +56,7 @@ serve:
 	$(PYTHON) -mhttp.server -d build/
 
 watch:
-	find site/ templates/ Makefile soupault.toml | entr $(MAKE) build linkcheck
+	find site/ templates/ scripts/ Makefile soupault.toml | entr $(MAKE) build linkcheck
 
 open:
 	open http://localhost:8000 || xdg-open http://localhost:8000
