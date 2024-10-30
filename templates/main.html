@@ -3,7 +3,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link rel="stylesheet" href="/style.css?v7" type="text/css">
+    <link rel="stylesheet" href="/style.css?v8" type="text/css">
     <link rel="alternate" type="application/atom+xml" href="/feed.xml" title="Markus Unterwaditzer">
     <link rel="icon" href="/favicon.ico" sizes="any">
     <link rel="canonical" href=""> <!-- set by soupault -->
@@ -24,30 +24,25 @@
 
     <footer>
        <!-- https://github.com/dddddddddzzzz/OpenHeart -->
-      <div id="likes">
-        <button title="Give this page a like!" name="👍">
-          <span>&hellip;</span>
-          👍
-        </button>
-      </div>
+      <button id=likes title="Give this page a like!">&hellip;</button>
 
       <script>
-        let url = "https://api.oh.dddddddddzzzz.org/unterwaditzer.net/mainv2";
-        let emoji = "👍";
+        let likesUrl = "https://api.oh.dddddddddzzzz.org/unterwaditzer.net/mainv2";
+        let likesEmoji = "👍";
 
-        window.reloadLikes = async () => {
-          const res = await fetch(url);
+        reloadLikes = async () => {
+          const res = await fetch(likesUrl);
           const json = await res.json();
-          document.querySelector("#likes span").innerText = `${json[emoji]} likes`;
+          document.querySelector("#likes").innerText = `${json[likesEmoji]} likes ${likesEmoji}`;
         };
         reloadLikes();
 
-        document.querySelector("#likes button").addEventListener("click", (e) => {
+        document.querySelector("#likes").addEventListener("click", (e) => {
           // who cares about error handling
-          fetch(url, {method: "POST", body: emoji, mode: "no-cors"});
+          fetch(likesUrl, {method: "POST", body: likesEmoji, mode: "no-cors"});
           const val = parseInt(document.querySelector("#likes span").innerText) + 1;
-          document.querySelector("#likes span").innerText = `${val} likes. thank you!`;
-          document.querySelector("#likes button").disabled = true;
+          document.querySelector("#likes").innerText = `${val} likes. thank you! ${likesEmoji}`;
+          document.querySelector("#likes").disabled = true;
         });
       </script>
 

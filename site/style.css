@@ -211,17 +211,17 @@ pre .c1 {
     margin-left: 0.5em;
 }
 
-#likes button {
+#likes {
   background: none;
   border: none;
   cursor: pointer;
   color: inherit;
 }
 
-#likes button:disabled {
+#likes:disabled {
   cursor: default;
 }
 
-#likes button:hover:not(:disabled) {
+#likes:hover:not(:disabled) {
   color: #a1c659;
 }
