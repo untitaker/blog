@@ -71,11 +71,15 @@ table th, table td {
 img {
     max-width: 100%;
 }
-a {
+a, #likes {
+    padding: 0;
     color: #bcc5ce;
+    background: none;
+    cursor: pointer;
     overflow: hidden;
     word-wrap: break-word;
     text-decoration: none;
+    border: none;
     border-bottom: 1px dotted #ddd;
 }
 
@@ -122,7 +126,7 @@ h2#brand {
     font-size: inherit;
 }
 
-h2#brand:before {
+h2#brand:before, .back:before {
     content: "\2190";
 }
 
@@ -131,7 +135,8 @@ footer {
     color: #999;
     font-size: 0.75em;
 }
-footer a {
+
+footer a, footer #likes {
     margin: 0;
     color: #999;
 }
@@ -212,16 +217,5 @@ pre .c1 {
 }
 
 #likes {
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: inherit;
-}
-
-#likes:disabled {
-  cursor: default;
-}
-
-#likes:hover:not(:disabled) {
-  color: #a1c659;
+    font-weight: inherit;
 }
