@@ -1,10 +1,58 @@
+:root {
+    --fg: white;
+    --body-bg: rgb(25, 25, 25);
+    --secondary-bg: rgba(135, 131, 120, 0.15);
+    --secondary-bg-dark: #292827;
+    --grey-text: #888;
+    --grey-border: #333;
+    --link-text: #bcc5ce;
+    --link-border: #ddd;
+
+    /* syntax highlighting, inspired by base16-bright colors colors copied from my
+     * own alacritty config, which are in turn copied from
+     * https://github.com/aaron-williamson/base16-alacritty */
+    --red: #FF5E5E;  /* this red is stolen from notion instead. i like it more than base16's #fb0120 */
+    --purple: #d381c3;
+    --green: #a1c659;
+    --blue: #6fb3d2;
+    --orange: #fda331;
+    --cyan: #75c7b7;
+}
+
+@media (prefers-color-scheme: light) {
+    :root {
+        --fg: rgb(25, 25, 25);
+        --grey-text: #333;
+        --body-bg: white;
+        --link-text: #1e2a78;
+        --link-border: #1e2a78;
+
+        /* similar to base16-bright but for light mode
+         * https://github.com/chriskempson/tomorrow-theme/blob/ccf6666d888198d341b26b3a99d0bc96500ad503/vim/colors/Tomorrow.vim#L7 */
+        --red: #c82829;
+        --purple: #8959a8;
+        --green: #718c00;
+        --blue: #4271ae;
+        --orange: #f5871f;
+        --cyan: #3e999f;
+        /* --yellow: #eab700; */
+    }
+}
+
 body {
-    background: rgb(25, 25, 25);
-    color: white;
+    background: var(--body-bg);
+    color: var(--fg);
     padding: 0;
     margin: 0;
     font: 1.125em/1.62 system-ui, sans-serif;
 }
+
+.bing {
+    color: var(--body-bg);
+    user-select: none;
+    margin-top: -28px;
+}
+
 h1 {
     margin-top: 0;
     font-size: 1.6em;
@@ -22,14 +70,13 @@ h3 {
 
 /* block level */
 blockquote {
-    border-left: 0.4em solid #ddd;
+    border-left: 0.4em solid var(--secondary-bg);
     margin: 15px 0;
     padding: 0 15px;
 }
 blockquote blockquote {
     padding: 0 0 0 1em;
     margin-left: 2em;
-    border-left: 0.4em solid #ddd;
 }
 p {
     font-weight: normal;
@@ -40,7 +87,7 @@ p {
 
 hr {
     border: none;
-    border-bottom: 1px solid #dadada;
+    border-bottom: 1px solid var(--link-border);
 }
 
 ul, ol {
@@ -58,10 +105,11 @@ li ul {
 table {
     border-collapse: collapse;
     border-spacing: 0;
-    border-color: #333;
+    border-color: var(--grey-border);
 }
 table tr:nth-child(2n) {
-    background: rgba(135, 131, 120, 0.15);
+    background: var(--secondary-bg);
+
 }
 table th, table td {
     text-align: left;
@@ -73,14 +121,14 @@ img {
 }
 a, #likes {
     padding: 0;
-    color: #bcc5ce;
+    color: var(--link-text);
     background: none;
     cursor: pointer;
     overflow: hidden;
     word-wrap: break-word;
     text-decoration: none;
     border: none;
-    border-bottom: 1px dotted #ddd;
+    border-bottom: 1px dotted var(--link-border);
 }
 
 a img {
@@ -90,7 +138,7 @@ a img {
 /* code */
 pre, code, tt {
     font: 1em monospace;
-    border: 1px solid #333;
+    border: 1px solid var(--secondary-bg);
     border-radius: 3px;
 }
 pre {
@@ -100,14 +148,14 @@ pre {
     overflow: auto;
 }
 code, tt {
-    color: #FF5E5E;
-    background-color: rgba(135, 131, 120, 0.15);
+    color: var(--red);
+    background-color: var(--secondary-bg);
     border-radius: 3px;
     padding: 1px 3px;
 }
 pre code {
     padding: 0;
-    color: white;
+    color: inherit;
     border: none;
     background: inherit;
     font-size: inherit;
@@ -132,19 +180,19 @@ h2#brand:before, .back:before {
 
 footer {
     text-align: center;
-    color: #999;
+    color: var(--grey-text);
     font-size: 0.75em;
 }
 
 footer a, footer #likes {
     margin: 0;
-    color: #999;
+    color: var(--grey-text)
 }
 
 /* article */
 main time {
-    color: #999;
     font-size: 0.9em;
+    color: var(--grey-text);
 }
 
 .timeline, .timeline > ul {
@@ -173,35 +221,32 @@ main time {
     padding: 0;
 }
 
-/* syntax highlighting, inspired by base16-bright colors colors copied from my
- * own alacritty config, which are in turn copied from
- * https://github.com/aaron-williamson/base16-alacritty */
 .code .builtin, pre .nb, pre .fm, .c-red, pre .kn {
-    color: #FF5E5E;
+    color: var(--red);
 }
 
 .code .keyword, pre .k, pre .cp, pre .kd, .c-purple, pre .ow {
-    color: #d381c3;
+    color: var(--purple);
 }
 
 .code .literal.string, pre .s2, pre .s, .c-green {
-    color: #a1c659;
+    color: var(--green);
 }
 
 pre .nd, pre .nf, .c-blue {
-    color: #6fb3d2;
+    color: var(--blue);
 }
 
 pre .mi, pre .kc, .c-orange {
-    color: #fda331;
+    color: var(--orange);
 }
 
 .c-cyan {
-    color: #76c7b7;
+    color: var(--cyan);
 }
 
 pre .c1 {
-    color: #888888;
+    color: var(--grey-text);
 }
 
 /* styles used by articles */
