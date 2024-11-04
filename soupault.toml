@@ -97,15 +97,21 @@ site_title = "Markus Unterwaditzer"
 site_logo = "https://unterwaditzer.net/favicon.ico"
 
 [widgets.canonical]
-widget = "canonical"
-selector = "link[rel=canonical]"
-site_url = "https://unterwaditzer.net"
-parse = false
+widget = "preprocess_element"
+selector = "link[rel=canonical].placeholder-soupault"
+action = "replace_element"
+
+# ignore old html on stdin entirely, set new HTML
+command = """
+echo '<link rel="canonical" href="https://unterwaditzer.net'$PAGE_URL'">'
+"""
 
 # Remove code tags such that we have an easier time passing the data to pygmentize
 [widgets.remove-code-tags-in-pre]
-widget = "remove-code-tags"
+widget = "preprocess_element"
 selector = "pre"
+action = "replace_content"
+command = "sed -e 's/<\\/*code>//g'"
 parse = false
 
 [widgets.pygmentize]
