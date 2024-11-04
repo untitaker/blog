@@ -32,7 +32,7 @@ bin/soupault:
 	mv $(SOUPAULT_TARBALL_PATH) bin/
 	rmdir $(SOUPAULT_ARTIFACT_NAME)
 
-build: bin/soupault pypi/bin/pygmentize bin/pandoc
+build: bin/soupault bin/pandoc
 	rm -rf build/
 	./bin/soupault
 .PHONY: build
@@ -77,22 +77,8 @@ html-diff:
 	cd build-old && git diff
 .PHONY: html-diff
 
-pypi/bin/python:
-	# https://www.youtube.com/watch?v=OXmYKh0eTQ8&list=PLWBKAf81pmOaP9naRiNAqug6EBnkPakvY
-	curl https://bootstrap.pypa.io/virtualenv.pyz -o bin/virtualenv.pyz
-	$(PYTHON) bin/virtualenv.pyz pypi/
-
-pypi/bin/pygmentize:
-	$(MAKE) pypi/bin/pygments
-
-pypi/bin/%: pypi/bin/python
-	pypi/bin/pip install $$(basename $@)
-
 bin/hyperlink:
 	curl -L https://github.com/untitaker/hyperlink/releases/download/$(HYPERLINK_VERSION)/$(HYPERLINK_ARTIFACT_NAME).tar.xz | tar x -J $(HYPERLINK_TARBALL_PATH)
 	mv $(HYPERLINK_TARBALL_PATH) bin/
 	rmdir $(HYPERLINK_ARTIFACT_NAME)
 	chmod +x ./bin/hyperlink
-
-cloudflare-pages-build:
-	$(MAKE) PYTHON=python3.7 build linkcheck

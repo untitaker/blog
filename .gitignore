@@ -2,7 +2,5 @@
 bin/hyperlink
 bin/pandoc
 bin/soupault
-bin/virtualenv.pyz
 build-old/
 build/
-pypi/

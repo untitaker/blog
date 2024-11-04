@@ -119,7 +119,7 @@ after = "remove-code-tags-in-pre"
 widget = "preprocess_element"
 action = "replace_element"
 selector = "pre[class^=sourceCode ]"
-command = "pypi/bin/pygmentize -f html -l $(echo $ATTR_CLASS | sed -e 's/sourceCode //g')"
+command = "uv tool run --from pygments==2.16.1 pygmentize -f html -l $(echo $ATTR_CLASS | sed -e 's/sourceCode //g')"
 
 # Re-adding code tags such that firefox reader mode works
 [widgets.add-code-tags-to-pre]
