@@ -137,5 +137,5 @@ append = " - Markus Unterwaditzer"
 
 [widgets.remove-home-link]
 widget = "delete_element"
-selector = "#home-link"
+selector = ".home-link"
 page = "index.md"
