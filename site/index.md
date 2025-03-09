@@ -37,6 +37,7 @@ document.getElementById("surname").onclick = function() {
 <li><a class=c-purple href="https://github.com/untitaker">GitHub</a></li>
 <li><a class=c-blue href="https://gts.woodland.cafe/@untitaker" rel="me">Mastodon</a></li>
 <li><a href="mailto:markus@unterwaditzer.net">Email</a></li>
+<li><a href="https://i.delta.chat/#035C912CABBAB0B589A9EDCB39DC3B3B46EA2D17&a=markus%40unterwaditzer.net&n=&i=4_zU8t_N4Ld-L0gpr_6UHvPU&s=Zc6hCGvYL5-ADFly_GSExTXP">DeltaChat</a></li>
 
 </ul>
 
