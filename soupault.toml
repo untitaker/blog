@@ -68,7 +68,6 @@ extract_attribute = "datetime"
 fallback_to_content = true
 
 [index]
-index = true
 sort_descending = true
 sort_type = "calendar"
 sort_by = "date"
