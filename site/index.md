@@ -58,6 +58,15 @@ document.getElementById("surname").onclick = function() {
 
 </div>
 
+## Hosted services and bots
+
+* [Mastodon Bookmark RSS](https://bookmark-rss.woodland.cafe) is a tool to let users on any mastodon instance subscribe to their bookmarks via RSS.
+* [RSSHub](https://rsshub.woodland.cafe) for subscribing to other social media platforms via RSS.
+* [Mastodon List Bot](https://list-bot.woodland.cafe) for (ab)using Mastodon's list feature to build alternative home feeds.
+* [@a11y_link_bot](https://mastodon.social/@a11y_link_bot) Mastodon bot
+* [Breezewiki](https://breezewiki.woodland.cafe), a Fandom mirror.
+* [Redlib](https://redlib.woodland.cafe), a Reddit mirror.
+
 ## Work
 
 <div class="timeline">
