@@ -72,7 +72,7 @@ document.getElementById("surname").onclick = function() {
 
 <div class="timeline">
 
-* <time>2018-now</time> [Sentry.io](https://sentry.io/)
+* <time>2018-now&nbsp;</time> [Sentry.io](https://sentry.io/)
 
 * <time>2017-2018</time> [Runtastic](https://www.runtastic.com/)
 
