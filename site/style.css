@@ -191,7 +191,8 @@ footer a, footer #likes {
 
 /* article */
 main time {
-    font-size: 0.9em;
+    /* this is only monospace so that columns in .timeline "tables" are aligned. lol. */
+    font: 0.9em monospace;
     color: var(--grey-text);
 }
 
@@ -200,14 +201,7 @@ main time {
 }
 
 .timeline time {
-    margin: 0.1em 0.5em 0.1em 0;
-    display: inline-block;
-    /* this is just hardcoded based off of the width of some items in Work section
-     * using em doesn't work properly
-     * if you see this, please help, i have no idea what i'm doing
-     * */
-    min-width: 77px;
-    text-align: right;
+    margin-right: 0.5em;
 }
 
 .timeline li {
